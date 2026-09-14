@@ -448,11 +448,11 @@
     const t = (now - t0) / 1000;
     leanX += (wantX - leanX) * 0.045;
     leanY += (wantY - leanY) * 0.045;
-    const s = Math.max(0.28, Math.min(0.95,
-      Math.min(window.innerWidth / 1700, window.innerHeight / 1180)));
+    const s = Math.max(0.22, Math.min(0.7,
+      Math.min(window.innerWidth / 2400, window.innerHeight / 1680)));
     const idle = still.matches ? 0 : Math.sin(t * 0.13) * 3;
     sceneEl.style.transform =
-      `translateY(${240 * s}px) rotateX(${13 + leanY * 3}deg)` +
+      `translate3d(${190 * s}px, ${300 * s}px, 0) rotateX(${13 + leanY * 3}deg)` +
       ` rotateY(${leanX * 15 + idle}deg) scale3d(${s}, ${s}, ${s})`;
     requestAnimationFrame(frameScene);
   }
