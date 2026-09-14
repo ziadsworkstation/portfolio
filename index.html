@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ziad Addami — Portfolio</title>
 <meta name="description" content="Industrial Design &amp; Product Development Engineering student at UPC. Barcelona, Spain.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      A single committed visual world: warm paper, warm ink, one
@@ -24,9 +21,10 @@
     --mark:   #3f5541;
     --mark-lit: #8fae91;
 
-    --display: 'Bodoni Moda', 'Didot', 'Bodoni MT', Georgia, serif;
-    --body:    'Archivo', 'Helvetica Neue', Arial, sans-serif;
-    --data:    'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --stack:   'Helvetica Neue', Arial, sans-serif;
+    --display: var(--stack);
+    --body:    var(--stack);
+    --data:    var(--stack);
 
     --label: 11px;
     --gutter: clamp(22px, 4.5vw, 84px);
@@ -44,6 +42,7 @@
 
   .label {
     font-family: var(--data);
+    font-variant-numeric: tabular-nums;
     font-size: var(--label);
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -80,8 +79,8 @@
     margin-left: -50vw; width: 100vw;
     text-align: center;
     font-family: var(--display);
-    font-size: 15.4vw; line-height: 0.78;
-    font-weight: 400;
+    font-size: 15.4vw; line-height: 0.8;
+    font-weight: 700; letter-spacing: -0.045em;
     color: rgba(239,236,228,0.19);
     white-space: nowrap; user-select: none; pointer-events: none;
     z-index: 1;
@@ -139,7 +138,7 @@
   .statement-lead {
     font-family: var(--display);
     font-size: clamp(30px, 4.4vw, 62px);
-    line-height: 1.12; font-weight: 400;
+    line-height: 1.14; font-weight: 400; letter-spacing: -0.018em;
     max-width: 18ch; text-wrap: balance;
   }
   .statement-lead em { font-style: italic; color: var(--dust-2); }
@@ -171,7 +170,7 @@
   }
   .work-head h2 {
     font-family: var(--display);
-    font-size: clamp(30px, 4vw, 56px); font-weight: 400; line-height: 1;
+    font-size: clamp(30px, 4vw, 56px); font-weight: 400; line-height: 1; letter-spacing: -0.022em;
   }
   .work-head .label { color: var(--dust); }
 
@@ -237,7 +236,7 @@
   @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
   .caption h3 {
     font-family: var(--display);
-    font-size: clamp(28px, 3.4vw, 46px); font-weight: 400; line-height: 1.04;
+    font-size: clamp(28px, 3.4vw, 46px); font-weight: 700; line-height: 1.06; letter-spacing: -0.022em;
     text-wrap: balance;
   }
   .caption .meta { color: var(--dust); margin-bottom: 12px; }
@@ -254,7 +253,7 @@
   .contact-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 28px; }
   .contact-row h2 {
     font-family: var(--display);
-    font-size: clamp(44px, 8vw, 116px); font-weight: 400; line-height: 0.94;
+    font-size: clamp(44px, 8vw, 116px); font-weight: 400; line-height: 0.94; letter-spacing: -0.035em;
   }
   .contact-links { display: flex; flex-direction: column; gap: 6px; text-align: right; }
   .contact-links a {
