@@ -25,31 +25,45 @@ en `index.html`.
 
 ## Estructura
 
-Una sola pantalla, sin scroll: una sala en 3D donde los paneles de tus
-imagenes derivan hacia el espectador, y encima un marco plano y fijo — el
-wordmark a sangre, la lista de proyectos, las disciplinas y el indice.
-Cada entrada abre una hoja superpuesta que se cierra con `Close` o `Esc`.
+Una sola pantalla, sin scroll. El fondo es **el estudio**: una escena en 3D
+construida con cajas de CSS, donde cada mueble es uno de los proyectos.
+Encima va un marco plano y fijo con el wordmark, las listas y el reloj.
 
-### Imagenes
+Cada mueble es un boton: al pasar por encima se enciende a la vez que su
+linea en la lista de la izquierda, y al pulsarlo abre su hoja. La hoja se
+cierra con `Close` o con `Esc`.
 
-El hero ya no lleva foto propia: la sala es el fondo. Las imagenes van todas
-en `assets/work/`, numeradas `<proyecto>-<fotograma>`:
+### La escena
 
-    assets/work/01-01.jpg   ← proyecto 1, primera imagen
-    assets/work/02-03.jpg   ← proyecto 2, tercera imagen
+Las coordenadas van en el espacio de la escena: x a la derecha, y hacia
+abajo (asi que arriba es negativo) y z hacia el espectador, con el suelo en
+y = 0. Cada pieza se coloca directamente en esas coordenadas dentro del
+`<script>`.
 
-Cada imagen aparece en tres sitios a la vez: como panel flotando en la sala,
-en la retícula de su proyecto y en el indice general. Las que falten se
-quedan como panel vacio, asi que se pueden anadir de una en una.
+Las caras no tienen luces: se sombrean por orientacion con un `brightness`
+constante — la superior recibe mas, las laterales menos, la trasera casi
+nada. Las dos unicas cosas que emiten en vez de reflejar son la pantalla del
+MacBook y la cara inferior de la pantalla de la lampara.
 
-### Proyectos
+El MacBook es atrezo, no proyecto: no se puede pulsar.
 
-Se declaran al principio del `<script>` de `index.html`:
+### Proyectos e imagenes
 
-    { name: '...', kind: 'Product', year: '2026', frames: 4,
-      disciplines: ['Research', 'Concept', 'CMF', 'Prototype'],
+Se declaran al principio del `<script>`:
+
+    { name: 'Desk', kind: 'Furniture', year: '2026', frames: 3, piece: 'desk',
+      disciplines: ['Research', 'Structure', 'Joinery', 'Prototype'],
       desc: '...' }
 
-`frames` decide cuantos paneles aporta a la sala. `disciplines` alimenta
-tanto la ficha del proyecto como la lista grande en verde de la portada,
-que se construye sola con el conjunto de todas sin repetir.
+`frames` decide cuantas imagenes tiene el proyecto. Van en `assets/work/`,
+numeradas `<proyecto>-<fotograma>`:
+
+    assets/work/01-01.jpg   ← Desk, primera imagen
+    assets/work/03-02.jpg   ← Lamp, segunda imagen
+
+Aparecen en la reticula de su proyecto y en el indice general. Las que
+falten se quedan como hueco rayado.
+
+`disciplines` alimenta la ficha del proyecto y tambien la lista grande en
+rosa de la portada, que se construye sola con el conjunto de todas sin
+repetir.

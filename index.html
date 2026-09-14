@@ -35,38 +35,56 @@
   .t-name  { font-size: clamp(25px, 2.4vw, 35px); letter-spacing: -0.025em; text-transform: uppercase; line-height: 0.98; }
   .sup { font-size: 9px; vertical-align: top; letter-spacing: 0.06em; margin-left: 8px; }
 
-  /* ============ THE ROOM: panels drifting toward the viewer ============ */
-  .room {
+  /* ============ THE STUDIO: four pieces of work, in the room ============ */
+  .stage {
     position: fixed; inset: 0; z-index: 1;
-    perspective: 900px; perspective-origin: 50% 50%;
+    perspective: 1150px; perspective-origin: 50% 22%;
     overflow: hidden;
   }
-  .room-inner { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
-  .panel {
-    position: absolute; top: 50%; left: 50%;
-    width: 42vw; min-width: 300px; aspect-ratio: 16 / 9;
-    margin: -12vw 0 0 -21vw;
-    background: #2a2428;
-    outline: 1px solid rgba(255,255,255,0.06);
-    will-change: transform, opacity;
-    overflow: hidden;
+  .scene {
+    position: absolute; left: 50%; top: 50%;
+    transform-style: preserve-3d; will-change: transform;
   }
-  .panel img { width: 100%; height: 100%; object-fit: cover; }
-  .panel .slot {
-    position: absolute; left: 10px; bottom: 8px;
-    font-size: 9px; letter-spacing: 0.14em; color: rgba(255,255,255,0.28);
+  .box { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .face {
+    position: absolute; left: 50%; top: 50%;
+    background: var(--obj, #332b30);
+    outline: 1px solid rgba(0,0,0,0.55);
+    outline-offset: -1px;
   }
-  .room::after {
-    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(10,7,9,0.94) 0%, rgba(10,7,9,0.34) 40%, rgba(10,7,9,0.10) 70%, rgba(10,7,9,0.42) 100%);
+  /* orientation does the shading — no lights, just constant faces */
+  .f-top    { filter: brightness(1.85); }
+  .f-front  { filter: brightness(1.06); }
+  .f-back   { filter: brightness(0.42); }
+  .f-right  { filter: brightness(0.78); }
+  .f-left   { filter: brightness(0.52); }
+  .f-bottom { filter: brightness(0.34); }
+
+  .piece { position: absolute; left: 0; top: 0; transform-style: preserve-3d; cursor: pointer; }
+  .piece .face { transition: background 0.35s ease; }
+    .piece.lit .face { background: var(--obj-lit); }
+  .piece.lit .face { background: #7a4a5d; }
+  .piece:focus-visible .face { outline: 1px solid var(--accent); outline-offset: -1px; }
+
+  .floor {
+    position: absolute; left: 50%; top: 50%;
+    width: 2400px; height: 1800px; margin: -900px 0 0 -1200px;
+    transform: rotateX(90deg);
+    background: radial-gradient(ellipse at 50% 42%, rgba(246,189,209,0.10) 0%, rgba(246,189,209,0.03) 34%, transparent 66%);
   }
-  /* the accent bleeding out from behind the project list, as in the reference */
-  .glow {
-    position: fixed; left: -16vw; top: 8%; z-index: 2;
-    width: 46vw; height: 46vh; pointer-events: none;
-    background: radial-gradient(ellipse at 26% 50%, rgba(168,53,96,0.72) 0%, rgba(168,53,96,0.24) 40%, transparent 70%);
-    filter: blur(14px);
+  /* the two things in the room that emit rather than reflect */
+  .emissive { background: var(--accent) !important; filter: none !important; outline: none; }
+  .pool {
+    position: absolute; left: 50%; top: 50%;
+    width: 900px; height: 900px; margin: -450px 0 0 -450px;
+    transform: rotateX(90deg);
+    background: radial-gradient(ellipse at 50% 50%, rgba(246,189,209,0.30) 0%, rgba(246,189,209,0.07) 40%, transparent 70%);
+    pointer-events: none;
+  }
+  .cone {
+    position: absolute; left: 50%; top: 50%;
+    border-radius: 50%;
+    background: #0e0b0d; outline: 1px solid rgba(246,189,209,0.16);
   }
 
   /* ============ THE FRAME: flat, fixed, over the room ============ */
@@ -94,7 +112,7 @@
   .group h2 { color: var(--white); margin-bottom: 10px; }
   .listing { display: flex; flex-direction: column; align-items: flex-start; }
   .listing button { display: block; text-align: left; color: var(--white); transition: color 0.2s ease; }
-  .listing button:hover, .listing button:focus-visible { color: var(--accent); }
+  .listing button:hover, .listing button:focus-visible, .listing button.lit { color: var(--accent); }
   .listing button .sup { color: var(--ghost); }
 
   .clocks { color: var(--accent); }
@@ -171,7 +189,7 @@
 
   @media (max-width: 820px) {
     body { overflow-y: auto; height: auto; }
-    .room, .glow { position: fixed; }
+    .stage, .glow { position: fixed; }
     .wordmark { font-size: 17vw; top: 0; }
     .frame {
       position: relative; inset: auto; height: auto;
@@ -193,8 +211,8 @@
 <body>
 
   <!-- ============ THE ROOM ============ -->
-  <div class="room" aria-hidden="true">
-    <div class="room-inner" id="room"></div>
+  <div class="stage">
+    <div class="scene" id="scene"></div>
   </div>
   <div class="glow" aria-hidden="true"></div>
 
@@ -281,16 +299,19 @@
 
 <script>
   const projects = [
-    // frames: how many images this project floats in the room and lists in the index
-    { name: '[Project 01]', kind: 'Product', year: '2026', frames: 4,
-      disciplines: ['Research', 'Concept', 'CMF', 'Prototype'],
-      desc: '[One or two lines on the brief, approach or outcome.]' },
-    { name: '[Project 02]', kind: 'Furniture', year: '2025', frames: 4,
-      disciplines: ['Concept', 'Modelling', 'Prototype'],
-      desc: '[One or two lines on the brief, approach or outcome.]' },
-    { name: '[Project 03]', kind: 'Object', year: '2025', frames: 4,
-      disciplines: ['Research', 'Concept', 'Detail'],
-      desc: '[One or two lines on the brief, approach or outcome.]' },
+    // each project is a piece standing in the room; frames are its images
+    { name: 'Desk', kind: 'Furniture', year: '2026', frames: 3, piece: 'desk',
+      disciplines: ['Research', 'Structure', 'Joinery', 'Prototype'],
+      desc: '[The brief, the approach, the outcome — two or three lines.]' },
+    { name: 'Studio Monitors', kind: 'Product', year: '2025', frames: 3, piece: 'monitors',
+      disciplines: ['Acoustics', 'CMF', 'Enclosure'],
+      desc: '[The brief, the approach, the outcome — two or three lines.]' },
+    { name: 'Lamp', kind: 'Lighting', year: '2025', frames: 3, piece: 'lamp',
+      disciplines: ['Optics', 'Mechanism', 'CMF'],
+      desc: '[The brief, the approach, the outcome — two or three lines.]' },
+    { name: 'Stools', kind: 'Furniture', year: '2024', frames: 3, piece: 'stools',
+      disciplines: ['Ergonomics', 'Structure', 'Joinery'],
+      desc: '[The brief, the approach, the outcome — two or three lines.]' },
   ];
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -311,64 +332,131 @@
   drawClock();
   setInterval(drawClock, 15000);
 
-  /* ============ the room: panels drift out of the dark and past the viewer ============ */
-  const roomEl = document.getElementById('room');
-  const LOOP = 2200, FAR = -1700;
+  /* ============ the studio ============
+     Scene space: x right, y down (so up is negative), z toward the viewer,
+     floor at y = 0. Every piece is placed in these coordinates directly.
+     ============================================================ */
+  const sceneEl = document.getElementById('scene');
 
-  const panels = slots.map((s, n) => {
+  function box({ w, h, d, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, parent, emissive }) {
     const el = document.createElement('div');
-    el.className = 'panel';
-    el.innerHTML =
-      `<img src="assets/work/${s.id}.jpg" alt="" onerror="this.remove()">` +
-      `<span class="slot">${s.id.replace('-', ' / ')}</span>`;
-    roomEl.appendChild(el);
-    // a stable scatter, so a panel always returns to its own path
-    const rnd = (k) => { const v = Math.sin((n + 1) * 91.7 + k * 37.3) * 43758.5453; return v - Math.floor(v); };
-    return {
-      el,
-      x: (rnd(1) - 0.5) * 150,     // vw
-      y: (rnd(2) - 0.5) * 120,     // vh
-      turn: (rnd(3) - 0.5) * 44,
-      pitch: (rnd(4) - 0.5) * 16,
-      offset: (n / slots.length) * LOOP + rnd(5) * 90,
-    };
+    el.className = 'box';
+    el.style.transform =
+      `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+    const sides = [
+      ['top',    w, d, `rotateX(90deg) translateZ(${h / 2}px)`],
+      ['bottom', w, d, `rotateX(-90deg) translateZ(${h / 2}px)`],
+      ['front',  w, h, `translateZ(${d / 2}px)`],
+      ['back',   w, h, `rotateY(180deg) translateZ(${d / 2}px)`],
+      ['right',  d, h, `rotateY(90deg) translateZ(${w / 2}px)`],
+      ['left',   d, h, `rotateY(-90deg) translateZ(${w / 2}px)`],
+    ];
+    for (const [name, fw, fh, t] of sides) {
+      const f = document.createElement('div');
+      f.className = `face f-${name}` + (emissive === name ? ' emissive' : '');
+      f.style.cssText =
+        `width:${fw}px;height:${fh}px;margin-left:${-fw / 2}px;margin-top:${-fh / 2}px;transform:${t};`;
+      el.appendChild(f);
+    }
+    parent.appendChild(el);
+    return el;
+  }
+
+  function flat(cls, { x = 0, y = 0, z = 0, size, parent }) {
+    const el = document.createElement('div');
+    el.className = cls;
+    if (size) el.style.cssText = `width:${size}px;height:${size}px;margin:${-size / 2}px 0 0 ${-size / 2}px;`;
+    el.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(90deg)`;
+    parent.appendChild(el);
+    return el;
+  }
+
+  function piece(i, build) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'piece';
+    el.dataset.project = String(i);
+    el.setAttribute('aria-label', `${projects[i].name} — ${projects[i].kind}, ${projects[i].year}`);
+    sceneEl.appendChild(el);
+    build(el);
+    el.addEventListener('click', () => openProject(i));
+    return el;
+  }
+
+  // the floor, and the light the lamp throws on it
+  flat('floor', { y: 0, parent: sceneEl });
+
+  // ---- 01 desk ----
+  piece(0, (g) => {
+    box({ w: 900, h: 22, d: 420, x: 0, y: -380, parent: g });                 // top
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      box({ w: 26, h: 380, d: 26, x: sx * 424, y: -190, z: sz * 184, parent: g });
+    }
   });
 
-  let leanX = 0, leanY = 0, wantX = 0, wantY = 0, travel = 0, lastT = performance.now();
+  // ---- the macbook is dressing, not work: it is not a project ----
+  const props = document.createElement('div');
+  props.className = 'piece';
+  props.style.pointerEvents = 'none';
+  sceneEl.appendChild(props);
+  box({ w: 196, h: 10, d: 134, x: -80, y: -396, z: 66, parent: props });       // deck
+  box({ w: 186, h: 118, d: 7, x: -80, y: -457, z: 6, rx: -14, parent: props, emissive: 'front' });
+
+  // ---- 02 studio monitors ----
+  piece(1, (g) => {
+    for (const sx of [-1, 1]) {
+      const x = sx * 322;
+      box({ w: 105, h: 162, d: 96, x, y: -472, z: -30, ry: sx * -9, parent: g });
+      const cone = document.createElement('div');
+      cone.className = 'cone';
+      cone.style.cssText = 'width:66px;height:66px;margin:-33px 0 0 -33px;';
+      cone.style.transform = `translate3d(${x + sx * 7}px, -486px, ${20}px) rotateY(${sx * -9}deg)`;
+      g.appendChild(cone);
+    }
+  });
+
+  // ---- 03 lamp ----
+  piece(2, (g) => {
+    box({ w: 96, h: 14, d: 96, x: 372, y: -398, z: 112, parent: g });          // base
+    box({ w: 12, h: 170, d: 12, x: 372, y: -490, z: 112, parent: g });         // stem
+    box({ w: 210, h: 12, d: 12, x: 280, y: -572, z: 112, rz: -13, parent: g }); // arm
+    box({ w: 92, h: 72, d: 84, x: 186, y: -580, z: 112, rz: -13, parent: g, emissive: 'bottom' });
+  });
+  // the lamp throws its light on the desk, not the floor
+  flat('pool', { x: 186, y: -395, z: 112, size: 660, parent: sceneEl });
+
+  // ---- 04 stools ----
+  piece(3, (g) => {
+    [[-300, 545], [286, 500]].forEach(([cx, cz]) => {
+      box({ w: 162, h: 20, d: 162, x: cx, y: -312, z: cz, parent: g });
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+        box({ w: 15, h: 312, d: 15, x: cx + sx * 60, y: -156, z: cz + sz * 60, parent: g });
+      }
+    });
+  });
+
+  /* ---- the camera, and the pieces lighting up with their name ---- */
+  const pieces = Array.from(sceneEl.querySelectorAll('.piece[data-project]'));
+  let wantX = 0, wantY = 0, leanX = 0, leanY = 0, t0 = performance.now();
 
   window.addEventListener('pointermove', (e) => {
     wantX = (e.clientX / window.innerWidth) * 2 - 1;
     wantY = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
 
-  function drift(now) {
-    const dt = Math.min((now - lastT) / 1000, 0.05);
-    lastT = now;
-    travel += dt * 62;
-    leanX += (wantX - leanX) * 0.05;
-    leanY += (wantY - leanY) * 0.05;
-
-    roomEl.style.transform = `rotateY(${leanX * -5}deg) rotateX(${leanY * 3.4}deg)`;
-
-    for (const p of panels) {
-      const z = FAR + ((travel + p.offset) % LOOP);
-      // fade in out of the dark, and out again as it sweeps past
-      const fade = Math.min(1, (z - FAR) / 520) * Math.min(1, (LOOP + FAR - z) / 420);
-      p.el.style.opacity = String(Math.max(0, fade));
-      p.el.style.transform =
-        `translate3d(${p.x}vw, ${p.y}vh, ${z}px) rotateY(${p.turn}deg) rotateX(${p.pitch}deg)`;
-    }
-    requestAnimationFrame(drift);
+  function frameScene(now) {
+    const t = (now - t0) / 1000;
+    leanX += (wantX - leanX) * 0.045;
+    leanY += (wantY - leanY) * 0.045;
+    const s = Math.max(0.28, Math.min(0.95,
+      Math.min(window.innerWidth / 1700, window.innerHeight / 1180)));
+    const idle = still.matches ? 0 : Math.sin(t * 0.13) * 3;
+    sceneEl.style.transform =
+      `translateY(${240 * s}px) rotateX(${13 + leanY * 3}deg)` +
+      ` rotateY(${leanX * 15 + idle}deg) scale3d(${s}, ${s}, ${s})`;
+    requestAnimationFrame(frameScene);
   }
-
-  if (still.matches) {
-    panels.forEach((p, i) => {
-      p.el.style.opacity = '0.4';
-      p.el.style.transform = `translate3d(${p.x}vw, ${p.y}vh, ${-300 - i * 40}px)`;
-    });
-  } else {
-    requestAnimationFrame(drift);
-  }
+  requestAnimationFrame(frameScene);
 
   /* ============ the project list ============ */
   const listing = document.getElementById('listing');
@@ -377,7 +465,23 @@
     btn.type = 'button';
     btn.innerHTML = `${p.name}<span class="sup">${p.kind} ${p.year}</span>`;
     btn.addEventListener('click', () => openProject(i));
+    btn.addEventListener('pointerenter', () => light(i, true));
+    btn.addEventListener('pointerleave', () => light(i, false));
+    btn.addEventListener('focus', () => light(i, true));
+    btn.addEventListener('blur', () => light(i, false));
     listing.appendChild(btn);
+  });
+
+  // a piece and its line in the list are the same thing seen twice
+  function light(i, on) {
+    pieces[i].classList.toggle('lit', on);
+    listing.children[i].classList.toggle('lit', on);
+  }
+  pieces.forEach((el, i) => {
+    el.addEventListener('pointerenter', () => light(i, true));
+    el.addEventListener('pointerleave', () => light(i, false));
+    el.addEventListener('focus', () => light(i, true));
+    el.addEventListener('blur', () => light(i, false));
   });
 
   document.getElementById('frame-count').textContent = `${pad(slots.length)}`;
