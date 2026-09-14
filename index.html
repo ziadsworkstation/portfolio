@@ -6,583 +6,447 @@
 <title>Ziad Addami — Portfolio</title>
 <meta name="description" content="Industrial Design &amp; Product Development Engineering student at UPC. Barcelona, Spain.">
 <style>
-  /* ============================================================
-     A single committed visual world: warm paper, warm ink, one
-     deep green that only ever marks what is active.
-     ============================================================ */
   :root {
-    --paper:  #efece4;
-    --room:   #0d0c0a;
-    --ink:    #14120e;
-    --dust:   #8f8a80;
-    --dust-2: rgba(239,236,228,0.58);
-    --rule:   rgba(20,18,14,0.16);
-    --rule-2: rgba(239,236,228,0.20);
-    --mark:   #3f5541;
-    --mark-lit: #8fae91;
-
-    --stack:   'Helvetica Neue', Arial, sans-serif;
-    --display: var(--stack);
-    --body:    var(--stack);
-    --data:    var(--stack);
-
-    --label: 11px;
-    --gutter: clamp(22px, 4.5vw, 84px);
+    --black: #050505;
+    --green: #24c21c;
+    --green-dim: #16780f;
+    --white: #ffffff;
+    --ghost: rgba(255,255,255,0.42);
+    --ghost-2: rgba(255,255,255,0.16);
+    --stack: 'Helvetica Neue', Arial, sans-serif;
+    --gut: clamp(14px, 1.4vw, 22px);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
   body {
-    font-family: var(--body);
-    background: var(--paper);
-    color: var(--ink);
-    overflow-x: hidden;
+    font-family: var(--stack);
+    font-weight: 700;
+    background: var(--black);
+    color: var(--white);
+    overflow: hidden;
+    overscroll-behavior: none;
+    height: 100svh;
   }
   img { max-width: 100%; display: block; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
 
-  .label {
-    font-family: var(--data);
-    font-variant-numeric: tabular-nums;
-    font-size: var(--label);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
+  .t-label { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.5; }
+  .t-name  { font-size: clamp(25px, 2.4vw, 35px); letter-spacing: -0.025em; text-transform: uppercase; line-height: 0.98; }
+  .sup { font-size: 9px; vertical-align: top; letter-spacing: 0.06em; margin-left: 8px; }
 
-  /* ---- every section is its own camera; its blocks are planes ---- */
-  .depth {
-    position: relative;
-    perspective: 1200px;
-    perspective-origin: 50% 50%;
-  }
-  .plane {
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-
-  /* ============ HERO: a lit room ============ */
-  .hero {
-    height: 100svh; min-height: 600px;
-    background: var(--room);
-    color: var(--paper);
+  /* ============ THE ROOM: panels drifting toward the viewer ============ */
+  .room {
+    position: fixed; inset: 0; z-index: 1;
+    perspective: 900px; perspective-origin: 50% 50%;
     overflow: hidden;
-    display: flex; align-items: flex-end; justify-content: center;
   }
-  .hero::after {
-    content: "";
-    position: absolute; inset: 0; z-index: 4;
-    background: radial-gradient(ellipse at 50% 42%, transparent 40%, rgba(0,0,0,0.42) 100%);
-    pointer-events: none;
-  }
-
-  .wordmark {
-    position: absolute; left: 50%; top: 46%;
-    margin-left: -50vw; width: 100vw;
-    text-align: center;
-    font-family: var(--display);
-    font-size: 15.4vw; line-height: 0.8;
-    font-weight: 700; letter-spacing: -0.045em;
-    color: rgba(239,236,228,0.19);
-    white-space: nowrap; user-select: none; pointer-events: none;
-    z-index: 1;
-  }
-
-  .portrait {
-    position: relative; z-index: 2;
-    height: 84%; display: flex; align-items: flex-end;
-  }
-  .portrait img {
-    height: 100%; width: auto; max-width: none;
-    filter: grayscale(100%) contrast(1.06);
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-  }
-  .portrait.is-empty::after {
-    content: "assets/hero.jpg";
-    display: flex; align-items: flex-end; justify-content: center;
-    width: clamp(230px, 26vw, 360px); aspect-ratio: 3 / 4;
-    padding-bottom: 20px;
-    border: 1px dashed var(--rule-2);
-    font-family: var(--data); font-size: var(--label);
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: rgba(239,236,228,0.34);
-  }
-
-  .hud {
-    position: absolute; inset: 0; z-index: 5;
-    padding: 26px var(--gutter);
-    pointer-events: none;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .hud a { pointer-events: auto; }
-  .hud-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
-  .hud-row.bottom { align-items: flex-end; }
-  .hud .label { color: var(--dust-2); }
-  .hud .lead { color: var(--paper); }
-
-  .socials { display: flex; gap: 14px; }
-  .socials a { color: var(--dust-2); transition: color 0.25s ease; }
-  .socials a:hover, .socials a:focus-visible { color: var(--paper); }
-  .socials svg { width: 17px; height: 17px; display: block; }
-
-  .clock { font-variant-numeric: tabular-nums; }
-  .clock .tick { animation: tick 1.6s steps(1, end) infinite; }
-  @keyframes tick { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.18; } }
-
-  /* ============ STATEMENT ============ */
-  .statement {
-    background: var(--room);
+  .room-inner { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+  .panel {
+    position: absolute; top: 50%; left: 50%;
+    width: 42vw; min-width: 300px; aspect-ratio: 16 / 9;
+    margin: -12vw 0 0 -21vw;
+    background: #2b2b2b;
+    outline: 1px solid rgba(255,255,255,0.06);
+    will-change: transform, opacity;
     overflow: hidden;
-    color: var(--paper);
-    padding: clamp(90px, 16vh, 180px) var(--gutter) clamp(110px, 20vh, 220px);
   }
-  .statement-lead {
-    font-family: var(--display);
-    font-size: clamp(30px, 4.4vw, 62px);
-    line-height: 1.14; font-weight: 400; letter-spacing: -0.018em;
-    max-width: 18ch; text-wrap: balance;
+  .panel img { width: 100%; height: 100%; object-fit: cover; }
+  .panel .slot {
+    position: absolute; left: 10px; bottom: 8px;
+    font-size: 9px; letter-spacing: 0.14em; color: rgba(255,255,255,0.28);
   }
-  .statement-lead em { font-style: italic; color: var(--dust-2); }
-  .statement-note {
-    margin-top: clamp(38px, 6vh, 64px);
-    margin-left: auto;
-    max-width: 44ch;
-    font-size: 15px; line-height: 1.75;
-    color: var(--dust-2);
-  }
-  .statement-rule {
-    margin-top: 30px; padding-top: 14px;
-    border-top: 1px solid var(--rule-2);
-    display: flex; justify-content: space-between; gap: 16px;
-    color: var(--dust-2);
-  }
-
-  /* ============ WORK ============ */
-  .work {
-    background: var(--paper);
-    overflow: hidden;
-    padding: clamp(80px, 14vh, 150px) 0 clamp(90px, 16vh, 170px);
-  }
-  .work-inner { padding: 0 var(--gutter); max-width: 1400px; margin: 0 auto; }
-  .work-head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    gap: 20px; flex-wrap: wrap;
-    padding-bottom: 16px; border-bottom: 1px solid var(--rule);
-  }
-  .work-head h2 {
-    font-family: var(--display);
-    font-size: clamp(30px, 4vw, 56px); font-weight: 400; line-height: 1; letter-spacing: -0.022em;
-  }
-  .work-head .label { color: var(--dust); }
-
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 38px; }
-  .tab {
-    display: flex; align-items: baseline; gap: 9px;
-    background: transparent; border: 1px solid var(--rule);
-    border-radius: 999px; padding: 9px 17px;
-    font-family: var(--body); font-size: 13px; color: var(--ink);
-    cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-  .tab .n { font-family: var(--data); font-size: 10px; color: var(--dust); transition: color 0.3s ease; }
-  .tab:hover { border-color: var(--ink); }
-  .tab[aria-selected="true"] { background: var(--mark); border-color: var(--mark); color: var(--paper); }
-  .tab[aria-selected="true"] .n { color: var(--mark-lit); }
-  .tab:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
-
-  /* ---- the band: frames scattered through depth ---- */
-  .reel {
-    position: relative;
-    perspective: 1000px;
-    padding: 60px 0 70px;
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  }
-  .reel-track {
-    display: flex; align-items: center; gap: 30px;
-    width: max-content;
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-  .frame {
-    position: relative; flex: none;
-    height: clamp(190px, 30vh, 330px);
-    padding: 0; border: 0;
+  .room::after {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
     background:
-      repeating-linear-gradient(135deg, rgba(255,255,255,0.5) 0px, rgba(255,255,255,0.5) 1px, transparent 1px, transparent 15px),
-      #bdb7ab;
-    cursor: pointer;
-    transform-style: preserve-3d;
-    transition: transform 0.95s cubic-bezier(.19,1,.22,1),
-                box-shadow 0.95s ease, filter 0.95s ease, opacity 0.95s ease;
-    box-shadow: 0 20px 50px -28px rgba(20,18,14,0.5);
-    filter: grayscale(1); opacity: 0.55;
+      linear-gradient(90deg, rgba(5,5,5,0.94) 0%, rgba(5,5,5,0.34) 40%, rgba(5,5,5,0.10) 70%, rgba(5,5,5,0.42) 100%);
   }
-  .frame[data-on="true"] {
-    filter: none; opacity: 1;
-    box-shadow: 0 50px 90px -34px rgba(20,18,14,0.55);
-  }
-  .frame img { width: 100%; height: 100%; object-fit: cover; }
-  .frame .n {
-    position: absolute; left: 0; bottom: -22px;
-    font-family: var(--data); font-size: 10px; letter-spacing: 0.14em;
-    color: var(--dust);
-  }
-  .frame[data-on="true"] .n { color: var(--mark); }
-  .frame:focus-visible { outline: 2px solid var(--mark); outline-offset: 4px; }
-
-  .caption { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: start; }
-  .caption.swap { animation: rise 0.6s cubic-bezier(.19,1,.22,1); }
-  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-  .caption h3 {
-    font-family: var(--display);
-    font-size: clamp(28px, 3.4vw, 46px); font-weight: 700; line-height: 1.06; letter-spacing: -0.022em;
-    text-wrap: balance;
-  }
-  .caption .meta { color: var(--dust); margin-bottom: 12px; }
-  .caption p { font-size: 15px; line-height: 1.75; color: var(--dust); max-width: 46ch; }
-
-  /* ============ CONTACT ============ */
-  .contact {
-    background: var(--paper);
-    overflow: hidden;
-    border-top: 1px solid var(--rule);
-    padding: clamp(70px, 12vh, 130px) var(--gutter) 40px;
-  }
-  .contact-inner { max-width: 1400px; margin: 0 auto; }
-  .contact-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 28px; }
-  .contact-row h2 {
-    font-family: var(--display);
-    font-size: clamp(44px, 8vw, 116px); font-weight: 400; line-height: 0.94; letter-spacing: -0.035em;
-  }
-  .contact-links { display: flex; flex-direction: column; gap: 6px; text-align: right; }
-  .contact-links a {
-    font-family: var(--data); font-size: 13px;
-    color: var(--ink); text-decoration: none;
-    transition: color 0.25s ease;
-  }
-  .contact-links a:hover, .contact-links a:focus-visible { color: var(--mark); }
-  .colophon {
-    margin-top: clamp(48px, 9vh, 90px); padding-top: 14px;
-    border-top: 1px solid var(--rule);
-    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-    color: var(--dust);
+  /* the green bleeding out from behind the project list, as in the reference */
+  .glow {
+    position: fixed; left: -16vw; top: 8%; z-index: 2;
+    width: 46vw; height: 46vh; pointer-events: none;
+    background: radial-gradient(ellipse at 26% 50%, rgba(36,194,28,0.85) 0%, rgba(36,194,28,0.28) 40%, transparent 70%);
+    filter: blur(14px);
   }
 
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
-
-  /* ============ NARROW ============ */
-  @media (max-width: 760px) {
-    .hero { height: 92svh; }
-    .wordmark { font-size: 22vw; top: 40%; }
-    .hud { padding: 20px var(--gutter); }
-    .hud-row { flex-direction: column; gap: 10px; }
-    .hud-row.bottom { flex-direction: column; align-items: flex-start; }
-    .statement-lead { max-width: none; }
-    .statement-note { margin-left: 0; }
-    .caption { grid-template-columns: 1fr; gap: 18px; }
-    .contact-links { text-align: left; }
-    .reel { padding: 40px 0 54px; }
+  /* ============ THE FRAME: flat, fixed, over the room ============ */
+  .wordmark span { display: inline-block; }
+  .wordmark {
+    position: fixed; top: -2.6vw; left: 0; z-index: 5;
+    width: 100%; padding: 0 var(--gut);
+    font-size: 15.6vw; line-height: 0.82;
+    display: block;
+    letter-spacing: -0.045em;
+    color: var(--green);
+    white-space: nowrap; user-select: none; pointer-events: none;
   }
 
-  /* ============ STILL ============ */
+  .frame {
+    position: fixed; inset: 0; z-index: 6;
+    padding: calc(13.4vw) var(--gut) calc(var(--gut) + 42px);
+    display: flex; justify-content: space-between; align-items: stretch;
+    gap: 20px; pointer-events: none;
+  }
+  .frame a, .frame button { pointer-events: auto; }
+  .col-l { display: flex; flex-direction: column; justify-content: space-between; gap: clamp(22px, 4vh, 46px); max-width: 44vw; }
+  .col-r { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+
+  .group h2 { color: var(--white); margin-bottom: 10px; }
+  .listing { display: flex; flex-direction: column; align-items: flex-start; }
+  .listing button { display: block; text-align: left; color: var(--white); transition: color 0.2s ease; }
+  .listing button:hover, .listing button:focus-visible { color: var(--green); }
+  .listing button .sup { color: var(--ghost); }
+
+  .clocks { color: var(--green); }
+  .clocks span { font-variant-numeric: tabular-nums; }
+  .tick { animation: tick 1.6s steps(1, end) infinite; }
+  @keyframes tick { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+
+  .frame-foot {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+    padding: var(--gut);
+    display: flex; justify-content: space-between; gap: 16px;
+    color: var(--ghost); pointer-events: none;
+  }
+  .frame-foot a { pointer-events: auto; color: var(--white); }
+  .frame-foot a:hover { color: var(--green); }
+
+  /* ============ OVERLAYS ============ */
+  .sheet {
+    position: fixed; inset: 0; z-index: 20;
+    background: rgba(5,5,5,0.94);
+    padding: var(--gut);
+    overflow-y: auto; overscroll-behavior: contain;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s;
+  }
+  .sheet[data-open="true"] { opacity: 1; visibility: visible; }
+  .close {
+    position: sticky; top: 0; z-index: 3;
+    display: block; margin-left: auto;
+    color: var(--white); letter-spacing: 0.04em;
+  }
+  .close:hover { color: var(--green); }
+
+  .sheet h3 {
+    font-size: clamp(30px, 5.4vw, 78px); line-height: 0.94;
+    letter-spacing: -0.035em; text-transform: uppercase;
+    color: var(--green); text-wrap: balance;
+  }
+  .disciplines { color: var(--green); margin-top: 8px; }
+  .credits { color: var(--ghost); margin-top: 2px; }
+  .credits b { color: var(--green); font-weight: 700; }
+  .copy {
+    color: var(--green); text-transform: uppercase;
+    font-size: 14px; line-height: 1.3; letter-spacing: 0.005em;
+    max-width: 62ch; margin-top: clamp(26px, 5vh, 54px);
+  }
+  .kind {
+    font-size: clamp(28px, 4.4vw, 60px); letter-spacing: -0.03em;
+    color: var(--green); margin-top: clamp(30px, 6vh, 66px); text-transform: uppercase;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 18px; margin-top: 30px; }
+  .cell { text-align: left; }
+  .cell .shot {
+    width: 100%; aspect-ratio: 16 / 10;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.045) 0px, rgba(255,255,255,0.045) 1px, transparent 1px, transparent 15px),
+      #191919;
+    overflow: hidden; margin-bottom: 8px;
+    transition: opacity 0.25s ease;
+  }
+  .cell:hover .shot { opacity: 0.75; }
+  .cell .shot img { width: 100%; height: 100%; object-fit: cover; }
+  .cell .row { display: flex; justify-content: space-between; gap: 12px; color: var(--green); }
+  .cell .with { color: var(--ghost); }
+  .cell .with b { color: var(--green); font-weight: 700; }
+
+  .about-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; margin-top: clamp(34px, 7vh, 76px); }
+  .about-cols h4 { color: var(--white); margin-bottom: 12px; }
+  .about-cols div { color: var(--green); }
+  .about-cols a:hover { color: var(--white); }
+
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+  @media (max-width: 820px) {
+    body { overflow-y: auto; height: auto; }
+    .room, .glow { position: fixed; }
+    .wordmark { font-size: 17vw; top: 0; }
+    .frame {
+      position: relative; inset: auto; height: auto;
+      flex-direction: column; padding: 20vw var(--gut) 90px;
+    }
+    .col-l { max-width: none; }
+    .col-r { align-items: flex-start; text-align: left; margin-top: 30px; }
+    .frame-foot { position: relative; }
+    .grid { grid-template-columns: 1fr; }
+    .about-cols { grid-template-columns: 1fr; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .plane, .reel-track, .frame { transform: none !important; transition: none !important; }
-    .caption.swap { animation: none; }
-    .clock .tick { animation: none; }
-    .reel { overflow-x: auto; }
+    .panel { transition: none !important; }
+    .tick { animation: none; }
   }
 </style>
 </head>
 <body>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero depth">
-    <div class="wordmark plane" data-z="-520" data-drift="55" aria-hidden="true">ZIAD ADDAMI</div>
+  <!-- ============ THE ROOM ============ -->
+  <div class="room" aria-hidden="true">
+    <div class="room-inner" id="room"></div>
+  </div>
+  <div class="glow" aria-hidden="true"></div>
 
-    <div class="portrait plane" data-z="-40" data-drift="55">
-      <img src="assets/hero.jpg" alt="Ziad Addami"
-           onerror="this.parentNode.classList.add('is-empty'); this.remove();">
+  <!-- ============ THE FRAME ============ -->
+  <div class="wordmark" aria-hidden="true"><span id="mark">ziadaddami</span></div>
+  <h1 class="t-label" style="position:absolute;left:-9999px;">Ziad Addami — Industrial Designer, Barcelona</h1>
+
+  <div class="frame">
+    <div class="col-l">
+      <div class="group">
+        <h2 class="t-label">Projects</h2>
+        <div class="listing t-name" id="listing"></div>
+      </div>
+      <div class="group">
+        <h2 class="t-label">Disciplines</h2>
+        <div class="listing t-name" id="disciplines" style="color: var(--green);"></div>
+      </div>
+      <div class="group">
+        <h2 class="t-label">Index</h2>
+        <button class="t-name" id="open-index" style="color: var(--green);">All frames <span class="sup" id="frame-count"></span></button>
+      </div>
     </div>
 
-    <div class="hud">
-      <div class="hud-row">
-        <a class="label lead" href="#work" style="text-decoration: none; color: inherit;">Selected work</a>
-        <div class="socials">
-          <a href="https://www.instagram.com/ziadaddami/" aria-label="Instagram" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-          </a>
-          <a href="#" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7.5 0h3.8v2.05h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V23h-4v-6.6c0-1.57-.03-3.6-2.2-3.6-2.2 0-2.53 1.72-2.53 3.49V23h-4V8z"/></svg>
-          </a>
+    <div class="col-r">
+      <button class="t-label" id="open-about">About</button>
+      <div class="clocks t-label">Barcelona <span id="clock">--<span class="tick">:</span>--</span></div>
+      <div class="t-label" style="color: var(--ghost);">41.3874° N, 2.1686° E</div>
+    </div>
+  </div>
+
+  <div class="frame-foot t-label">
+    <span>Ziad Addami — Industrial Designer</span>
+    <span>UPC Barcelona — ©2026</span>
+    <a href="mailto:ziadsworkstation@gmail.com">Contact</a>
+  </div>
+
+  <!-- ============ SHEETS ============ -->
+  <div class="sheet" id="sheet-project" role="dialog" aria-modal="true" aria-labelledby="p-title" data-open="false">
+    <button class="close t-label" data-close>Close</button>
+    <h3 id="p-title"></h3>
+    <div class="disciplines t-label" id="p-disc"></div>
+    <div class="credits t-label" id="p-credits"></div>
+    <div class="copy" id="p-copy"></div>
+    <div class="kind" id="p-kind"></div>
+    <div class="grid" id="p-grid"></div>
+  </div>
+
+  <div class="sheet" id="sheet-index" role="dialog" aria-modal="true" aria-labelledby="i-title" data-open="false">
+    <button class="close t-label" data-close>Close</button>
+    <h3 id="i-title">Index</h3>
+    <div class="disciplines t-label" id="i-sub"></div>
+    <div class="grid" id="i-grid"></div>
+  </div>
+
+  <div class="sheet" id="sheet-about" role="dialog" aria-modal="true" aria-labelledby="a-title" data-open="false">
+    <button class="close t-label" data-close>Close</button>
+    <h3 id="a-title">Ziad Addami</h3>
+    <div class="copy">
+      Industrial Design &amp; Product Development Engineering student at UPC, Barcelona.
+      A versatile designer with a deep respect for craft and timeless detail.
+      Early in my career, I'm looking for a company that believes in my potential
+      and gives me the space to sharpen my skills through real projects.
+    </div>
+    <div class="about-cols t-label">
+      <div>
+        <h4>Barcelona <span id="clock-2"></span></h4>
+        <div>
+          UPC — Universitat Politècnica de Catalunya<br>
+          Industrial Design &amp; Product Development Engineering<br>
+          Available 2026
         </div>
       </div>
-      <div class="hud-row bottom">
-        <span class="label lead">Ziad Addami</span>
-        <span class="label">Industrial Designer</span>
-        <span class="label clock">Barcelona <span id="clock">--<span class="tick">:</span>--</span></span>
-        <span class="label">©2026</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ STATEMENT ============ -->
-  <section class="statement depth" id="about">
-    <div class="statement-lead plane" data-z="0" data-drift="70">
-      Industrial Design &amp; Product Development Engineering student at UPC. <em>A versatile designer with a deep respect for craft and timeless detail.</em>
-    </div>
-    <div class="statement-note plane" data-z="-90" data-drift="100">
-      Early in my career, I'm looking for a company that believes in my potential and gives me the space to sharpen my skills through real projects.
-      <div class="statement-rule label">
-        <span>UPC Barcelona</span>
-        <span>Available 2026</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ WORK ============ -->
-  <section class="work depth" id="work">
-    <div class="work-inner">
-      <div class="work-head plane" data-z="0" data-drift="55">
-        <h2>Projects</h2>
-        <span class="label" id="work-count"></span>
-      </div>
-      <div class="tabs plane" data-z="60" data-drift="50" id="tabs" role="tablist" aria-label="Projects"></div>
-    </div>
-
-    <div class="reel" id="reel" aria-label="Showreel">
-      <div class="reel-track" id="track"></div>
-    </div>
-
-    <div class="work-inner">
-      <div class="caption plane" data-z="40" data-drift="50" id="caption" role="tabpanel" tabindex="-1"></div>
-    </div>
-  </section>
-
-  <!-- ============ CONTACT ============ -->
-  <footer class="contact depth" id="contact">
-    <div class="contact-inner">
-      <div class="contact-row plane" data-z="0" data-drift="70">
-        <h2>Let's talk</h2>
-        <div class="contact-links">
-          <a href="mailto:ziadsworkstation@gmail.com">ziadsworkstation@gmail.com</a>
-          <a href="tel:+34632390480">+34 632 390 480</a>
-          <a href="https://ziadaddami.es">ziadaddami.es</a>
+      <div>
+        <h4>Contact</h4>
+        <div>
+          <a href="mailto:ziadsworkstation@gmail.com">ziadsworkstation@gmail.com</a><br>
+          <a href="tel:+34632390480">+34 632 390 480</a><br>
+          <a href="https://ziadaddami.es">ziadaddami.es</a><br>
+          <a href="https://www.instagram.com/ziadaddami/" target="_blank" rel="noopener">Instagram</a>
         </div>
       </div>
-      <div class="colophon label plane" data-z="-60" data-drift="60">
-        <span>Ziad Addami</span>
-        <span>41.3874° N, 2.1686° E</span>
-        <span>Barcelona, Spain</span>
-      </div>
     </div>
-  </footer>
+  </div>
 
 <script>
   const projects = [
-    // frames: how many images this project floats in the band
-    { name: '[Project 01]', category: 'Category', year: 'Year', frames: 4, desc: '[One or two lines on the brief, approach or outcome.]' },
-    { name: '[Project 02]', category: 'Category', year: 'Year', frames: 4, desc: '[One or two lines on the brief, approach or outcome.]' },
-    { name: '[Project 03]', category: 'Category', year: 'Year', frames: 4, desc: '[One or two lines on the brief, approach or outcome.]' },
+    // frames: how many images this project floats in the room and lists in the index
+    { name: '[Project 01]', kind: 'Product', year: '2026', frames: 4,
+      disciplines: ['Research', 'Concept', 'CMF', 'Prototype'],
+      desc: '[One or two lines on the brief, approach or outcome.]' },
+    { name: '[Project 02]', kind: 'Furniture', year: '2025', frames: 4,
+      disciplines: ['Concept', 'Modelling', 'Prototype'],
+      desc: '[One or two lines on the brief, approach or outcome.]' },
+    { name: '[Project 03]', kind: 'Object', year: '2025', frames: 4,
+      disciplines: ['Research', 'Concept', 'Detail'],
+      desc: '[One or two lines on the brief, approach or outcome.]' },
   ];
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
   const pad = (n) => String(n).padStart(2, '0');
+  const slots = projects.flatMap((p, pi) =>
+    Array.from({ length: p.frames }, (_, f) => ({ pi, f, id: `${pad(pi + 1)}-${pad(f + 1)}` })));
 
-  /* ---- a stable scatter: the same frame always sits at the same depth ---- */
-  const scatter = (n) => {
-    const s = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-    return s - Math.floor(s);
-  };
-
-  /* ============ Barcelona, on the clock ============ */
-  const clockEl = document.getElementById('clock');
+  /* ============ clock ============ */
+  const clocks = [document.getElementById('clock'), document.getElementById('clock-2')];
   function drawClock() {
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', hour12: false,
     }).formatToParts(new Date());
     const get = (t) => parts.find(p => p.type === t).value;
-    clockEl.innerHTML = `${get('hour')}<span class="tick">:</span>${get('minute')}`;
+    const html = `${get('hour')}<span class="tick">:</span>${get('minute')}`;
+    clocks.forEach(el => { if (el) el.innerHTML = html; });
   }
   drawClock();
   setInterval(drawClock, 15000);
 
-  /* ============ pills ============ */
-  const tabsEl = document.getElementById('tabs');
-  const capEl = document.getElementById('caption');
-  const reelEl = document.getElementById('reel');
-  const trackEl = document.getElementById('track');
-  let active = -1;
+  /* ============ the room: panels drift out of the dark and past the viewer ============ */
+  const roomEl = document.getElementById('room');
+  const LOOP = 2200, FAR = -1700;
 
-  document.getElementById('work-count').textContent =
-    `${pad(projects.length)} projects — ${pad(projects.reduce((n, p) => n + p.frames, 0))} frames`;
+  const panels = slots.map((s, n) => {
+    const el = document.createElement('div');
+    el.className = 'panel';
+    el.innerHTML =
+      `<img src="assets/work/${s.id}.jpg" alt="" onerror="this.remove()">` +
+      `<span class="slot">${s.id.replace('-', ' / ')}</span>`;
+    roomEl.appendChild(el);
+    // a stable scatter, so a panel always returns to its own path
+    const rnd = (k) => { const v = Math.sin((n + 1) * 91.7 + k * 37.3) * 43758.5453; return v - Math.floor(v); };
+    return {
+      el,
+      x: (rnd(1) - 0.5) * 150,     // vw
+      y: (rnd(2) - 0.5) * 120,     // vh
+      turn: (rnd(3) - 0.5) * 44,
+      pitch: (rnd(4) - 0.5) * 16,
+      offset: (n / slots.length) * LOOP + rnd(5) * 90,
+    };
+  });
 
+  let leanX = 0, leanY = 0, wantX = 0, wantY = 0, travel = 0, lastT = performance.now();
+
+  window.addEventListener('pointermove', (e) => {
+    wantX = (e.clientX / window.innerWidth) * 2 - 1;
+    wantY = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  function drift(now) {
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
+    travel += dt * 62;
+    leanX += (wantX - leanX) * 0.05;
+    leanY += (wantY - leanY) * 0.05;
+
+    roomEl.style.transform = `rotateY(${leanX * -5}deg) rotateX(${leanY * 3.4}deg)`;
+
+    for (const p of panels) {
+      const z = FAR + ((travel + p.offset) % LOOP);
+      // fade in out of the dark, and out again as it sweeps past
+      const fade = Math.min(1, (z - FAR) / 520) * Math.min(1, (LOOP + FAR - z) / 420);
+      p.el.style.opacity = String(Math.max(0, fade));
+      p.el.style.transform =
+        `translate3d(${p.x}vw, ${p.y}vh, ${z}px) rotateY(${p.turn}deg) rotateX(${p.pitch}deg)`;
+    }
+    requestAnimationFrame(drift);
+  }
+
+  if (still.matches) {
+    panels.forEach((p, i) => {
+      p.el.style.opacity = '0.4';
+      p.el.style.transform = `translate3d(${p.x}vw, ${p.y}vh, ${-300 - i * 40}px)`;
+    });
+  } else {
+    requestAnimationFrame(drift);
+  }
+
+  /* ============ the project list ============ */
+  const listing = document.getElementById('listing');
   projects.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'tab';
-    btn.id = `tab-${i}`;
-    btn.setAttribute('role', 'tab');
-    btn.setAttribute('aria-controls', 'caption');
-    btn.setAttribute('aria-selected', 'false');
-    btn.tabIndex = -1;
-    btn.innerHTML = `<span class="n">${pad(i + 1)}</span><span>${p.name}</span>`;
-    btn.addEventListener('click', () => show(i));
-    tabsEl.appendChild(btn);
+    btn.innerHTML = `${p.name}<span class="sup">${p.kind} ${p.year}</span>`;
+    btn.addEventListener('click', () => openProject(i));
+    listing.appendChild(btn);
   });
-  const tabEls = Array.from(tabsEl.children);
 
-  /* ============ the band ============ */
-  const SHAPES = ['4 / 5', '16 / 10', '1 / 1', '3 / 4', '5 / 4'];
-  const sequence = projects.flatMap((p, pi) =>
-    Array.from({ length: p.frames }, (_, f) => ({ pi, f })));
+  document.getElementById('frame-count').textContent = `${pad(slots.length)}`;
+  document.getElementById('disciplines').innerHTML =
+    [...new Set(projects.flatMap(p => p.disciplines))]
+      .map(d => `<div>${d}</div>`).join('');
 
-  for (let copy = 0; copy < 2; copy++) {
-    sequence.forEach(({ pi, f }, n) => {
-      const slot = `${pad(pi + 1)}-${pad(f + 1)}`;
-      const frame = document.createElement('button');
-      frame.type = 'button';
-      frame.className = 'frame';
-      frame.style.aspectRatio = SHAPES[n % SHAPES.length];
-      frame.dataset.project = String(pi);
-      frame.dataset.on = 'false';
-      frame.dataset.seed = String(n);
-      // the flat placeholder shows through until assets/work/<slot>.jpg exists
-      frame.innerHTML =
-        `<img src="assets/work/${slot}.jpg" alt="" onerror="this.remove()">` +
-        `<span class="n">${slot.replace('-', ' / ')}</span>`;
-      if (copy === 0) frame.setAttribute('aria-label', `${projects[pi].name}, image ${f + 1}`);
-      else { frame.tabIndex = -1; frame.setAttribute('aria-hidden', 'true'); }
-      frame.addEventListener('click', () => show(pi));
-      trackEl.appendChild(frame);
-    });
+  // the wordmark bleeds edge to edge whatever the name measures
+  const markEl = document.querySelector('.wordmark');
+  const markText = document.getElementById('mark');
+  function fitMark() {
+    const room = markEl.clientWidth - parseFloat(getComputedStyle(markEl).paddingLeft) * 2;
+    markEl.style.fontSize = '100px';
+    markEl.style.fontSize = (100 * room / markText.offsetWidth) * 0.998 + 'px';
   }
-  const frameEls = Array.from(trackEl.children);
-  const lapWidth = frameEls[sequence.length].offsetLeft; // exactly one lap
+  fitMark();
+  window.addEventListener('resize', fitMark);
+  document.getElementById('i-sub').textContent =
+    `${pad(projects.length)} projects — ${pad(slots.length)} frames`;
 
-  /* each frame rests somewhere in depth; the active project's come forward */
-  function placeFrames() {
-    frameEls.forEach((el) => {
-      const n = Number(el.dataset.seed);
-      const on = el.dataset.project === String(active);
-      const depth = on ? 50 : -70 - scatter(n) * 200;
-      const lift = on ? 0 : (scatter(n + 4) - 0.5) * 54;
-      const turn = on ? (scatter(n + 8) - 0.5) * 5 : (scatter(n + 8) - 0.5) * 24;
-      const pitch = on ? 0 : (scatter(n + 12) - 0.5) * 12;
-      el.style.transform =
-        `translate3d(0, ${lift}px, ${depth}px) rotateY(${turn}deg) rotateX(${pitch}deg)`;
-    });
+  /* ============ sheets ============ */
+  const sheets = Array.from(document.querySelectorAll('.sheet'));
+  let lastFocus = null;
+
+  function openSheet(el) {
+    lastFocus = document.activeElement;
+    sheets.forEach(s => s.dataset.open = String(s === el));
+    el.scrollTop = 0;
+    el.querySelector('[data-close]').focus();
   }
+  function closeSheets() {
+    sheets.forEach(s => s.dataset.open = 'false');
+    if (lastFocus) lastFocus.focus();
+  }
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheets(); });
 
-  const SPEED = 22, INSET = 120;
-  let x = 0, paused = false, tween = null, last = performance.now();
-
-  function tick(now) {
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    if (tween) {
-      tween.t += dt;
-      const k = Math.min(tween.t / tween.dur, 1);
-      x = tween.from + (tween.to - tween.from) * (1 - Math.pow(1 - k, 3));
-      if (k === 1) tween = null;
-    } else if (!paused) {
-      x -= SPEED * dt;
-    }
-    while (x <= -lapWidth) x += lapWidth;
-    while (x > 0) x -= lapWidth;
-    trackEl.style.transform = `translate3d(${x}px, 0, 0)`;
-    requestAnimationFrame(tick);
+  function cell(slot) {
+    const p = projects[slot.pi];
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'cell';
+    el.innerHTML =
+      `<div class="shot"><img src="assets/work/${slot.id}.jpg" alt="" onerror="this.remove()"></div>` +
+      `<div class="row t-label"><span>${p.name}</span><span>${slot.id.replace('-', ' / ')}</span></div>` +
+      `<div class="with t-label">${p.kind} — ${p.year} — <b>${p.disciplines.join(', ')}</b></div>`;
+    el.addEventListener('click', () => openProject(slot.pi));
+    return el;
   }
 
-  function glideTo(pi) {
-    const first = frameEls.find(el => el.dataset.project === String(pi));
-    let to = -(first.offsetLeft - INSET);
-    to = ((to % lapWidth) + lapWidth) % lapWidth - lapWidth;
-    while (to > x) to -= lapWidth;
-    if (still.matches) { x = to; return; }
-    tween = { from: x, to, t: 0, dur: Math.min(1.3, 0.5 + (x - to) / 1500) };
-  }
-
-  reelEl.addEventListener('mouseenter', () => { paused = true; });
-  reelEl.addEventListener('mouseleave', () => { paused = false; });
-  reelEl.addEventListener('focusin', () => { paused = true; });
-  reelEl.addEventListener('focusout', () => { paused = false; });
-
-  function show(i) {
-    if (i === active) return;
-    const firstPaint = active === -1;
-    active = i;
+  function openProject(i) {
     const p = projects[i];
-
-    tabEls.forEach((btn, n) => {
-      const on = n === i;
-      btn.setAttribute('aria-selected', String(on));
-      btn.tabIndex = on ? 0 : -1;
-    });
-    placeFrames();
-
-    capEl.setAttribute('aria-labelledby', `tab-${i}`);
-    capEl.innerHTML = `
-      <h3>${p.name}</h3>
-      <div>
-        <div class="meta label">${p.category} — ${p.year} — ${pad(p.frames)} frames</div>
-        <p>${p.desc}</p>
-      </div>`;
-
-    if (!firstPaint) {
-      capEl.classList.remove('swap');
-      void capEl.offsetWidth;
-      capEl.classList.add('swap');
-      glideTo(i);
-    }
+    document.getElementById('p-title').textContent = p.name;
+    document.getElementById('p-disc').textContent = p.disciplines.join(' / ');
+    document.getElementById('p-credits').innerHTML =
+      `Designed by <b>Ziad Addami</b> &nbsp; ${p.kind} &nbsp; ${p.year}`;
+    document.getElementById('p-copy').textContent = p.desc;
+    document.getElementById('p-kind').textContent = p.kind;
+    const grid = document.getElementById('p-grid');
+    grid.replaceChildren(...slots.filter(s => s.pi === i).map(cell));
+    openSheet(document.getElementById('sheet-project'));
   }
 
-  tabsEl.addEventListener('keydown', (e) => {
-    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-    if (!step) return;
-    e.preventDefault();
-    const next = (active + step + projects.length) % projects.length;
-    show(next);
-    tabEls[next].focus();
+  document.getElementById('open-index').addEventListener('click', () => {
+    document.getElementById('i-grid').replaceChildren(...slots.map(cell));
+    openSheet(document.getElementById('sheet-index'));
   });
-
-  show(0);
-
-  /* ============ the room: planes drift through depth on scroll,
-     and the whole space leans a few degrees toward the pointer ============ */
-  const planes = Array.from(document.querySelectorAll('.plane'));
-  let pointerX = 0, pointerY = 0, leanX = 0, leanY = 0;
-
-  window.addEventListener('pointermove', (e) => {
-    pointerX = (e.clientX / window.innerWidth) * 2 - 1;
-    pointerY = (e.clientY / window.innerHeight) * 2 - 1;
-  }, { passive: true });
-
-  function float() {
-    leanX += (pointerX - leanX) * 0.055;
-    leanY += (pointerY - leanY) * 0.055;
-    const mid = window.innerHeight / 2;
-
-    for (const el of planes) {
-      const box = el.getBoundingClientRect();
-      if (box.bottom < -300 || box.top > window.innerHeight + 300) continue;
-      const p = Math.max(-1, Math.min(1, ((box.top + box.height / 2) - mid) / mid));
-      const base = Number(el.dataset.z) || 0;
-      const drift = Number(el.dataset.drift) || 0;
-      el.style.transform =
-        `translate3d(${leanX * -10}px, ${p * -10}px, ${base - p * drift}px)` +
-        ` rotateY(${leanX * 1.4}deg) rotateX(${(leanY * -1.1) + (p * 1.4)}deg)`;
-    }
-    requestAnimationFrame(float);
-  }
-
-  if (!still.matches) {
-    requestAnimationFrame(tick);
-    requestAnimationFrame(float);
-  } else {
-    placeFrames();
-  }
+  document.getElementById('open-about').addEventListener('click', () =>
+    openSheet(document.getElementById('sheet-about')));
 </script>
 
 </body>

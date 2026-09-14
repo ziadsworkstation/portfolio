@@ -23,22 +23,33 @@ Recomendaciones para el archivo:
 Si el archivo final es PNG o WebP, hay que actualizar la ruta del `<img class="hero-photo">`
 en `index.html`.
 
-## Showreel de proyectos
+## Estructura
 
-La sección de proyectos es una banda continua de fotogramas. Cada proyecto
-aporta los suyos, y el número se declara en `index.html`:
+Una sola pantalla, sin scroll: una sala en 3D donde los paneles de tus
+imagenes derivan hacia el espectador, y encima un marco plano y fijo — el
+wordmark a sangre, la lista de proyectos, las disciplinas y el indice.
+Cada entrada abre una hoja superpuesta que se cierra con `Close` o `Esc`.
 
-    { name: '...', category: '...', year: '...', frames: 4, desc: '...' }
+### Imagenes
 
-Cada fotograma busca su imagen en `assets/work/`, numerada `<proyecto>-<fotograma>`:
+El hero ya no lleva foto propia: la sala es el fondo. Las imagenes van todas
+en `assets/work/`, numeradas `<proyecto>-<fotograma>`:
 
     assets/work/01-01.jpg   ← proyecto 1, primera imagen
-    assets/work/01-02.jpg
-    assets/work/02-01.jpg   ← proyecto 2, primera imagen
+    assets/work/02-03.jpg   ← proyecto 2, tercera imagen
 
-Las que falten se quedan como placeholder rayado, así que se pueden ir
-añadiendo de una en una. Si subes o bajas `frames`, la banda se recompone sola.
+Cada imagen aparece en tres sitios a la vez: como panel flotando en la sala,
+en la retícula de su proyecto y en el indice general. Las que falten se
+quedan como panel vacio, asi que se pueden anadir de una en una.
 
-Las proporciones las asigna la propia banda de forma alternada (vertical,
-apaisada, cuadrada) para dar ritmo, y las imágenes se recortan con
-`object-fit: cover` — conviene que el sujeto esté centrado.
+### Proyectos
+
+Se declaran al principio del `<script>` de `index.html`:
+
+    { name: '...', kind: 'Product', year: '2026', frames: 4,
+      disciplines: ['Research', 'Concept', 'CMF', 'Prototype'],
+      desc: '...' }
+
+`frames` decide cuantos paneles aporta a la sala. `disciplines` alimenta
+tanto la ficha del proyecto como la lista grande en verde de la portada,
+que se construye sola con el conjunto de todas sin repetir.
