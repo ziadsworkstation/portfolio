@@ -1,1172 +1,954 @@
 <!DOCTYPE html>
-<html lang="en" data-mood="peace">
+<html lang="en" data-sky="peace">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLOUT NATIVE — Find your peace</title>
-<meta name="description" content="Clout Native blends the luxurious with the casual into exotic pieces built for the street and the runway. Rooted in Native Influence: Peace, Mystery, Nostalgia.">
-<meta name="theme-color" content="#e9eef3">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CLOUT NATIVE</title>
+<meta name="description" content="A window into the native inner world. Clout Native — Peace, Mystery, Nostalgia.">
+<meta name="theme-color" content="#bcd4e6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cloutnative.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  /* ============================================================
-     Three moods, one site. Peace / Mystery / Nostalgia are the
-     brand's own pillars, so they drive the palette instead of a
-     dark-mode toggle. Everything below reads from these vars.
-     ============================================================ */
-  :root, :root[data-mood="peace"] {
-    --bg:        #e9eef3;
-    --surface:   #ffffff;
-    --text:      #12151b;
-    --soft:      rgba(18,21,27,0.56);
-    --faint:     rgba(18,21,27,0.30);
-    --line:      rgba(18,21,27,0.13);
-    --accent:    #5b8fb0;
-    --accent-in: #ffffff;
-    --accent-bg: rgba(91,143,176,0.12);
-    --sky-1:     #cfe3f2;
-    --sky-2:     #f2f7fb;
-    --sky-3:     #a4c6de;
-    --cloud:     #ffffff;
-    --shade:     0 30px 70px -44px rgba(20,44,66,0.55);
-    --grain:     0.055;
-  }
-  :root[data-mood="mystery"] {
-    --bg:        #0c0a14;
-    --surface:   #161324;
-    --text:      #eae7f4;
-    --soft:      rgba(234,231,244,0.60);
-    --faint:     rgba(234,231,244,0.32);
-    --line:      rgba(234,231,244,0.15);
-    --accent:    #a493e6;
-    --accent-in: #14102a;
-    --accent-bg: rgba(164,147,230,0.16);
-    --sky-1:     #221b3d;
-    --sky-2:     #0d0b17;
-    --sky-3:     #4a3b7d;
-    --cloud:     #241d3d;
-    --shade:     0 30px 80px -40px rgba(0,0,0,0.92);
-    --grain:     0.085;
-  }
-  :root[data-mood="nostalgia"] {
-    --bg:        #efe4d6;
-    --surface:   #fbf4ea;
-    --text:      #2a1e18;
-    --soft:      rgba(42,30,24,0.60);
-    --faint:     rgba(42,30,24,0.32);
-    --line:      rgba(42,30,24,0.16);
-    --accent:    #ab6a49;
-    --accent-in: #fbf4ea;
-    --accent-bg: rgba(171,106,73,0.13);
-    --sky-1:     #e8cdb0;
-    --sky-2:     #f7eee2;
-    --sky-3:     #c99a71;
-    --cloud:     #fdf8f1;
-    --shade:     0 30px 70px -44px rgba(88,56,32,0.5);
-    --grain:     0.11;
-  }
+  /* =====================================================================
+     There is no page here. There is a sky, and you are moving through it.
+     Everything below is either the window onto that sky (the canvas) or
+     the few marks laid over it.
+     ===================================================================== */
 
   :root {
     --sans: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
     --serif: 'Instrument Serif', 'Times New Roman', serif;
-    --gut: clamp(18px, 4vw, 64px);
-    --tune: 900ms cubic-bezier(.4,0,.2,1);
+    --ink: #0f1620;
+    --ink-soft: rgba(15,22,32,0.55);
+    --ink-faint: rgba(15,22,32,0.30);
+    --pane: rgba(255,255,255,0.72);
+    --edge: rgba(15,22,32,0.14);
+    --gut: clamp(20px, 3.4vw, 46px);
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+  /* night has to invert the few marks, or they disappear into it */
+  html[data-sky="mystery"] {
+    --ink: #eef1fb;
+    --ink-soft: rgba(238,241,251,0.58);
+    --ink-faint: rgba(238,241,251,0.30);
+    --pane: rgba(16,18,34,0.62);
+    --edge: rgba(238,241,251,0.16);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
+  html, body { min-height: 100%; }
   body {
-    font-family: var(--sans);
-    font-weight: 300;
-    background: var(--bg);
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--sans); font-weight: 300;
+    color: var(--ink);
+    background: #a9c6dd;
     overflow-x: clip;
-    transition: background-color var(--tune), color var(--tune);
+    -webkit-font-smoothing: antialiased;
+    transition: color 1400ms ease;
   }
-  body.locked { overflow: hidden; }
-
-  img { display: block; max-width: 100%; }
+  body.held { overflow: hidden; }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
   a { color: inherit; text-decoration: none; }
+  img { display: block; }
   svg { display: block; }
+  :focus-visible { outline: 1.5px solid currentColor; outline-offset: 5px; border-radius: 2px; }
 
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .tag {
+    font-size: 10px; font-weight: 400; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .serif { font-family: var(--serif); font-weight: 400; line-height: 1.2; }
+  .serif em { font-style: italic; }
 
-  /* ---- type scale ---------------------------------------------------- */
-  .label {
-    font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--soft);
+  /* ---- the sky itself ------------------------------------------------ */
+  #sky {
+    position: fixed; inset: 0; z-index: 0;
+    width: 100%; height: 100%; display: block;
   }
-  .display {
-    font-weight: 900; letter-spacing: -0.045em; line-height: 0.82;
-    text-transform: uppercase;
-  }
-  .said {
-    font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em;
-    line-height: 1.24;
-  }
-  .said em { font-style: italic; color: var(--accent); }
-
-  /* ---- the film of grain over everything ----------------------------- */
-  .grain {
-    position: fixed; inset: -50%; z-index: 90; pointer-events: none;
-    opacity: var(--grain);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: shift 700ms steps(3) infinite;
-    transition: opacity var(--tune);
-  }
-  @keyframes shift {
-    0%   { transform: translate(0,0); }
-    33%  { transform: translate(-3%,2%); }
-    66%  { transform: translate(2%,-3%); }
-    100% { transform: translate(0,0); }
-  }
-
-  /* ---- the weather: slow light behind the whole page ------------------ */
-  .weather { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
-  .weather i {
-    position: absolute; display: block; border-radius: 50%;
-    filter: blur(70px); opacity: 0.6;
-    transition: background var(--tune);
-  }
-  .weather i:nth-child(1) {
-    width: 60vw; height: 60vw; left: -14vw; top: -18vw;
-    background: var(--sky-1); animation: drift-a 34s ease-in-out infinite;
-  }
-  .weather i:nth-child(2) {
-    width: 46vw; height: 46vw; right: -10vw; top: 22vh;
-    background: var(--sky-3); opacity: 0.4; animation: drift-b 41s ease-in-out infinite;
-  }
-  .weather i:nth-child(3) {
-    width: 54vw; height: 54vw; left: 26vw; bottom: -22vw;
-    background: var(--sky-1); animation: drift-a 48s ease-in-out infinite reverse;
-  }
-  @keyframes drift-a {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50%     { transform: translate(8vw,6vh) scale(1.14); }
-  }
-  @keyframes drift-b {
-    0%,100% { transform: translate(0,0) scale(1.1); }
-    50%     { transform: translate(-9vw,-5vh) scale(0.94); }
-  }
-
-  /* ============================ THE GATE ==============================
-     The old site made you press ENTER. Kept, because the pause is the
-     point — but now the thing you press is the mark itself, and the
-     window you were looking through becomes the site.
-     ==================================================================== */
-  .gate {
-    position: fixed; inset: 0; z-index: 100;
-    display: grid; grid-template-rows: 1fr auto 1fr;
-    justify-items: center; align-items: center;
-    background: var(--bg); overflow: hidden;
-    transition: opacity 1100ms ease, visibility 1100ms;
-  }
-  .gate::before {
-    content: ''; position: absolute; inset: 0;
+  /* what stands in for it when there is no WebGL to draw it with */
+  #flat {
+    position: fixed; inset: 0; z-index: 0; display: none;
     background:
-      radial-gradient(60% 50% at 50% 38%, var(--sky-1), transparent 70%),
-      radial-gradient(70% 60% at 20% 90%, var(--sky-3), transparent 70%),
-      var(--sky-2);
-    filter: blur(44px); transform: scale(1.3);
-    transition: background var(--tune);
+      radial-gradient(120% 70% at 50% 100%, #fdfdff 0%, #dbe8f4 32%, transparent 68%),
+      radial-gradient(90% 60% at 18% 78%, #ffffff 0%, transparent 60%),
+      radial-gradient(70% 45% at 82% 70%, #f4f8fc 0%, transparent 62%),
+      linear-gradient(#4d7fb5, #9cc3e0 52%, #dbe9f5);
   }
-  .gate.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+  html.flat #sky { display: none; }
+  html.flat #flat { display: block; }
 
-  .gate-core { grid-row: 2; position: relative; display: grid; justify-items: center; gap: 30px; }
-  .gate-core > * { position: relative; }
-
-  .mark-btn {
-    display: block; width: clamp(180px, 34vw, 280px);
-    transition: transform 1100ms cubic-bezier(.65,0,.35,1), opacity 800ms ease;
-  }
-  .mark-btn .mark { animation: breathe 7s ease-in-out infinite; }
-  @keyframes breathe {
-    0%,100% { transform: scale(1) translateY(0); }
-    50%     { transform: scale(1.035) translateY(-1.5%); }
-  }
-  .gate.leaving .mark-btn { transform: scale(9); opacity: 0; }
-  .gate.leaving .gate-core > :not(.mark-btn) { opacity: 0; transition: opacity 400ms ease; }
-
-  .gate-word { font-size: clamp(26px, 5vw, 46px); }
-  .gate-word .thin { font-weight: 200; letter-spacing: -0.03em; }
-
-  .enter {
-    display: inline-flex; align-items: center; gap: 12px;
-    padding: 13px 30px; border-radius: 100px;
-    border: 1px solid var(--text);
-    font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-    transition: background 400ms ease, color 400ms ease, gap 400ms ease;
-  }
-  .enter:hover, .enter:focus-visible { background: var(--text); color: var(--bg); gap: 18px; }
-  .enter svg { width: 14px; }
-
-  .gate-foot {
-    grid-row: 3; align-self: end; width: 100%;
-    display: flex; justify-content: space-between; align-items: end;
-    padding: var(--gut); gap: 16px; flex-wrap: wrap;
-  }
-  .gate-foot .label { color: var(--text); opacity: 0.5; }
-  .gate-links { display: flex; gap: 18px; }
-  .gate-links a { transition: opacity 300ms ease; }
-  .gate-links a:hover { opacity: 1; }
-
-  /* the clock the old site had — it stays, it dated the visit ---------- */
-  #clock { font-variant-numeric: tabular-nums; }
-
-  /* ============================ HEADER ================================ */
-  .top {
-    position: sticky; top: 0; z-index: 60;
-    display: flex; align-items: center; gap: var(--gut);
-    padding: 14px var(--gut);
-    border-bottom: 1px solid transparent;
-    transition: background 500ms ease, border-color 500ms ease, backdrop-filter 500ms ease;
-  }
-  .top.stuck {
-    background: color-mix(in srgb, var(--bg) 96%, transparent);
-    backdrop-filter: blur(28px) saturate(1.3);
-    -webkit-backdrop-filter: blur(28px) saturate(1.3);
-    border-bottom-color: var(--line);
-  }
-  .top .wordmark {
-    display: flex; align-items: center; gap: 10px;
-    font-weight: 900; font-size: 13px; letter-spacing: 0.02em; text-transform: uppercase;
-    white-space: nowrap; flex: none;
-  }
-  .top .wordmark .mark-wrap { width: 30px; flex: none; }
-  .nav { display: flex; gap: 26px; margin-left: auto; }
-  .nav a {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
-    position: relative; padding-bottom: 3px;
-  }
-  .nav a::after {
-    content: ''; position: absolute; left: 0; right: 100%; bottom: 0;
-    height: 1px; background: currentColor; transition: right 400ms cubic-bezier(.4,0,.2,1);
-  }
-  .nav a:hover::after, .nav a:focus-visible::after { right: 0; }
-
-  /* ---- the mood triad ------------------------------------------------ */
-  .triad { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 100px; }
-  .triad button {
-    padding: 6px 13px; border-radius: 100px;
-    font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--faint);
-    transition: color 400ms ease, background 400ms ease;
-  }
-  .triad button[aria-pressed="true"] { background: var(--accent); color: var(--accent-in); }
-  .triad button:hover { color: var(--text); }
-  .triad button[aria-pressed="true"]:hover { color: var(--accent-in); }
-
-  .top .triad { margin-left: 0; }
-
-  /* ============================ HERO ================================== */
-  .hero {
-    position: relative; min-height: 88svh; padding: clamp(40px, 9vh, 110px) var(--gut) clamp(30px, 6vh, 70px);
-    display: grid; align-content: space-between; gap: clamp(30px, 6vh, 64px);
-  }
-  .hero-type, .hero-foot { position: relative; z-index: 1; }
-  .hero-type { display: grid; gap: 4px; }
-
-  /* the mark, held in the empty half of the hero */
-  .hero-ghost {
-    position: absolute; z-index: 0; right: 3vw; top: 46%;
-    width: 34vw; transform: translateY(-50%);
-    pointer-events: none; opacity: 0.92;
-  }
-  .hero-ghost .mark { animation: breathe 11s ease-in-out infinite; }
-  @media (max-width: 1040px) { .hero-ghost { display: none; } }
-  .hero-type h1 {
-    font-size: clamp(54px, 20vw, 252px);
-    font-weight: 900; letter-spacing: -0.055em; line-height: 0.80; text-transform: uppercase;
-  }
-  /* once the mark takes the right half, the type has to give the room back */
-  @media (min-width: 1041px) { .hero-type h1 { font-size: clamp(90px, 13.5vw, 205px); } }
-  .hero-type h1 span { display: block; }
-  .hero-type h1 .two { padding-left: 0.09em; }
-  /* each word rises on load */
-  .rise { display: block; overflow: hidden; }
-  .rise > * { display: block; transform: translateY(105%); transition: transform 1200ms cubic-bezier(.16,1,.3,1); }
-  .lit .rise > * { transform: none; }
-  .lit .rise:nth-child(2) > * { transition-delay: 90ms; }
-  .lit .rise:nth-child(3) > * { transition-delay: 180ms; }
-
-  .hero-foot {
-    display: grid; gap: clamp(24px, 4vw, 60px);
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    align-items: end;
-  }
-  .hero-foot p.said { font-size: clamp(19px, 2.1vw, 29px); max-width: 30ch; }
-  .hero-foot .stack { display: grid; gap: 12px; justify-items: start; }
-
-  .scroll-cue { display: flex; align-items: center; gap: 10px; }
-  .scroll-cue span { width: 40px; height: 1px; background: var(--faint); position: relative; overflow: hidden; }
-  .scroll-cue span::after {
-    content: ''; position: absolute; inset: 0; background: var(--accent);
-    animation: sweep 2.4s ease-in-out infinite;
-  }
-  @keyframes sweep {
-    0%   { transform: translateX(-100%); }
-    60%  { transform: translateX(100%); }
-    100% { transform: translateX(100%); }
+  /* the whiteout as you go through the cloud */
+  #veil {
+    position: fixed; inset: 0; z-index: 40; pointer-events: none;
+    background: #fff; opacity: 0;
   }
 
-  /* ============================ MARQUEE =============================== */
-  .ticker {
-    border-block: 1px solid var(--line);
-    padding: 15px 0; overflow: hidden; white-space: nowrap;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  }
-  .ticker-row { display: inline-flex; gap: 34px; animation: roll 34s linear infinite; }
-  .ticker:hover .ticker-row { animation-play-state: paused; }
-  .ticker b {
-    font-size: clamp(13px, 1.5vw, 19px); font-weight: 500;
-    letter-spacing: 0.24em; text-transform: uppercase; white-space: nowrap;
-  }
-  .ticker b:nth-child(even) { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: 0.02em; text-transform: none; color: var(--accent); }
-  @keyframes roll { to { transform: translateX(-50%); } }
+  /* the scroll is the flight — this is the only thing giving it length */
+  #runway { position: relative; z-index: 1; height: 760vh; pointer-events: none; }
 
-  /* ============================ SECTIONS ============================== */
-  .sec { padding: clamp(60px, 11vh, 140px) var(--gut); }
-  .sec-head {
-    display: flex; align-items: end; justify-content: space-between;
-    gap: 24px; flex-wrap: wrap; margin-bottom: clamp(28px, 5vh, 56px);
+  /* =====================================================================
+     THE FIELD — garments and words, placed in the sky in three dimensions
+     and projected onto the screen each frame by the same camera that
+     draws the clouds.
+     ===================================================================== */
+  #field {
+    position: fixed; inset: 0; z-index: 10;
+    pointer-events: none; overflow: hidden;
   }
-  .sec-head h2 { font-size: clamp(34px, 6vw, 88px); }
-
-  /* reveal on scroll */
-  .up { opacity: 0; transform: translateY(26px); transition: opacity 900ms ease, transform 900ms cubic-bezier(.16,1,.3,1); }
-  .up.in { opacity: 1; transform: none; }
-
-  /* ---- filter tabs --------------------------------------------------- */
-  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tabs button {
-    padding: 9px 18px; border-radius: 100px; border: 1px solid var(--line);
-    font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--soft);
-    transition: all 350ms ease;
+  .drift {
+    position: absolute; left: 0; top: 0;
+    transform-origin: 0 0;
+    will-change: transform, opacity;
+    opacity: 0;
   }
-  .tabs button:hover { border-color: var(--text); color: var(--text); }
-  .tabs button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
 
-  /* ---- the rack ------------------------------------------------------ */
-  .rack {
-    display: grid; gap: clamp(16px, 2.2vw, 34px);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
-  }
-  .piece { display: grid; gap: 14px; text-align: left; transition: opacity 500ms ease, transform 500ms ease; }
-  .piece[hidden] { display: none; }
-
-  .shot {
-    position: relative; aspect-ratio: 4/5; overflow: hidden;
-    border-radius: 3px; background: var(--surface);
-    box-shadow: var(--shade);
-    transition: background var(--tune);
-  }
-  /* the placeholder that shows through if a photo never lands */
-  .shot::before {
-    content: attr(data-alt); position: absolute; inset: 0; z-index: 0;
-    display: grid; place-content: center; padding: 20px; text-align: center;
-    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint);
-    background: repeating-linear-gradient(45deg, transparent 0 9px, var(--accent-bg) 9px 18px);
-  }
-  .shot img {
-    position: absolute; inset: 0; z-index: 1;
-    width: 100%; height: 100%; object-fit: cover;
-    transition: opacity 650ms ease, transform 1400ms cubic-bezier(.16,1,.3,1);
-  }
-  .shot img.back { opacity: 0; }
-  .piece:hover .shot img.front,
-  .piece:focus-visible .shot img.front { opacity: 0; }
-  .piece:hover .shot img.back,
-  .piece:focus-visible .shot img.back { opacity: 1; }
-  .piece:hover .shot img { transform: scale(1.045); }
-
-  .flag {
-    position: absolute; z-index: 2; left: 10px; top: 10px;
-    padding: 5px 10px; border-radius: 100px;
-    background: var(--surface); color: var(--text);
-    font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-  }
-  .flag.out { background: var(--text); color: var(--bg); }
-  .flag.new { background: var(--accent); color: var(--accent-in); }
-
-  .piece-line { display: flex; justify-content: space-between; gap: 14px; align-items: baseline; }
-  .piece-line h3 { font-size: 13px; font-weight: 500; letter-spacing: -0.005em; }
-  .piece-line .eur { font-size: 12px; font-weight: 300; color: var(--soft); white-space: nowrap; }
-  .piece .turn { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
-
-  /* ============================ MANIFESTO ============================= */
-  .creed {
-    display: grid; gap: clamp(34px, 6vw, 80px);
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-  @media (min-width: 900px) { .creed { grid-template-columns: 0.85fr 1.15fr; } }
-
-  .creed-mark { position: sticky; top: 100px; display: grid; gap: 22px; justify-items: start; }
-  .creed-mark .mark-wrap { width: min(100%, 320px); }
-  .creed-mark .mark { animation: breathe 9s ease-in-out infinite; }
-
-  .creed-text p.said { font-size: clamp(21px, 2.5vw, 36px); }
-  .creed-text p.said + p.said { margin-top: 0.7em; }
-  .creed-text strong { font-family: var(--sans); font-weight: 500; font-size: 0.82em; letter-spacing: -0.01em; }
-
-  /* the three pillars, each one also flips the mood */
-  .pillars { display: grid; gap: 1px; margin-top: clamp(34px, 5vh, 60px); background: var(--line); border-block: 1px solid var(--line); }
-  .pillar {
-    display: grid; grid-template-columns: 2.2em 1fr; gap: 14px; align-items: start;
-    padding: 22px 4px; text-align: left; background: var(--bg);
-    transition: background 400ms ease, padding 400ms ease;
-  }
-  .pillar:hover, .pillar[aria-pressed="true"] { background: var(--accent-bg); padding-inline: 16px; }
-  .pillar .no { font-size: 11px; letter-spacing: 0.14em; color: var(--soft); padding-top: 0.55em; }
-  .pillar[aria-pressed="true"] .no { color: var(--accent); }
-  .pillar .body { display: grid; gap: 7px; }
-  .pillar h3 { font-size: clamp(26px, 3.6vw, 48px); font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; line-height: 0.9; }
-  .pillar[aria-pressed="true"] h3 { color: var(--accent); }
-  .pillar p { font-size: 13px; color: var(--soft); max-width: 46ch; }
-
-  /* ============================ SIGN-UP / FOOTER ====================== */
-  .join {
-    padding: clamp(50px, 9vh, 110px) var(--gut);
-    border-top: 1px solid var(--line);
-    display: grid; gap: clamp(22px, 4vw, 50px);
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    align-items: center;
-  }
-  .join h2 { font-size: clamp(28px, 4.4vw, 60px); }
-  .join form { display: flex; gap: 10px; flex-wrap: wrap; }
-  .join input {
-    flex: 1 1 200px; min-width: 0;
-    padding: 14px 18px; border-radius: 100px;
-    border: 1px solid var(--line); background: transparent; color: var(--text);
-    font: inherit; font-size: 13px;
-  }
-  .join input::placeholder { color: var(--faint); }
-  .join input:focus { outline: none; border-color: var(--accent); }
-  .join button {
-    padding: 14px 28px; border-radius: 100px; background: var(--text); color: var(--bg);
-    font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-    transition: background 350ms ease;
-  }
-  .join button:hover { background: var(--accent); color: var(--accent-in); }
-  .join small { display: block; margin-top: 12px; font-size: 11px; color: var(--faint); }
-
-  .foot { padding: var(--gut); border-top: 1px solid var(--line); display: grid; gap: 34px; }
-  .foot-grid { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-  .foot-grid ul { list-style: none; display: grid; gap: 8px; }
-  .foot-grid li a { font-size: 12px; color: var(--soft); transition: color 300ms ease; }
-  .foot-grid li a:hover { color: var(--text); }
-  .foot-grid .label { margin-bottom: 14px; }
-  .foot-base { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
-
-  .huge-mark { font-size: clamp(48px, 17vw, 260px); line-height: 0.76; opacity: 0.09; user-select: none; pointer-events: none; }
-
-  /* ============================ THE SHEET ============================= */
-  .sheet {
-    position: fixed; inset: 0; z-index: 80;
-    display: grid; place-items: center; padding: var(--gut);
-    background: color-mix(in srgb, var(--bg) 72%, transparent);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    opacity: 0; visibility: hidden;
-    transition: opacity 400ms ease, visibility 400ms;
-  }
-  .sheet.open { opacity: 1; visibility: visible; }
-  .sheet-card {
-    position: relative; width: min(980px, 100%); max-height: 88svh; overflow: auto;
-    background: var(--surface); border-radius: 5px; box-shadow: var(--shade);
-    display: grid; gap: 0; grid-template-columns: minmax(0,1fr);
-    transform: translateY(24px) scale(0.98);
-    transition: transform 500ms cubic-bezier(.16,1,.3,1);
-  }
-  .sheet.open .sheet-card { transform: none; }
-  @media (min-width: 760px) { .sheet-card { grid-template-columns: 1.1fr 1fr; } }
-
-  .sheet-shots { display: grid; gap: 1px; background: var(--line); grid-auto-rows: 1fr; }
-  .sheet-shots .shot { border-radius: 0; box-shadow: none; }
-  .sheet-body { padding: clamp(24px, 3vw, 44px); display: grid; align-content: start; gap: 16px; }
-  .sheet-body h3 { font-size: clamp(24px, 3vw, 38px); font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; line-height: 0.92; }
-  .sheet-body .eur { font-size: 17px; font-weight: 300; }
-  .sheet-body p { font-size: 14px; line-height: 1.6; color: var(--soft); }
-  .sheet-body p.label { font-size: 10px; line-height: 1.5; }
-  .sheet-cta {
-    display: inline-flex; align-items: center; justify-content: space-between; gap: 14px;
-    margin-top: 8px; padding: 16px 24px; border-radius: 100px;
-    background: var(--text); color: var(--bg);
-    font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-    transition: background 350ms ease, color 350ms ease;
-  }
-  .sheet-cta:hover { background: var(--accent); color: var(--accent-in); }
-  .sheet-cta[aria-disabled="true"] { background: var(--accent-bg); color: var(--faint); pointer-events: none; }
-  .sheet-close {
-    position: absolute; right: 12px; top: 12px; z-index: 3;
-    width: 38px; height: 38px; border-radius: 50%;
+  /* ---- a garment, hanging in the air ---- */
+  .garment { pointer-events: auto; display: block; width: 300px; }
+  .garment figure { position: relative; }
+  .garment .plate {
+    position: relative; width: 300px; height: 380px;
     display: grid; place-items: center;
-    background: var(--surface); box-shadow: var(--shade);
-    transition: transform 300ms ease;
   }
-  .sheet-close:hover { transform: rotate(90deg); }
-  .sheet-meta { display: flex; gap: 8px; flex-wrap: wrap; }
-  .sheet-meta span {
-    padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line);
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft);
+  .garment .plate img {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: drop-shadow(0 40px 46px rgba(30,52,78,0.28));
+    transition: transform 900ms var(--ease);
+  }
+  /* if a photo never arrives, the garment is still there as a held shape */
+  .garment .plate::before {
+    content: ''; position: absolute; inset: 12% 16%; z-index: -1;
+    border: 1px solid var(--edge); border-radius: 50% 50% 46% 46% / 38% 38% 62% 62%;
+    background: rgba(255,255,255,0.10);
+  }
+  .garment figcaption {
+    margin-top: 14px; text-align: center;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity 600ms ease, transform 600ms var(--ease);
+  }
+  .garment:hover figcaption, .garment:focus-visible figcaption { opacity: 1; transform: none; }
+  .garment:hover .plate img, .garment:focus-visible .plate img { transform: translateY(-10px) scale(1.03); }
+  .garment figcaption .n { display: block; font-size: 13px; letter-spacing: 0.02em; }
+  .garment figcaption .p { display: block; margin-top: 3px; font-size: 11px; color: var(--ink-soft); }
+
+  /* ---- a line of the manifesto, hanging in the air ---- */
+  .verse { width: 640px; text-align: center; }
+  .verse p { font-size: 40px; line-height: 1.22; }
+  .verse .big {
+    font-family: var(--sans); font-weight: 800; letter-spacing: -0.05em;
+    text-transform: uppercase; font-size: 86px; line-height: 0.88;
   }
 
-  /* ============================ RESPONSIVE / MOTION =================== */
-  @media (max-width: 720px) {
-    /* on a phone the header can carry the nav or the moods, not both —
-       the moods are one screen down, the sections are not */
-    .top { padding-inline: 18px; gap: 12px; }
-    .top .triad { display: none; }
-    .top .wordmark { font-size: 12px; }
-    .nav { gap: 14px; }
-    .nav a { font-size: 9px; letter-spacing: 0.1em; }
-    .nav a[href*="cart"] { display: none; }
-    .hero { min-height: 72svh; }
-    .creed-mark { position: static; }
-    .gate-foot { justify-content: center; text-align: center; }
-    .pillar { grid-template-columns: 1fr; gap: 6px; }
-    .pillar .no { padding-top: 0; }
+  /* =====================================================================
+     THE FEW MARKS
+     ===================================================================== */
+  .hud { position: fixed; z-index: 30; }
+  .hud a, .hud button { pointer-events: auto; }
+
+  .hud-mark {
+    left: var(--gut); top: calc(var(--gut) + env(safe-area-inset-top, 0px));
+    display: flex; align-items: center; gap: 11px;
   }
-  @media (max-width: 420px) {
-    .top .wordmark span.mark-wrap { display: none; }
-    .nav { gap: 11px; }
+  .hud-mark .m { width: 26px; }
+  .hud-mark b { font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; }
+
+  .hud-skies { right: var(--gut); top: calc(var(--gut) + env(safe-area-inset-top, 0px)); display: flex; gap: 16px; }
+  .hud-skies button {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-faint); padding-bottom: 4px; position: relative;
+    transition: color 600ms ease;
+  }
+  .hud-skies button::after {
+    content: ''; position: absolute; left: 0; bottom: 0; height: 1px;
+    width: 0; background: currentColor; transition: width 600ms var(--ease);
+  }
+  .hud-skies button:hover { color: var(--ink-soft); }
+  .hud-skies button[aria-pressed="true"] { color: var(--ink); }
+  .hud-skies button[aria-pressed="true"]::after { width: 100%; }
+
+  /* how far through the sky you are */
+  .hud-rail { left: var(--gut); right: var(--gut); bottom: calc(var(--gut) + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 14px; }
+  .hud-rail .line { flex: 1; height: 1px; background: var(--edge); position: relative; }
+  .hud-rail .line i { position: absolute; inset: 0 auto 0 0; width: 0%; background: currentColor; }
+  .hud-rail .where { white-space: nowrap; }
+
+  .hud-hint {
+    left: 50%; bottom: calc(var(--gut) + 34px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    text-align: center; transition: opacity 900ms ease;
+  }
+  html.through .hud-hint.gone { opacity: 0; }
+
+  /* everything laid over the sky fades in only once you are through it */
+  .hud, #field { opacity: 0; transition: opacity 1600ms ease; }
+  html.through .hud, html.through #field { opacity: 1; }
+
+  /* =====================================================================
+     THE WAY IN
+     ===================================================================== */
+  #door {
+    position: fixed; inset: 0; z-index: 50;
+    display: grid; place-content: center; justify-items: center; gap: 34px;
+    text-align: center; padding: var(--gut);
+    transition: opacity 1200ms ease, visibility 1200ms;
+  }
+  #door.open { opacity: 0; visibility: hidden; pointer-events: none; }
+  #door .m { width: clamp(150px, 26vw, 230px); }
+  #door .m svg { animation: breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  #door h1 {
+    font-size: clamp(30px, 6vw, 62px); font-weight: 800;
+    letter-spacing: -0.05em; text-transform: uppercase; line-height: 0.9;
+  }
+  #door h1 span { font-weight: 200; }
+  #enter {
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    padding: 4px 2px; position: relative;
+  }
+  #enter::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: currentColor; transform-origin: right; transition: transform 700ms var(--ease);
+  }
+  #enter:hover::after { transform: scaleX(0); transform-origin: left; }
+  #door .tag { font-size: 9px; }
+
+  /* =====================================================================
+     A GARMENT, BROUGHT CLOSE
+     ===================================================================== */
+  #close-up {
+    position: fixed; z-index: 60; inset: auto 0 0 0;
+    padding: var(--gut); display: grid; justify-items: center;
+    opacity: 0; visibility: hidden; transform: translateY(20px);
+    transition: opacity 700ms ease, visibility 700ms, transform 900ms var(--ease);
+  }
+  #close-up.up { opacity: 1; visibility: visible; transform: none; }
+  #close-up .card {
+    width: min(560px, 100%); padding: 26px 30px 28px;
+    background: var(--pane); border: 1px solid var(--edge); border-radius: 3px;
+    backdrop-filter: blur(26px) saturate(1.25);
+    -webkit-backdrop-filter: blur(26px) saturate(1.25);
+    display: grid; gap: 12px; text-align: center;
+    box-shadow: 0 40px 80px -50px rgba(14,30,50,0.6);
+  }
+  #close-up h2 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  #close-up p.say { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+  #close-up .row { display: flex; gap: 18px; justify-content: center; align-items: center; margin-top: 4px; }
+  #close-up .go {
+    font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    border-bottom: 1px solid currentColor; padding-bottom: 3px;
+  }
+  #close-up .go[aria-disabled="true"] { color: var(--ink-faint); border-color: transparent; pointer-events: none; }
+  #close-up .shut { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* =====================================================================
+     THE FAR SIDE
+     ===================================================================== */
+  #shore {
+    position: fixed; inset: 0; z-index: 20;
+    display: grid; place-content: center; justify-items: center; gap: 26px;
+    text-align: center; padding: var(--gut);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 1400ms ease, visibility 1400ms;
+  }
+  #shore.here { opacity: 1; visibility: visible; pointer-events: auto; }
+  #shore p.serif { font-size: clamp(24px, 3.6vw, 44px); max-width: 18ch; }
+  #shore .ways { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  #shore .ways a { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; border-bottom: 1px solid var(--edge); padding-bottom: 4px; }
+  #shore .ways a:hover { border-color: currentColor; }
+
+  /* =====================================================================
+     SMALL SCREENS / STILL SCREENS
+     ===================================================================== */
+  @media (max-width: 760px) {
+    .garment { width: 200px; }
+    .garment .plate { width: 200px; height: 260px; }
+    .verse { width: min(88vw, 420px); }
+    .verse p { font-size: 27px; }
+    .verse .big { font-size: 52px; }
+    .hud-rail .where { display: none; }
+    .hud-skies { gap: 12px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after {
-      animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
-      transition-duration: 0.001ms !important;
-    }
-    .rise > *, .up { transform: none !important; opacity: 1 !important; }
+    #door .m svg { animation: none; }
+    *, *::before, *::after { transition-duration: 1ms !important; }
   }
 </style>
 </head>
 <body>
 
-<div class="weather" aria-hidden="true"><i></i><i></i><i></i></div>
-<div class="grain" aria-hidden="true"></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div id="flat" aria-hidden="true"></div>
+<div id="veil" aria-hidden="true"></div>
 
-<!-- ======================= THE GATE ======================= -->
-<div class="gate" id="gate">
-  <div class="gate-core">
-    <button class="mark-btn" id="enterMark" aria-label="Enter Clout Native">
-      <span class="mark-wrap" data-mark="gate"></span>
-    </button>
-    <p class="gate-word display"><span class="thin">CLOUT</span> NATIVE</p>
-    <button class="enter" id="enterBtn">
-      Enter
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M4 12h15M13 6l6 6-6 6"/>
-      </svg>
-    </button>
-  </div>
-  <div class="gate-foot">
-    <p class="label" id="clock">—</p>
-    <div class="gate-links label">
-      <a href="https://www.instagram.com/cloutnative/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.tiktok.com/@cloutnative" target="_blank" rel="noopener">TikTok</a>
-      <a href="https://discord.gg/cloutnative" target="_blank" rel="noopener">Discord</a>
+<!-- the flight is a scroll; this is the only thing giving it length -->
+<div id="runway" aria-hidden="true"></div>
+
+<!-- garments and verses, placed in the sky and projected each frame -->
+<div id="field"></div>
+
+<!-- ============================ THE MARKS ============================ -->
+<div class="hud hud-mark">
+  <span class="m" data-mark="hud" aria-hidden="true"></span>
+  <b>Clout Native</b>
+</div>
+
+<div class="hud hud-skies" role="group" aria-label="The hour of the sky">
+  <button type="button" data-sky="peace" aria-pressed="true">Peace</button>
+  <button type="button" data-sky="mystery" aria-pressed="false">Mystery</button>
+  <button type="button" data-sky="nostalgia" aria-pressed="false">Nostalgia</button>
+</div>
+
+<div class="hud hud-rail">
+  <span class="tag where" id="where">Above the deck</span>
+  <span class="line"><i id="flown"></i></span>
+  <span class="tag" id="depth">0 km</span>
+</div>
+
+<p class="hud hud-hint tag" id="hint">Scroll to fly</p>
+
+<!-- ============================ THE WAY IN ============================ -->
+<div id="door">
+  <span class="m" data-mark="door" aria-hidden="true"></span>
+  <h1><span>Clout</span> Native</h1>
+  <button id="enter">Enter the sky</button>
+  <p class="tag">You are inside the cloud</p>
+</div>
+
+<!-- ======================= A GARMENT, BROUGHT CLOSE ==================== -->
+<div id="close-up" role="dialog" aria-modal="false" aria-labelledby="cuName">
+  <div class="card">
+    <p class="tag" id="cuPillar"></p>
+    <h2 id="cuName"></h2>
+    <p class="say" id="cuSay"></p>
+    <div class="row">
+      <a class="go" id="cuGo" href="#" target="_blank" rel="noopener">Take it down with you</a>
+      <button class="shut" id="cuShut">Let it go</button>
     </div>
-    <p class="label">Barcelona · ES</p>
   </div>
 </div>
 
-<!-- ======================= HEADER ======================= -->
-<header class="top" id="top">
-  <a href="#hero" class="wordmark">
-    <span class="mark-wrap" data-mark="top"></span>
-    Clout Native
-  </a>
-  <nav class="nav">
-    <a href="#drop">New drop</a>
-    <a href="#maison">Maison</a>
-    <a href="#about">About us</a>
-    <a href="https://cloutnative.com/cart" target="_blank" rel="noopener">Cart</a>
-  </nav>
-  <div class="triad" role="group" aria-label="Choose the mood of the site">
-    <button type="button" data-mood="peace" aria-pressed="true">Peace</button>
-    <button type="button" data-mood="mystery" aria-pressed="false">Mystery</button>
-    <button type="button" data-mood="nostalgia" aria-pressed="false">Nostalgia</button>
+<!-- ============================ THE FAR SIDE =========================== -->
+<div id="shore">
+  <p class="tag">Where the deck ends</p>
+  <p class="serif">Return to your essence, create from calm, and <em>find your peace</em>.</p>
+  <div class="ways">
+    <a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The whole drop</a>
+    <a href="https://www.instagram.com/cloutnative/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://cloutnative.com/pages/our-meaning" target="_blank" rel="noopener">Our meaning</a>
   </div>
-</header>
-
-<main>
-
-<!-- ======================= HERO ======================= -->
-<section class="hero" id="hero">
-  <div class="hero-type">
-    <p class="label">Est. Barcelona — Luxury worn like it is nothing</p>
-    <h1>
-      <span class="rise"><span>Find</span></span>
-      <span class="rise two"><span>your</span></span>
-      <span class="rise"><span>peace</span></span>
-    </h1>
-  </div>
-  <div class="hero-ghost" data-mark="hero" aria-hidden="true"></div>
-  <div class="hero-foot">
-    <p class="said">
-      A fashion house built on <em>Native Influence</em> — the pure, calm
-      inner space where honest ideas are born.
-    </p>
-    <div class="stack">
-      <p class="label">Pick the air you want to read in</p>
-      <div class="triad" role="group" aria-label="Choose the mood of the site">
-        <button type="button" data-mood="peace" aria-pressed="true">Peace</button>
-        <button type="button" data-mood="mystery" aria-pressed="false">Mystery</button>
-        <button type="button" data-mood="nostalgia" aria-pressed="false">Nostalgia</button>
-      </div>
-    </div>
-    <div class="stack">
-      <a href="#drop" class="scroll-cue label"><span></span> Scroll to the drop</a>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= TICKER ======================= -->
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-row" id="ticker"></div>
-</div>
-
-<!-- ======================= THE RACK ======================= -->
-<section class="sec" id="drop">
-  <div class="sec-head">
-    <div>
-      <p class="label">01 — The wardrobe</p>
-      <h2 class="display">New drop</h2>
-    </div>
-    <div class="tabs" role="group" aria-label="Filter the wardrobe">
-      <button type="button" data-filter="drop" aria-pressed="true">New drop</button>
-      <button type="button" data-filter="all" aria-pressed="false">Maison</button>
-      <button type="button" data-filter="tee" aria-pressed="false">Tees</button>
-      <button type="button" data-filter="heavy" aria-pressed="false">Hoodies &amp; pants</button>
-    </div>
-  </div>
-  <div class="rack" id="rack"></div>
-  <p class="label" id="rackCount" style="margin-top:28px"></p>
-</section>
-
-<!-- ======================= MANIFESTO ======================= -->
-<section class="sec" id="about" style="scroll-margin-top:70px">
-  <div class="sec-head">
-    <div>
-      <p class="label">02 — Our meaning</p>
-      <h2 class="display">About us</h2>
-    </div>
-  </div>
-  <div class="creed">
-    <div class="creed-mark up">
-      <span class="mark-wrap" data-mark="creed"></span>
-      <p class="label">A cloud with a window — the gaze into your own native inner world.</p>
-    </div>
-    <div class="creed-text">
-      <p class="said up">
-        <strong>CLOUT NATIVE</strong> is a fashion brand that blends the luxurious with
-        the casual to create exotic pieces designed for both everyday wear and the runway.
-      </p>
-      <p class="said up">
-        Rooted in the concept of <em>Native Influence</em> — the pure, calm inner space
-        where honest ideas are born — each garment is crafted with precise intention to
-        embody <em>Peace, Mystery and Nostalgia</em>, the pillars of our identity.
-      </p>
-      <p class="said up">
-        Founded by a 23-year-old who rebuilt himself spiritually and turned uncertainty
-        into purpose, the brand emerged as a reflection of his journey.
-      </p>
-      <p class="said up">
-        Clout Native is an invitation to return to your essence, create from calm, and
-        <em>find your peace</em>.
-      </p>
-
-      <div class="pillars up" role="group" aria-label="The three pillars — each one sets the mood of the site">
-        <button type="button" class="pillar" data-mood="peace" aria-pressed="true">
-          <span class="no">I</span>
-          <span class="body">
-            <h3>Peace</h3>
-            <p>Daylight. The haze after rain. Pieces you can breathe in — Pure Water, White Bones, Greek Stone.</p>
-          </span>
-        </button>
-        <button type="button" class="pillar" data-mood="mystery" aria-pressed="false">
-          <span class="no">II</span>
-          <span class="body">
-            <h3>Mystery</h3>
-            <p>What the window does not show you. Night weight, black stone, the question mark in WiP?.</p>
-          </span>
-        </button>
-        <button type="button" class="pillar" data-mood="nostalgia" aria-pressed="false">
-          <span class="no">III</span>
-          <span class="body">
-            <h3>Nostalgia</h3>
-            <p>Sun-faded film. Sweet Lemon, Cotton Candy, Magnolia — a memory you did not know you had.</p>
-          </span>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= MAISON / ARCHIVE ======================= -->
-<section class="sec" id="maison" style="padding-top:0">
-  <div class="sec-head">
-    <div>
-      <p class="label">03 — The house</p>
-      <h2 class="display">Maison</h2>
-    </div>
-    <p class="said" style="font-size:clamp(17px,1.9vw,25px);max-width:34ch">
-      Every piece is an <em>exclusive edition</em>. When a drop is gone, it is gone —
-      the archive stays open so you can see what the house has been.
-    </p>
-  </div>
-  <div class="rack" id="archive"></div>
-</section>
-
-</main>
-
-<!-- ======================= JOIN ======================= -->
-<section class="join">
-  <div>
-    <p class="label">04 — Stay close</p>
-    <h2 class="display">Get the drop first</h2>
-  </div>
-  <div>
-    <form action="https://cloutnative.com/contact#newsletter" method="post" accept-charset="UTF-8" target="_blank">
-      <input type="hidden" name="form_type" value="customer">
-      <input type="hidden" name="utf8" value="&#x2713;">
-      <input type="hidden" name="contact[tags]" value="newsletter">
-      <label class="label" for="mail" style="position:absolute;left:-9999px">Email</label>
-      <input id="mail" type="email" name="contact[email]" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Subscribe</button>
-    </form>
-    <small>Drops, restocks and nothing else. Unsubscribe whenever.</small>
-  </div>
-</section>
-
-<!-- ======================= FOOT ======================= -->
-<footer class="foot">
-  <div class="foot-grid">
-    <div>
-      <p class="label">Shop</p>
-      <ul>
-        <li><a href="#drop">New drop</a></li>
-        <li><a href="#maison">Maison</a></li>
-        <li><a href="https://cloutnative.com/cart" target="_blank" rel="noopener">Cart</a></li>
-        <li><a href="https://cloutnative.com/account/login" target="_blank" rel="noopener">Log in</a></li>
-      </ul>
-    </div>
-    <div>
-      <p class="label">House</p>
-      <ul>
-        <li><a href="#about">Our meaning</a></li>
-        <li><a href="https://cloutnative.com/policies/shipping-policy" target="_blank" rel="noopener">Shipping</a></li>
-        <li><a href="https://cloutnative.com/policies/refund-policy" target="_blank" rel="noopener">Refunds</a></li>
-        <li><a href="https://cloutnative.com/policies/terms-of-service" target="_blank" rel="noopener">Terms</a></li>
-        <li><a href="https://cloutnative.com/policies/privacy-policy" target="_blank" rel="noopener">Privacy</a></li>
-      </ul>
-    </div>
-    <div>
-      <p class="label">Elsewhere</p>
-      <ul>
-        <li><a href="https://www.instagram.com/cloutnative/" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="https://www.tiktok.com/@cloutnative" target="_blank" rel="noopener">TikTok</a></li>
-        <li><a href="https://discord.gg/cloutnative" target="_blank" rel="noopener">Discord</a></li>
-      </ul>
-    </div>
-    <div>
-      <p class="label">Mood</p>
-      <div class="triad" role="group" aria-label="Choose the mood of the site" style="width:fit-content">
-        <button type="button" data-mood="peace" aria-pressed="true">Peace</button>
-        <button type="button" data-mood="mystery" aria-pressed="false">Mystery</button>
-        <button type="button" data-mood="nostalgia" aria-pressed="false">Nostalgia</button>
-      </div>
-    </div>
-  </div>
-  <p class="display huge-mark" aria-hidden="true">Clout Native</p>
-  <div class="foot-base">
-    <p class="label">© <span id="year">2026</span> Clout Native — Barcelona, ES</p>
-    <p class="label">Website by Native Studios</p>
-  </div>
-</footer>
-
-<!-- ======================= THE SHEET ======================= -->
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName">
-  <div class="sheet-card">
-    <button class="sheet-close" id="sheetClose" aria-label="Close">
-      <svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M5 5l14 14M19 5L5 19"/>
-      </svg>
-    </button>
-    <div class="sheet-shots" id="sheetShots"></div>
-    <div class="sheet-body">
-      <p class="label" id="sheetKind"></p>
-      <h3 id="sheetName"></h3>
-      <p class="eur" id="sheetPrice"></p>
-      <p id="sheetDesc"></p>
-      <div class="sheet-meta" id="sheetMeta"></div>
-      <a class="sheet-cta" id="sheetCta" href="#" target="_blank" rel="noopener">
-        <span>Take it home</span>
-        <svg viewBox="0 0 24 24" width="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M4 12h15M13 6l6 6-6 6"/>
-        </svg>
-      </a>
-      <p class="label" style="margin-top:6px">Sizes and stock live on the Clout Native store.</p>
-      <p class="label">&larr; &rarr; to walk the rail &middot; Esc to close</p>
-    </div>
-  </div>
+  <p class="tag">Clout Native — Barcelona</p>
 </div>
 
 <script>
+/* =======================================================================
+   CLOUT NATIVE — the sky is raymarched, the garments hang in it.
+
+   One camera drives both: the fragment shader walks rays through a slab
+   of noise to draw the cloud deck, and the same basis projects the
+   garment elements onto the screen so they sit inside the weather
+   instead of on top of a picture of it.
+   ======================================================================= */
 (function () {
   'use strict';
 
-  var CDN = 'https://cloutnative.com/cdn/shop/files/';
+  var CDN  = 'https://cloutnative.com/cdn/shop/files/';
   var SHOP = 'https://cloutnative.com/products/';
-  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* =====================================================================
-     THE MARK — a cloud with a window, and real sky behind the glass.
-     Each copy needs its own ids, so it is built rather than pasted.
-     ===================================================================== */
+  /* ===================== what hangs in the sky ========================= */
+  var SKY = [
+    { k: 'garment', h: 'white-bones', n: 'White Bones "WiP?"', p: 39.99, pillar: 'Peace',
+      img: 'IMG-0270.jpg', at: [-17, 83, 200], size: 13,
+      say: 'Bare structure on bare cotton. The quietest thing the house makes.' },
+
+    { k: 'garment', h: 'pure-water-wip-t-shirt', n: 'Pure Water "WiP?"', p: 39.99, pillar: 'Peace',
+      img: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg', at: [20, 67, 268], size: 13,
+      say: 'Washed blue, the colour of the inner space the house is named after.' },
+
+    { k: 'garment', h: 'greek-stone-wip-t-shirt', n: 'Greek Stone "WiP?"', p: 39.99, pillar: 'Peace',
+      img: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg', at: [-8, 93, 336], size: 13,
+      say: 'Marble, columns, patience — cut for a Tuesday.' },
+
+    { k: 'verse', at: [0, 78, 404], w: 700, wide: 30,
+      html: '<p class="big">Find<br>your<br>peace</p>' },
+
+    { k: 'garment', h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy "WiP?"', p: 39.99, pillar: 'Nostalgia',
+      img: 'IMG-8696.jpg', at: [22, 73, 472], size: 13,
+      say: 'Sugar pink, sun-faded on purpose.' },
+
+    { k: 'garment', h: 'black-stone', n: 'Black Stone "WiP?"', p: 39.99, pillar: 'Mystery',
+      img: 'IMG-0276.jpg', at: [-21, 89, 540], size: 13,
+      say: 'The question mark, printed in the dark. It only gives itself up under light.' },
+
+    { k: 'garment', h: 'sweet-lemon-hoodie', n: '"Sweet Lemon" Hoodie', p: 64.99, pillar: 'Nostalgia',
+      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg', at: [7, 63, 608], size: 16, sold: true,
+      say: 'The hoodie that opened the house to a wider room. Citrus left in the sun.' },
+
+    { k: 'verse', at: [0, 80, 672], w: 760, wide: 34,
+      html: '<p class="serif">Rooted in <em>Native Influence</em> — the pure, calm inner space where honest ideas are born.</p>' },
+
+    { k: 'garment', h: 'sweet-lemon-pants', n: '"Sweet Lemon" Pants', p: 64.99, pillar: 'Nostalgia',
+      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg', at: [-20, 80, 734], size: 16,
+      say: 'Its other half. Wide leg, same fleece, same faded citrus.' },
+
+    { k: 'garment', h: 'ycsfpotd-hoodie', n: '"YCSFPOTD" Hoodie', p: 64.99, pillar: 'Mystery',
+      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg', at: [19, 91, 800], size: 16,
+      say: 'Six letters nobody outside will decode. The house keeps something back.' },
+
+    { k: 'garment', h: 'ycsfpotd-pants', n: '"YCSFPOTD" Pants', p: 64.99, pillar: 'Mystery',
+      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg', at: [-9, 65, 864], size: 16,
+      say: 'The set completed. Same weight, same cipher, running down the leg.' },
+
+    { k: 'verse', at: [0, 78, 920], w: 700, wide: 30,
+      html: '<p class="serif">Peace. <em>Mystery.</em> Nostalgia.<br>The three pillars of our identity.</p>' },
+
+    { k: 'garment', h: 'native-pinky-stars-shirt', n: 'Native Magnolia Shirt', p: 35.00, pillar: 'Nostalgia',
+      img: 'Recurso7t7.png', at: [21, 81, 976], size: 13, exclusive: true,
+      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' },
+
+    { k: 'garment', h: 'native-flower-shirt', n: 'Native Life in Flowers', p: 35.00, pillar: 'Peace',
+      img: 'Recurso11T1BACK.png', at: [-18, 71, 1034], size: 13, exclusive: true,
+      say: 'Life in flowers, front and back. The softest statement in the archive.' }
+  ];
+
+  /* ===================== the three hours of the sky ==================== */
+  var HOURS = {
+    peace: {
+      sun: [0.34, 0.30, 0.89], sunCol: [1.30, 1.24, 1.14],
+      top: [0.26, 0.47, 0.80], hor: [0.79, 0.88, 0.96],
+      amb: [0.40, 0.48, 0.60], cover: 0.535, stars: 0.0, page: '#bcd4e6'
+    },
+    mystery: {
+      sun: [-0.42, 0.44, -0.79], sunCol: [0.52, 0.58, 0.88],
+      top: [0.015, 0.025, 0.075], hor: [0.075, 0.09, 0.19],
+      amb: [0.075, 0.095, 0.185], cover: 0.57, stars: 1.0, page: '#0a0d18'
+    },
+    nostalgia: {
+      sun: [0.16, 0.075, 0.984], sunCol: [1.60, 0.94, 0.52],
+      top: [0.20, 0.30, 0.52], hor: [0.95, 0.70, 0.47],
+      amb: [0.34, 0.28, 0.27], cover: 0.54, stars: 0.0, page: '#e0b48a'
+    }
+  };
+
+  /* ===================== the mark ===================================== */
   function cloudWindow(id) {
-    var win = 'M78 54 h56 a8 8 0 0 1 8 8 v44 a8 8 0 0 1 -8 8 h-56 a8 8 0 0 1 -8 -8 v-44 a8 8 0 0 1 8 -8 z';
-    return [
-      '<svg class="mark" viewBox="0 0 220 168" role="img" aria-label="Clout Native — a cloud with a window"',
-      ' style="filter:drop-shadow(0 18px 30px rgba(0,0,0,.14))">',
-      '<defs>',
-        '<linearGradient id="sky-', id, '" x1="0" y1="0" x2="0" y2="1">',
-          '<stop offset="0%" stop-color="var(--sky-3)"/>',
-          '<stop offset="55%" stop-color="var(--sky-1)"/>',
-          '<stop offset="100%" stop-color="var(--sky-2)"/>',
-        '</linearGradient>',
-        '<clipPath id="win-', id, '"><path d="', win, '"/></clipPath>',
-        '<mask id="cloud-', id, '">',
-          '<rect width="220" height="168" fill="#000"/>',
-          '<g fill="#fff">',
-            '<circle cx="70" cy="76" r="40"/>',
-            '<circle cx="120" cy="62" r="48"/>',
-            '<circle cx="162" cy="88" r="34"/>',
-            '<circle cx="46" cy="100" r="30"/>',
-            '<rect x="18" y="94" width="176" height="34" rx="17"/>',
-          '</g>',
-          '<path d="', win, '" fill="#000"/>',
-        '</mask>',
-      '</defs>',
-      /* 1. what is on the other side of the glass */
-      '<g clip-path="url(#win-', id, ')">',
-        '<g class="mark-sky">',
-          '<rect x="50" y="26" width="112" height="112" fill="url(#sky-', id, ')"/>',
-          '<circle class="mark-orb" cx="122" cy="74" r="9" fill="var(--sky-2)" opacity=".85"/>',
-          '<ellipse class="mark-wisp" cx="88" cy="96" rx="26" ry="7" fill="var(--sky-2)" opacity=".6"/>',
-          '<ellipse class="mark-wisp2" cx="128" cy="108" rx="18" ry="5" fill="var(--sky-2)" opacity=".4"/>',
-        '</g>',
-        /* the glare that crosses the pane */
-        '<rect class="mark-glare" x="40" y="-40" width="18" height="220" fill="#fff" opacity=".22" transform="rotate(22 110 84)"/>',
-      '</g>',
-      /* 2. the cloud, with the window cut out of it */
-      '<rect width="220" height="168" fill="var(--cloud)" mask="url(#cloud-', id, ')"/>',
-      /* 3. the frame and its panes */
-      '<g stroke="var(--text)" stroke-opacity=".5" fill="none" stroke-width="2.2" stroke-linecap="round">',
-        '<path d="', win, '"/>',
-        '<path d="M106 54 v66 M70 87 h72" stroke-opacity=".3" stroke-width="1.6"/>',
-      '</g>',
-      '</svg>'
-    ].join('');
+    var w = 'M78 54 h56 a8 8 0 0 1 8 8 v44 a8 8 0 0 1 -8 8 h-56 a8 8 0 0 1 -8 -8 v-44 a8 8 0 0 1 8 -8 z';
+    return '<svg viewBox="0 0 220 168" role="img" aria-label="Clout Native">'
+      + '<defs><linearGradient id="g' + id + '" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0%" stop-color="#7fb0d8"/><stop offset="60%" stop-color="#cfe4f4"/>'
+      + '<stop offset="100%" stop-color="#f4f9fd"/></linearGradient>'
+      + '<clipPath id="w' + id + '"><path d="' + w + '"/></clipPath>'
+      + '<mask id="m' + id + '"><rect width="220" height="168" fill="#000"/><g fill="#fff">'
+      + '<circle cx="70" cy="76" r="40"/><circle cx="120" cy="62" r="48"/>'
+      + '<circle cx="162" cy="88" r="34"/><circle cx="46" cy="100" r="30"/>'
+      + '<rect x="18" y="94" width="176" height="34" rx="17"/></g>'
+      + '<path d="' + w + '" fill="#000"/></mask></defs>'
+      + '<g clip-path="url(#w' + id + ')">'
+      + '<rect x="50" y="26" width="112" height="112" fill="url(#g' + id + ')"/>'
+      + '<circle cx="122" cy="74" r="9" fill="#fdfeff" opacity=".9"/>'
+      + '<ellipse cx="88" cy="99" rx="26" ry="7" fill="#fff" opacity=".65"/></g>'
+      + '<rect width="220" height="168" fill="currentColor" mask="url(#m' + id + ')" opacity=".92"/>'
+      + '<g stroke="currentColor" stroke-opacity=".45" fill="none" stroke-width="2.4" stroke-linecap="round">'
+      + '<path d="' + w + '"/><path d="M106 54 v66 M70 87 h72" stroke-opacity=".28" stroke-width="1.6"/>'
+      + '</g></svg>';
   }
-
-  [].forEach.call(document.querySelectorAll('[data-mark]'), function (slot) {
-    slot.innerHTML = cloudWindow(slot.getAttribute('data-mark'));
+  [].forEach.call(document.querySelectorAll('[data-mark]'), function (s) {
+    s.innerHTML = cloudWindow(s.getAttribute('data-mark'));
   });
 
-  /* the sky drifts against the frame — you are looking through, not at */
-  if (!calm) {
-    var skies = [].slice.call(document.querySelectorAll('.mark-sky'));
-    var glares = [].slice.call(document.querySelectorAll('.mark-glare'));
-    var px = 0, py = 0, cx = 0, cy = 0, t = 0;
+  /* =====================================================================
+     THE SHADER
+     A slab of fractal noise between BOT and TOP. Rays walk it, and at
+     every sample a short second march toward the sun says how much light
+     reaches that point — that shadowing is the whole reason the clouds
+     read as volume and not as fog.
+     ===================================================================== */
+  var VERT = [
+    '#version 300 es',
+    'void main(){',
+    '  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));',
+    '  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FRAG = [
+    '#version 300 es',
+    'precision highp float;',
+    'out vec4 O;',
+    'uniform vec2  uRes;',
+    'uniform float uTime;',
+    'uniform vec3  uCam, uFwd, uRight, uUp;',
+    'uniform float uTanY;',
+    'uniform vec3  uSun, uSunCol, uTop, uHor, uAmb;',
+    'uniform float uCover, uSteps, uStars, uInside;',
+
+    'const float BOT = 0.0;',
+    'const float TOP = 46.0;',
+    'const float FAR = 640.0;',
+
+    'float hash(vec3 p){',
+    '  p = fract(p * 0.3183099 + vec3(0.71, 0.113, 0.419));',
+    '  p *= 17.0;',
+    '  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));',
+    '}',
+    'float vnoise(vec3 x){',
+    '  vec3 i = floor(x), f = fract(x);',
+    '  f = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),',
+    '                 mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
+    '             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),',
+    '                 mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);',
+    '}',
+    'const mat3 ROT = mat3( 0.00, 0.80, 0.60, -0.80, 0.36, -0.48, -0.60, -0.48, 0.64);',
+    'float fbm4(vec3 p){',
+    '  float a = 0.5, s = 0.0;',
+    '  for(int i = 0; i < 4; i++){ s += a * vnoise(p); p = ROT * p * 2.03; a *= 0.5; }',
+    '  return s;',
+    '}',
+    'float fbm2(vec3 p){',
+    '  float a = 0.5, s = 0.0;',
+    '  for(int i = 0; i < 2; i++){ s += a * vnoise(p); p = ROT * p * 2.03; a *= 0.5; }',
+    '  return s;',
+    '}',
+
+    /* how much cloud is at a point */
+    'float dens(vec3 p, float detail){',
+    '  float h = (p.y - BOT) / (TOP - BOT);',
+    '  if (h < 0.0 || h > 1.0) return 0.0;',
+    /*   rounded underneath, billowing on top */
+    '  float prof = smoothstep(0.0, 0.20, h) * smoothstep(1.0, 0.46, h);',
+    '  vec3 q = p * 0.0165;',
+    '  q.x += uTime * 0.0055;',
+    '  float base = fbm4(q);',
+    '  float d = base * prof - (1.0 - uCover);',
+    '  if (d <= 0.0) return 0.0;',
+    /*   eat the edges away so they fray instead of ending in a surface */
+    '  if (detail > 0.5) {',
+    '    vec3 r = p * 0.085; r.z += uTime * 0.02;',
+    '    d -= fbm2(r) * 0.30 * (1.0 - h * 0.45);',
+    '  }',
+    '  return clamp(d, 0.0, 1.0) * 2.4;',
+    '}',
+
+    /* forward scattering — the bright rim when you look toward the sun */
+    'float hg(float c, float g){',
+    '  float g2 = g * g;',
+    '  return (1.0 - g2) / pow(1.0 + g2 - 2.0 * g * c, 1.5);',
+    '}',
+
+    'vec3 skyOf(vec3 rd){',
+    '  float up = clamp(rd.y * 0.5 + 0.5, 0.0, 1.0);',
+    '  vec3 c = mix(uHor, uTop, pow(up, 0.72));',
+    '  float sd = max(dot(rd, uSun), 0.0);',
+    '  c += uSunCol * pow(sd, 3200.0) * 4.0;',
+    '  c += uSunCol * pow(sd, 9.0) * 0.14;',
+    '  c += uSunCol * pow(sd, 2.2) * 0.05;',
+    '  if (uStars > 0.5 && rd.y > 0.0) {',
+    '    vec3 s = floor(rd * 320.0);',
+    '    float v = hash(s);',
+    '    float tw = step(0.9972, v) * (0.55 + 0.45 * sin(uTime * 1.7 + v * 90.0));',
+    '    c += vec3(tw) * smoothstep(0.0, 0.30, rd.y);',
+    '  }',
+    '  return c;',
+    '}',
+
+    'void main(){',
+    '  vec2 uv = (gl_FragCoord.xy / uRes) * 2.0 - 1.0;',
+    '  float aspect = uRes.x / uRes.y;',
+    '  vec3 rd = normalize(uFwd + uRight * (uv.x * uTanY * aspect) + uUp * (uv.y * uTanY));',
+    '  vec3 ro = uCam;',
+    '  vec3 sky = skyOf(rd);',
+
+    /*  where the ray is inside the slab */
+    '  float tn = 0.0, tf = FAR;',
+    '  if (abs(rd.y) > 0.0008) {',
+    '    float a = (BOT - ro.y) / rd.y, b = (TOP - ro.y) / rd.y;',
+    '    tn = max(min(a, b), 0.0);',
+    '    tf = min(max(a, b), FAR);',
+    '  } else if (ro.y < BOT || ro.y > TOP) {',
+    '    tf = -1.0;',
+    '  }',
+
+    '  vec3 acc = vec3(0.0);',
+    '  float trans = 1.0;',
+    '  if (tf > tn) {',
+    '    int N = int(uSteps);',
+    '    float dt = (tf - tn) / float(N);',
+    '    float jitter = hash(vec3(gl_FragCoord.xy, floor(uTime * 60.0)));',
+    '    float t = tn + dt * jitter;',
+    '    float phase = 0.55 + 0.85 * hg(dot(rd, uSun), 0.62);',
+    '    for (int i = 0; i < 112; i++) {',
+    '      if (i >= N || trans < 0.015 || t > tf) break;',
+    '      vec3 p = ro + rd * t;',
+    /*     far samples get the cheap density — nobody can see the detail there */
+    '      float detail = t < 230.0 ? 1.0 : 0.0;',
+    '      float d = dens(p, detail);',
+    '      if (d > 0.002) {',
+    '        float shade = 0.0;',
+    '        for (int j = 1; j <= 4; j++) {',
+    '          shade += dens(p + uSun * float(j) * 7.0, 0.0);',
+    '        }',
+    '        float light = exp(-shade * 7.0 * 0.32);',
+    /*       powder: dense cores stay dark, thin edges glow */
+    '        float powder = 1.0 - exp(-d * 2.6);',
+    '        vec3 lit = uSunCol * light * phase * powder + uAmb * (0.35 + 0.65 * powder);',
+    /*       distance drops everything back into the haze */
+    '        lit = mix(lit, uHor, smoothstep(140.0, 560.0, t));',
+    '        float a = 1.0 - exp(-d * dt * 0.62);',
+    '        acc += lit * a * trans;',
+    '        trans *= 1.0 - a;',
+    '      }',
+    '      t += dt;',
+    '    }',
+    '  }',
+
+    '  vec3 col = acc + sky * trans;',
+    /*  inside the cloud everything washes out toward white */
+    '  col = mix(col, vec3(1.02, 1.02, 1.04), uInside * 0.55);',
+    /*  gentle shoulder, then dither so the gradients do not band */
+    '  col = col / (col + 0.72) * 1.34;',
+    '  col = pow(max(col, 0.0), vec3(0.82));',
+    '  float r = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);',
+    '  O = vec4(col + (r - 0.5) / 255.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  /* ===================== bring the sky up ============================= */
+  var cv = document.getElementById('sky');
+  var gl = null, prog = null, U = {}, renderScale = 1, steps = 74;
+  try {
+    gl = cv.getContext('webgl2', { antialias: false, alpha: false, depth: false,
+                                   powerPreference: 'high-performance' });
+  } catch (e) { gl = null; }
+
+  function compile(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn(gl.getShaderInfoLog(s)); return null;
+    }
+    return s;
+  }
+
+  if (gl) {
+    var vs = compile(gl.VERTEX_SHADER, VERT), fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (vs && fs) {
+      prog = gl.createProgram();
+      gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn(gl.getProgramInfoLog(prog)); prog = null; }
+    }
+  }
+  if (!prog) {
+    gl = null;
+    document.documentElement.classList.add('flat');
+  } else {
+    gl.useProgram(prog);
+    gl.bindVertexArray(gl.createVertexArray());
+    ['uRes','uTime','uCam','uFwd','uRight','uUp','uTanY','uSun','uSunCol',
+     'uTop','uHor','uAmb','uCover','uSteps','uStars','uInside'].forEach(function (n) {
+      U[n] = gl.getUniformLocation(prog, n);
+    });
+    renderScale = Math.min(window.devicePixelRatio || 1, 1) * 0.78;
+  }
+
+  var W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    if (gl) {
+      cv.width  = Math.max(2, Math.floor(W * renderScale));
+      cv.height = Math.max(2, Math.floor(H * renderScale));
+      gl.viewport(0, 0, cv.width, cv.height);
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  /* ===================== the hour of the sky =========================== */
+  var now = { sun: [0,0,1], sunCol: [0,0,0], top: [0,0,0], hor: [0,0,0], amb: [0,0,0], cover: 0.5, stars: 0 };
+  var want = null, hour = 'peace';
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  function setHour(name, instant) {
+    if (!HOURS[name]) return;
+    hour = name;
+    want = HOURS[name];
+    if (instant) {
+      ['sun','sunCol','top','hor','amb'].forEach(function (k) { now[k] = want[k].slice(); });
+      now.cover = want.cover; now.stars = want.stars;
+    }
+    document.documentElement.setAttribute('data-sky', name);
+    if (themeMeta) themeMeta.setAttribute('content', want.page);
+    document.body.style.background = want.page;
+    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-sky') === name));
+    });
+    try { localStorage.setItem('cn-hour', name); } catch (e) {}
+  }
+  try { var kept = localStorage.getItem('cn-hour'); } catch (e) {}
+  setHour(kept && HOURS[kept] ? kept : 'peace', true);
+
+  document.querySelector('.hud-skies').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-sky]');
+    if (b) setHour(b.getAttribute('data-sky'));
+  });
+
+  function ease(a, b, k) { return a + (b - a) * k; }
+  function drift(dtk) {
+    if (!want) return;
+    ['sun','sunCol','top','hor','amb'].forEach(function (k) {
+      for (var i = 0; i < 3; i++) now[k][i] = ease(now[k][i], want[k][i], dtk);
+    });
+    now.cover = ease(now.cover, want.cover, dtk);
+    now.stars = ease(now.stars, want.stars, dtk);
+  }
+
+  /* ===================== the field ==================================== */
+  var field = document.getElementById('field');
+  var things = [];
+
+  SKY.forEach(function (it, i) {
+    var el = document.createElement(it.k === 'garment' ? 'button' : 'div');
+    el.className = 'drift ' + (it.k === 'garment' ? 'garment' : 'verse');
+    if (it.k === 'garment') {
+      el.type = 'button';
+      el.innerHTML =
+        '<figure><span class="plate">' +
+          '<img alt="' + it.n.replace(/"/g, '') + '" loading="lazy" decoding="async"' +
+          ' src="' + CDN + encodeURIComponent(it.img) + '?width=760"></span>' +
+        '<figcaption><span class="n">' + it.n + '</span>' +
+        '<span class="p">' + (it.sold ? 'Sold out' : '€' + it.p.toFixed(2).replace('.', ',')) +
+        '</span></figcaption></figure>';
+      var im = el.querySelector('img');
+      im.addEventListener('error', function () { im.style.visibility = 'hidden'; });
+      el.addEventListener('click', function () { bring(i); });
+    } else {
+      el.innerHTML = it.html;
+      el.style.width = it.w + 'px';
+      el.setAttribute('aria-hidden', 'false');
+    }
+    field.appendChild(el);
+    things.push({ d: it, el: el, seed: i * 1.7, shown: null });
+  });
+
+  /* ===================== the flight =================================== */
+  var cam = [0, 16, 0];
+  var fwd = [0, 0, 1], rgt = [1, 0, 0], upv = [0, 1, 0];
+  var tanY = 0.6, aspect = 1;
+  var dive = 0, diving = false, through = false;
+  var px = 0, py = 0, cx = 0, cy = 0;
+
+  var Z0 = 96, ZSPAN = 1060;
+  var runway = document.getElementById('runway');
+
+  function flightProgress() {
+    var max = runway.offsetHeight - window.innerHeight;
+    if (max <= 0) return 0;
+    return Math.min(1, Math.max(0, window.scrollY / max));
+  }
+
+  function buildCamera(t) {
+    aspect = W / H;
+    tanY = aspect >= 1 ? 0.60 : 0.60 * (1 + (1 - aspect) * 0.6);
+
+    var p = through ? flightProgress() : 0;
+    var d = diving || through ? dive : 0;
+    var k = d * d * (3 - 2 * d);              /* the passage, eased */
+
+    cam[1] = ease(16, 74, k) + (through ? p * 13 + Math.sin(t * 0.13) * 1.6 : 0);
+    cam[2] = ease(0, Z0, k) + (through ? p * ZSPAN : 0);
+    cam[0] = through ? Math.sin(t * 0.09) * 3.2 : 0;
+
+    /* look forward, tilted a little down onto the deck, plus the pointer */
+    var yaw   = cx * 0.16;
+    var pitch = ease(0.22, -0.11, k) + cy * 0.10;
+    var cp = Math.cos(pitch), sp = Math.sin(pitch);
+    fwd = [Math.sin(yaw) * cp, sp, Math.cos(yaw) * cp];
+
+    /* right lies in the ground plane; up closes the basis as fwd x right */
+    var rx = fwd[2], rz = -fwd[0];
+    var rl = Math.hypot(rx, rz) || 1;
+    rgt = [rx / rl, 0, rz / rl];
+    upv = [fwd[1] * rgt[2] - fwd[2] * rgt[1],
+           fwd[2] * rgt[0] - fwd[0] * rgt[2],
+           fwd[0] * rgt[1] - fwd[1] * rgt[0]];
+    return p;
+  }
+
+  /* the same camera, used to place the things in the sky on the screen */
+  function place(t) {
+    var halfH = H * 0.5, k = halfH / tanY;
+    for (var i = 0; i < things.length; i++) {
+      var th = things[i], a = th.d.at;
+      var bob = Math.sin(t * 0.36 + th.seed) * 1.5;
+      var relX = a[0] - cam[0], relY = a[1] + bob - cam[1], relZ = a[2] - cam[2];
+      var zc = relX * fwd[0] + relY * fwd[1] + relZ * fwd[2];
+
+      var verse = th.d.k === 'verse';
+      /* a garment can sweep past your face; a line of text has to hold
+         its distance or it stops being readable and starts being wallpaper */
+      var vis = zc > (verse ? 38 : 6) && zc < 330;
+      if (!vis) {
+        if (th.shown !== false) {
+          th.el.style.opacity = '0'; th.el.style.visibility = 'hidden';
+          th.el.tabIndex = -1; th.el.setAttribute('aria-hidden', 'true');
+          th.shown = false;
+        }
+        continue;
+      }
+      var xc = relX * rgt[0] + relY * rgt[1] + relZ * rgt[2];
+      var yc = relX * upv[0] + relY * upv[1] + relZ * upv[2];
+      var sx = (xc / zc) / (tanY * aspect);
+      var sy = (yc / zc) / tanY;
+      var scr = k / zc;                                   /* px per world unit */
+
+      var near = verse ? Math.min(1, Math.max(0, (zc - 42) / 34))
+                       : Math.min(1, Math.max(0, (zc - 8) / 16));
+      var far  = Math.min(1, Math.max(0, (310 - zc) / 90));
+      var op = near * far;
+      var scale = verse ? Math.min(th.d.wide * scr / th.d.w, W * 0.86 / th.d.w)
+                        : Math.min(th.d.size * scr / 380, H * 1.15 / 380);
+
+      th.el.style.transform =
+        'translate(' + ((sx * 0.5 + 0.5) * W).toFixed(1) + 'px,' +
+                       ((0.5 - sy * 0.5) * H).toFixed(1) + 'px) ' +
+        'scale(' + scale.toFixed(4) + ') translate(-50%,-50%)';
+      th.el.style.opacity = op.toFixed(3);
+      th.el.style.zIndex = String(1000 - Math.round(zc));
+      if (th.shown !== true) {
+        th.el.style.visibility = 'visible';
+        th.el.tabIndex = th.d.k === 'garment' ? 0 : -1;
+        th.el.setAttribute('aria-hidden', 'false');
+        th.shown = true;
+      }
+    }
+  }
+
+  /* ===================== the marks that report the flight ============== */
+  var flown = document.getElementById('flown');
+  var depth = document.getElementById('depth');
+  var where = document.getElementById('where');
+  var shore = document.getElementById('shore');
+  var hint  = document.getElementById('hint');
+  var lastWhere = '';
+
+  function report(p) {
+    flown.style.width = (p * 100).toFixed(1) + '%';
+    depth.textContent = (p * 11.4).toFixed(1) + ' km';
+    var w = p < 0.30 ? 'Above the deck' : p < 0.72 ? 'Open sky' : 'The far side';
+    if (w !== lastWhere) { where.textContent = w; lastWhere = w; }
+    shore.classList.toggle('here', p > 0.955);
+  }
+
+  /* ===================== a garment, brought close ====================== */
+  var cu = document.getElementById('close-up');
+  function bring(i) {
+    var it = SKY[i];
+    document.getElementById('cuPillar').textContent =
+      (it.exclusive ? 'Exclusive edition · ' : '') + it.pillar;
+    document.getElementById('cuName').textContent = it.n;
+    document.getElementById('cuSay').textContent = it.say;
+    var go = document.getElementById('cuGo');
+    go.href = SHOP + it.h;
+    go.setAttribute('aria-disabled', String(!!it.sold));
+    go.textContent = it.sold ? 'Gone' : 'Take it down with you';
+    cu.classList.add('up');
+  }
+  function letgo() { cu.classList.remove('up'); }
+  document.getElementById('cuShut').addEventListener('click', letgo);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') letgo(); });
+
+  /* ===================== the way in =================================== */
+  var door = document.getElementById('door');
+  var veil = document.getElementById('veil');
+  var root = document.documentElement;
+  var t0 = 0;
+
+  function enter() {
+    if (diving || through) return;
+    diving = true;
+    door.classList.add('open');
+    var start = performance.now();
+    var span = still ? 400 : 3200;
+    (function push(now) {
+      dive = Math.min(1, (now - start) / span);
+      /* white out as the cloud closes over, clear as you come out the top */
+      var flash = Math.min(1, Math.max(0, (dive - 0.06) / 0.20))
+                * Math.min(1, Math.max(0, (0.74 - dive) / 0.30));
+      veil.style.opacity = flash.toFixed(3);
+      if (dive < 1) requestAnimationFrame(push);
+      else {
+        veil.style.opacity = '0';
+        through = true;
+        root.classList.add('through');
+        document.body.classList.remove('held');
+      }
+    })(start);
+  }
+  document.body.classList.add('held');
+  document.getElementById('enter').addEventListener('click', enter);
+  document.querySelector('#door .m').addEventListener('click', enter);
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 40) hint.classList.add('gone');
+  }, { passive: true });
+
+  if (!still) {
     window.addEventListener('pointermove', function (e) {
       px = (e.clientX / window.innerWidth - 0.5) * 2;
       py = (e.clientY / window.innerHeight - 0.5) * 2;
     }, { passive: true });
-    (function loop() {
-      cx += (px - cx) * 0.045;
-      cy += (py - cy) * 0.045;
-      t += 0.004;
-      var drift = Math.sin(t) * 5;
-      skies.forEach(function (s) {
-        s.setAttribute('transform', 'translate(' + (-cx * 9 + drift).toFixed(2) + ',' + (-cy * 7).toFixed(2) + ')');
-      });
-      glares.forEach(function (g) {
-        g.setAttribute('x', (40 + cx * 26).toFixed(1));
-      });
-      requestAnimationFrame(loop);
-    })();
   }
 
-  /* =====================================================================
-     MOOD — Peace / Mystery / Nostalgia. The pillars are not decoration,
-     they are the only theme control the site has.
-     ===================================================================== */
-  var THEME = { peace: '#e9eef3', mystery: '#0c0a14', nostalgia: '#efe4d6' };
-  var meta = document.querySelector('meta[name="theme-color"]');
+  /* ===================== the loop ===================================== */
+  var frames = 0, acc = 0, last = performance.now(), quality = 2;
 
-  function setMood(mood) {
-    if (!THEME[mood]) return;
-    document.documentElement.setAttribute('data-mood', mood);
-    if (meta) meta.setAttribute('content', THEME[mood]);
-    [].forEach.call(document.querySelectorAll('[data-mood]'), function (b) {
-      if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.getAttribute('data-mood') === mood));
-    });
-    try { localStorage.setItem('cn-mood', mood); } catch (e) {}
-  }
+  function frame(ms) {
+    var dt = Math.min(0.05, (ms - last) / 1000); last = ms;
+    t0 += still ? 0 : dt;
 
-  try {
-    var saved = localStorage.getItem('cn-mood');
-    if (saved) setMood(saved);
-  } catch (e) {}
+    cx += (px - cx) * 0.045;
+    cy += (py - cy) * 0.045;
+    drift(Math.min(1, dt * 2.0));
 
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-mood]');
-    if (b) setMood(b.getAttribute('data-mood'));
-  });
+    var p = buildCamera(t0);
+    place(t0);
+    if (through) report(p);
 
-  /* =====================================================================
-     THE GATE
-     ===================================================================== */
-  var gate = document.getElementById('gate');
+    if (gl) {
+      gl.uniform2f(U.uRes, cv.width, cv.height);
+      gl.uniform1f(U.uTime, t0);
+      gl.uniform3f(U.uCam, cam[0], cam[1], cam[2]);
+      gl.uniform3f(U.uFwd, fwd[0], fwd[1], fwd[2]);
+      gl.uniform3f(U.uRight, rgt[0], rgt[1], rgt[2]);
+      gl.uniform3f(U.uUp, upv[0], upv[1], upv[2]);
+      gl.uniform1f(U.uTanY, tanY);
+      var s = now.sun, sl = Math.hypot(s[0], s[1], s[2]) || 1;
+      gl.uniform3f(U.uSun, s[0] / sl, s[1] / sl, s[2] / sl);
+      gl.uniform3f(U.uSunCol, now.sunCol[0], now.sunCol[1], now.sunCol[2]);
+      gl.uniform3f(U.uTop, now.top[0], now.top[1], now.top[2]);
+      gl.uniform3f(U.uHor, now.hor[0], now.hor[1], now.hor[2]);
+      gl.uniform3f(U.uAmb, now.amb[0], now.amb[1], now.amb[2]);
+      gl.uniform1f(U.uCover, now.cover);
+      gl.uniform1f(U.uSteps, steps);
+      gl.uniform1f(U.uStars, now.stars);
+      /* how buried in the deck the camera is, for the whiteout */
+      gl.uniform1f(U.uInside, cam[1] > 46 ? 0 : Math.min(1, (46 - cam[1]) / 26));
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-  function tick() {
-    var d = new Date();
-    var h = d.getHours() % 12 || 12;
-    var m = String(d.getMinutes()).padStart(2, '0');
-    var s = d.getHours() >= 12 ? 'PM' : 'AM';
-    document.getElementById('clock').textContent =
-      d.toLocaleDateString('en-GB').replace(/\//g, '.') + ' — ' + h + ':' + m + ' ' + s;
-  }
-  tick();
-  setInterval(tick, 1000 * 20);
-
-  function open() {
-    if (gate.classList.contains('leaving')) return;
-    gate.classList.add('leaving');
-    document.body.classList.remove('locked');
-    setTimeout(function () {
-      gate.classList.add('gone');
-      document.querySelector('.hero').classList.add('lit');
-      document.getElementById('top').focus({ preventScroll: true });
-    }, calm ? 0 : 750);
-  }
-
-  document.body.classList.add('locked');
-  document.getElementById('enterBtn').addEventListener('click', open);
-  document.getElementById('enterMark').addEventListener('click', open);
-  document.addEventListener('keydown', function (e) {
-    if (!gate.classList.contains('gone') && (e.key === 'Enter' || e.key === ' ')) {
-      if (document.activeElement === document.body) { e.preventDefault(); open(); }
+      /* if the machine cannot hold it, ask the sky for less */
+      acc += dt; frames++;
+      if (acc > 1.2) {
+        var fps = frames / acc; acc = 0; frames = 0;
+        if (fps < 34 && quality > 0 && !window.__lockQuality) {
+          quality--;
+          steps = [40, 56, 74][quality];
+          renderScale = [0.42, 0.58, 0.78][quality] * Math.min(window.devicePixelRatio || 1, 1);
+          resize();
+        }
+      }
     }
-  });
-
-  /* =====================================================================
-     THE WARDROBE
-     Photography and prices come straight off the Clout Native store, and
-     every piece hands off to its real product page for size and checkout.
-     `pillar` is which of the three the piece belongs to; `kind` feeds the
-     filter row.
-     ===================================================================== */
-  var PIECES = [
-    { h: 'black-stone', n: 'Black Stone "WiP?" T-shirt', p: 39.99, kind: 'tee', drop: true,
-      pillar: 'Mystery', front: 'IMG-0276.jpg',
-      d: 'The question mark, printed in the dark. Heavyweight cotton, boxed shoulder, a print that only gives itself up under light.' },
-    { h: 'white-bones', n: 'White Bones "WiP?" T-shirt', p: 39.99, kind: 'tee', drop: true,
-      pillar: 'Peace', front: 'IMG-0270.jpg',
-      d: 'Bare structure on bare cotton. The quietest piece of the drop and the one that goes with everything you already own.' },
-    { h: 'pure-water-wip-t-shirt', n: 'Pure Water "WiP?" T-shirt', p: 39.99, kind: 'tee', drop: true,
-      pillar: 'Peace', front: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg',
-      d: 'Washed blue, the colour of the inner space the house is named after. Work in progress — like the person wearing it.' },
-    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy "WiP?" T-shirt', p: 39.99, kind: 'tee', drop: true,
-      pillar: 'Nostalgia', front: 'IMG-8696.jpg', back: 'IMG-8697.jpg',
-      d: 'Sugar pink, sun-faded on purpose. Front and back carry the same question from two different distances.' },
-    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone "WiP?" T-shirt', p: 39.99, kind: 'tee', drop: true,
-      pillar: 'Peace', front: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg', back: 'DE94C367-B8CB-4A0B-92F7-982921000ADC.jpg',
-      d: 'Marble, columns, patience. The most classical thing the house makes, cut for a Tuesday.' },
-    { h: 'sweet-lemon-hoodie', n: '"SWEET LEMON" Hoodie', p: 64.99, kind: 'heavy', sold: true,
-      pillar: 'Nostalgia', front: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg', back: '81122A52-3629-4FE8-9876-259D4FD10561.jpg',
-      d: 'The hoodie that opened the house to a wider room. Heavy fleece, dropped shoulder, citrus that has been left in the sun.' },
-    { h: 'sweet-lemon-pants', n: '"SWEET LEMON" Pants', p: 64.99, kind: 'heavy',
-      pillar: 'Nostalgia', front: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg', back: '64F6AAD4-8591-479B-9769-9545F58733F0.jpg',
-      d: 'Its other half. Wide leg, same fleece, same faded citrus — wear them together or break the set on purpose.' },
-    { h: 'ycsfpotd-hoodie', n: '"YCSFPOTD" Hoodie', p: 64.99, kind: 'heavy',
-      pillar: 'Mystery', front: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg', back: '9D70BCA3-3939-436C-8E22-8BEBEBF57ED5.jpg',
-      d: 'Six letters nobody outside will decode. That is the point — the house keeps something for the people already inside it.' },
-    { h: 'ycsfpotd-pants', n: '"YCSFPOTD" Pants', p: 64.99, kind: 'heavy',
-      pillar: 'Mystery', front: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg', back: '5B6F3DC4-3B52-42F9-96A3-82439E4890F0.jpg',
-      d: 'The set completed. Same weight, same cipher, running down the leg.' },
-    { h: 'native-pinky-stars-shirt', n: 'Native Magnolia Shirt', p: 35.00, kind: 'tee', exclusive: true,
-      pillar: 'Nostalgia', front: 'Recurso7t7.png', back: 'Recurso8t8.png',
-      d: 'Magnolia across the chest, stars behind it. An exclusive edition — printed once, never re-run.' },
-    { h: 'native-flower-shirt', n: 'Native Life in Flowers Shirt', p: 35.00, kind: 'tee', exclusive: true,
-      pillar: 'Peace', front: 'Recurso11T1BACK.png', back: 'Recurso12T1BACK.png',
-      d: 'Life in flowers, front and back. The softest statement in the archive and the one that sold through first.' }
-  ];
-
-  function euro(n) { return '€' + n.toFixed(2).replace('.', ','); }
-  function img(file, cls, alt) {
-    return '<img class="' + cls + '" loading="lazy" decoding="async" alt="' + alt +
-           '" src="' + CDN + encodeURIComponent(file) + '?width=900">';
+    requestAnimationFrame(frame);
   }
-
-  var showing = 'drop';
-
-  function shot(pc, big) {
-    var alt = pc.n.replace(/"/g, '');
-    /* inside the new-drop view the badge would be on every card, so it goes */
-    var flag = pc.sold ? '<span class="flag out">Sold out</span>'
-             : (pc.drop && showing !== 'drop' && !big) ? '<span class="flag new">New drop</span>'
-             : pc.exclusive ? '<span class="flag">Exclusive edition</span>' : '';
-    return '<div class="shot" data-alt="' + alt + '">' + flag +
-           img(pc.front, 'front', alt + ', front') +
-           (pc.back && !big ? img(pc.back, 'back', alt + ', back') : '') +
-           '</div>';
-  }
-
-  function card(pc, i) {
-    return '<button class="piece up" data-h="' + pc.h + '" style="transition-delay:' + (i % 4) * 70 + 'ms">' +
-      shot(pc) +
-      '<span class="piece-line">' +
-        '<h3>' + pc.n + '</h3>' +
-        '<span class="eur">' + euro(pc.p) + '</span>' +
-      '</span>' +
-      '<span class="turn">' + (pc.back ? 'Hover to turn it around' : pc.pillar) + '</span>' +
-    '</button>';
-  }
-
-  /* a photo that never lands leaves the striped placeholder behind it */
-  function guard(root) {
-    [].forEach.call(root.querySelectorAll('.shot img'), function (el) {
-      el.addEventListener('error', function () { el.remove(); });
-    });
-  }
-
-  var rack = document.getElementById('rack');
-  var archive = document.getElementById('archive');
-  var count = document.getElementById('rackCount');
-
-  function paint(el, list) {
-    el.innerHTML = list.map(card).join('');
-    guard(el);
-    [].forEach.call(el.querySelectorAll('.up'), watch);
-  }
-
-  function filter(which) {
-    showing = which;
-    var list = which === 'all' ? PIECES : PIECES.filter(function (p) {
-      return which === 'drop' ? p.drop : p.kind === which;
-    });
-    paint(rack, list);
-    count.textContent = list.length + ' of ' + PIECES.length + ' pieces';
-  }
-
-  [].forEach.call(document.querySelectorAll('.tabs button'), function (b) {
-    b.addEventListener('click', function () {
-      [].forEach.call(document.querySelectorAll('.tabs button'), function (o) {
-        o.setAttribute('aria-pressed', String(o === b));
-      });
-      filter(b.getAttribute('data-filter'));
-    });
-  });
-
-  /* =====================================================================
-     THE SHEET
-     ===================================================================== */
-  var sheet = document.getElementById('sheet');
-  var lastFocus = null;
-  var openIndex = -1;
-
-  function show(handle) {
-    var i = PIECES.findIndex(function (p) { return p.h === handle; });
-    if (i < 0) return;
-    var pc = PIECES[i];
-    /* walking the rail with the arrows re-enters here, and must not
-       overwrite the card that focus has to go back to */
-    if (openIndex < 0) lastFocus = document.activeElement;
-    openIndex = i;
-
-    var shots = document.getElementById('sheetShots');
-    shots.innerHTML = shot(pc, true) + (pc.back ? shot({ n: pc.n, front: pc.back }, true) : '');
-    guard(shots);
-
-    document.getElementById('sheetKind').textContent =
-      (pc.exclusive ? 'Exclusive edition — ' : '') + pc.pillar;
-    document.getElementById('sheetName').textContent = pc.n;
-    document.getElementById('sheetPrice').textContent = euro(pc.p);
-    document.getElementById('sheetDesc').textContent = pc.d;
-    document.getElementById('sheetMeta').innerHTML =
-      ['<span>' + (pc.kind === 'tee' ? 'T-shirt' : 'Heavyweight') + '</span>',
-       '<span>' + pc.pillar + '</span>',
-       '<span>Ships from Spain</span>'].join('');
-
-    var cta = document.getElementById('sheetCta');
-    cta.href = SHOP + pc.h;
-    cta.setAttribute('aria-disabled', String(!!pc.sold));
-    cta.querySelector('span').textContent = pc.sold ? 'Sold out' : 'Take it home';
-
-    var wasOpen = sheet.classList.contains('open');
-    sheet.classList.add('open');
-    document.body.classList.add('locked');
-    if (!wasOpen) document.getElementById('sheetClose').focus();
-  }
-
-  function hide() {
-    sheet.classList.remove('open');
-    document.body.classList.remove('locked');
-    openIndex = -1;
-    if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
-    lastFocus = null;
-  }
-
-  document.addEventListener('click', function (e) {
-    var p = e.target.closest('.piece');
-    if (p) { show(p.getAttribute('data-h')); return; }
-    if (e.target === sheet) hide();
-  });
-  document.getElementById('sheetClose').addEventListener('click', hide);
-
-  document.addEventListener('keydown', function (e) {
-    if (!sheet.classList.contains('open')) return;
-    if (e.key === 'Escape') hide();
-    if (e.key === 'ArrowRight') show(PIECES[(openIndex + 1) % PIECES.length].h);
-    if (e.key === 'ArrowLeft') show(PIECES[(openIndex - 1 + PIECES.length) % PIECES.length].h);
-  });
-
-  /* =====================================================================
-     TRIMMINGS
-     ===================================================================== */
-  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (rows) {
-    rows.forEach(function (r) { if (r.isIntersecting) { r.target.classList.add('in'); io.unobserve(r.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' }) : null;
-
-  function watch(el) { if (io) io.observe(el); else el.classList.add('in'); }
-  [].forEach.call(document.querySelectorAll('.up'), watch);
-
-  var words = ['Clout Native', 'find your peace', 'Peace', 'native influence', 'Mystery',
-               'create from calm', 'Nostalgia', 'return to your essence'];
-  document.getElementById('ticker').innerHTML =
-    words.concat(words).map(function (w) { return '<b>' + w + '</b>'; }).join('');
-
-  var top = document.getElementById('top');
-  window.addEventListener('scroll', function () {
-    top.classList.toggle('stuck', window.scrollY > 24);
-  }, { passive: true });
-
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  filter('drop');
-  showing = 'all';
-  paint(archive, PIECES);
-  showing = 'drop';
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
