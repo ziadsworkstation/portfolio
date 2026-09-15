@@ -104,16 +104,26 @@
     opacity: 0;
   }
 
-  /* ---- a garment, hanging in the air ---- */
+  /* ---- a rail, standing on the grass ---- */
+  .rack { width: 380px; }
+  .rack svg { width: 100%; height: auto; }
+
+  /* ---- a garment, on its hanger ---- */
   .garment { pointer-events: auto; display: block; width: 300px; }
-  .garment figure { position: relative; }
+  .garment figure { position: relative; transform-origin: 50% 6%; }
+  .garment .hook {
+    width: 38px; height: 28px; margin: 0 auto;
+    color: var(--ink); opacity: 0.8;
+  }
+  /* hook and plate together are the 380px the projection scales from */
   .garment .plate {
-    position: relative; width: 300px; height: 380px;
-    display: grid; place-items: center;
+    position: relative; width: 300px; height: 352px;
+    display: grid; place-items: start center;
   }
   .garment .plate img {
     width: 100%; height: 100%; object-fit: contain;
-    filter: drop-shadow(0 40px 46px rgba(30,52,78,0.28));
+    /* hanging, so the shadow falls away and down, not straight under */
+    filter: drop-shadow(0 26px 30px rgba(20,40,64,0.30));
     transition: transform 900ms var(--ease);
   }
   /* if a photo never arrives, the garment is still there as a held shape */
@@ -123,7 +133,8 @@
     background: rgba(255,255,255,0.10);
   }
   .garment figcaption {
-    margin-top: 14px; text-align: center;
+    position: absolute; top: 100%; left: 0; right: 0;
+    margin-top: 10px; text-align: center;
     opacity: 0; transform: translateY(6px);
     transition: opacity 600ms ease, transform 600ms var(--ease);
   }
@@ -135,6 +146,7 @@
   /* ---- a line of the manifesto, hanging in the air ---- */
   .verse { width: 640px; text-align: center; }
   .verse p { font-size: 40px; line-height: 1.22; }
+  .verse .sub { font-size: 25px; margin-top: 10px; opacity: 0.74; }
   .verse .big {
     font-family: var(--sans); font-weight: 800; letter-spacing: -0.05em;
     text-transform: uppercase; font-size: 86px; line-height: 0.88;
@@ -151,6 +163,7 @@
     display: flex; align-items: center; gap: 11px;
   }
   .hud-mark .m { width: 34px; }
+  .m .real-mark { width: 100%; height: auto; }
   .hud-mark b { font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; }
 
   .hud-skies { right: var(--gut); top: calc(var(--gut) + env(safe-area-inset-top, 0px)); display: flex; gap: 16px; }
@@ -266,7 +279,8 @@
      ===================================================================== */
   @media (max-width: 760px) {
     .garment { width: 200px; }
-    .garment .plate { width: 200px; height: 260px; }
+    .garment .plate { width: 200px; height: 236px; }
+    .rack { width: 250px; }
     .verse { width: min(88vw, 420px); }
     .verse p { font-size: 27px; }
     .verse .big { font-size: 52px; }
@@ -362,80 +376,90 @@
   var SHOP = 'https://cloutnative.com/products/';
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ===================== what hangs in the sky ========================= */
-  var SKY = [
-    { k: 'garment', h: 'white-bones', n: 'White Bones "WiP?"', p: 39.99, pillar: 'Peace',
-      img: 'IMG-0270.jpg', at: [-5.2, 5.4, 33], size: 3.1,
-      say: 'Bare structure on bare cotton. The quietest thing the house makes.' },
+  /* =====================================================================
+     One room, one collection, one hour. Rooms are RL deep, so room n runs
+     from n*RL to (n+1)*RL. Room 0 is the way in; 4 is the way out.
+     ===================================================================== */
+  var RL = 26, RAIL = 5.44;          /* room depth, and the height of a rail */
 
-    { k: 'garment', h: 'pure-water-wip-t-shirt', n: 'Pure Water "WiP?"', p: 39.99, pillar: 'Peace',
-      img: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg', at: [5.4, 4.2, 40], size: 3.1,
-      say: 'Washed blue, the colour of the inner space the house is named after.' },
-
-    { k: 'garment', h: 'greek-stone-wip-t-shirt', n: 'Greek Stone "WiP?"', p: 39.99, pillar: 'Peace',
-      img: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg', at: [-5.0, 6.6, 47], size: 3.1,
-      say: 'Marble, columns, patience — cut for a Tuesday.' },
-
-    { k: 'verse', at: [0, 8.4, 30], w: 700, wide: 11.5,
-      html: '<p class="big">Find<br>your<br>peace</p>' },
-
-    { k: 'garment', h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy "WiP?"', p: 39.99, pillar: 'Nostalgia',
-      img: 'IMG-8696.jpg', at: [5.6, 5.0, 59], size: 3.1,
-      say: 'Sugar pink, sun-faded on purpose.' },
-
-    { k: 'garment', h: 'black-stone', n: 'Black Stone "WiP?"', p: 39.99, pillar: 'Mystery',
-      img: 'IMG-0276.jpg', at: [-5.4, 6.2, 66], size: 3.1,
-      say: 'The question mark, printed in the dark. It only gives itself up under light.' },
-
-    { k: 'garment', h: 'sweet-lemon-hoodie', n: '"Sweet Lemon" Hoodie', p: 64.99, pillar: 'Nostalgia',
-      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg', at: [5.0, 3.9, 73], size: 3.7, sold: true,
-      say: 'The hoodie that opened the house to a wider room. Citrus left in the sun.' },
-
-    { k: 'verse', at: [0, 8.4, 56], w: 760, wide: 12.5,
-      html: '<p class="serif">Rooted in <em>Native Influence</em> — the pure, calm inner space where honest ideas are born.</p>' },
-
-    { k: 'garment', h: 'sweet-lemon-pants', n: '"Sweet Lemon" Pants', p: 64.99, pillar: 'Nostalgia',
-      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg', at: [-5.6, 5.2, 85], size: 3.9,
-      say: 'Its other half. Wide leg, same fleece, same faded citrus.' },
-
-    { k: 'garment', h: 'ycsfpotd-hoodie', n: '"YCSFPOTD" Hoodie', p: 64.99, pillar: 'Mystery',
-      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg', at: [5.2, 6.4, 92], size: 3.7,
-      say: 'Six letters nobody outside will decode. The house keeps something back.' },
-
-    { k: 'garment', h: 'ycsfpotd-pants', n: '"YCSFPOTD" Pants', p: 64.99, pillar: 'Mystery',
-      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg', at: [-5.0, 4.0, 99], size: 3.9,
-      say: 'The set completed. Same weight, same cipher, running down the leg.' },
-
-    { k: 'verse', at: [0, 8.4, 82], w: 700, wide: 11.5,
-      html: '<p class="serif">Peace. <em>Mystery.</em> Nostalgia.<br>The three pillars of our identity.</p>' },
-
-    { k: 'garment', h: 'native-pinky-stars-shirt', n: 'Native Magnolia Shirt', p: 35.00, pillar: 'Nostalgia',
-      img: 'Recurso7t7.png', at: [5.4, 5.6, 111], size: 3.1, exclusive: true,
-      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' },
-
-    { k: 'garment', h: 'native-flower-shirt', n: 'Native Life in Flowers', p: 35.00, pillar: 'Peace',
-      img: 'Recurso11T1BACK.png', at: [-5.4, 4.6, 118], size: 3.1, exclusive: true,
-      say: 'Life in flowers, front and back. The softest statement in the archive.' }
+  var ROOMS = [
+    { hour: 'peace',     name: 'The first room', sub: 'You are inside the cloud' },
+    { hour: 'peace',     name: 'Peace',     sub: 'Daylight, and the haze after rain' },
+    { hour: 'mystery',   name: 'Mystery',   sub: 'What the window does not show you' },
+    { hour: 'nostalgia', name: 'Nostalgia', sub: 'Sun-faded film, a memory you did not know you had' },
+    { hour: 'peace',     name: 'The last door', sub: '' }
   ];
 
-  /* ===================== the three hours of the sky ==================== */
-  var HOURS = {
-    peace: {
-      deep: [0.11, 0.41, 0.74], pale: [0.71, 0.86, 0.96], cloud: [1.00, 1.00, 1.00],
-      grassA: [0.17, 0.31, 0.11], grassB: [0.55, 0.74, 0.31],
-      glow: [0.95, 0.98, 1.00], cover: 0.44, light: 1.00, stars: 0.0, page: '#9fc4dd'
-    },
-    mystery: {
-      deep: [0.022, 0.045, 0.13], pale: [0.10, 0.15, 0.30], cloud: [0.38, 0.44, 0.62],
-      grassA: [0.045, 0.085, 0.065], grassB: [0.14, 0.22, 0.17],
-      glow: [0.09, 0.13, 0.26], cover: 0.50, light: 0.52, stars: 1.0, page: '#0b1020'
-    },
-    nostalgia: {
-      deep: [0.66, 0.36, 0.20], pale: [0.96, 0.82, 0.62], cloud: [1.00, 0.93, 0.82],
-      grassA: [0.29, 0.26, 0.10], grassB: [0.72, 0.64, 0.31],
-      glow: [0.99, 0.90, 0.76], cover: 0.47, light: 0.90, stars: 0.0, page: '#dcae80'
-    }
-  };
+  /* each collection hangs on two rails, one either side of the doorway */
+  var RACKS = [
+    { room: 1, x: -4.9 }, { room: 1, x: 4.9 },
+    { room: 2, x: -4.9 }, { room: 2, x: 4.9 },
+    { room: 3, x: -4.9 }, { room: 3, x: 4.9 }
+  ];
+
+  var WARDROBE = [
+    /* --- room 1, PEACE ------------------------------------------------ */
+    { h: 'white-bones', n: 'White Bones "WiP?"', p: 39.99, room: 1, rail: 0, slot: -1,
+      img: 'IMG-0270.jpg', tall: 3.1,
+      say: 'Bare structure on bare cotton. The quietest thing the house makes.' },
+    { h: 'pure-water-wip-t-shirt', n: 'Pure Water "WiP?"', p: 39.99, room: 1, rail: 0, slot: 1,
+      img: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg', tall: 3.1,
+      say: 'Washed blue, the colour of the inner space the house is named after.' },
+    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone "WiP?"', p: 39.99, room: 1, rail: 1, slot: -1,
+      img: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg', tall: 3.1,
+      say: 'Marble, columns, patience — cut for a Tuesday.' },
+    { h: 'native-flower-shirt', n: 'Native Life in Flowers', p: 35.00, room: 1, rail: 1, slot: 1,
+      img: 'Recurso11T1BACK.png', tall: 3.1, exclusive: true,
+      say: 'Life in flowers, front and back. The softest statement in the archive.' },
+
+    /* --- room 2, MYSTERY ---------------------------------------------- */
+    { h: 'black-stone', n: 'Black Stone "WiP?"', p: 39.99, room: 2, rail: 0, slot: -1,
+      img: 'IMG-0276.jpg', tall: 3.1,
+      say: 'The question mark, printed in the dark. It only gives itself up under light.' },
+    { h: 'ycsfpotd-hoodie', n: '"YCSFPOTD" Hoodie', p: 64.99, room: 2, rail: 0, slot: 1,
+      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg', tall: 3.7,
+      say: 'Six letters nobody outside will decode. The house keeps something back.' },
+    { h: 'ycsfpotd-pants', n: '"YCSFPOTD" Pants', p: 64.99, room: 2, rail: 1, slot: 0,
+      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg', tall: 3.9,
+      say: 'The set completed. Same weight, same cipher, running down the leg.' },
+
+    /* --- room 3, NOSTALGIA -------------------------------------------- */
+    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy "WiP?"', p: 39.99, room: 3, rail: 0, slot: -1,
+      img: 'IMG-8696.jpg', tall: 3.1,
+      say: 'Sugar pink, sun-faded on purpose.' },
+    { h: 'sweet-lemon-hoodie', n: '"Sweet Lemon" Hoodie', p: 64.99, room: 3, rail: 0, slot: 1,
+      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg', tall: 3.7, sold: true,
+      say: 'The hoodie that opened the house to a wider room. Citrus left in the sun.' },
+    { h: 'sweet-lemon-pants', n: '"Sweet Lemon" Pants', p: 64.99, room: 3, rail: 1, slot: -1,
+      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg', tall: 3.9,
+      say: 'Its other half. Wide leg, same fleece, same faded citrus.' },
+    { h: 'native-pinky-stars-shirt', n: 'Native Magnolia Shirt', p: 35.00, room: 3, rail: 1, slot: 1,
+      img: 'Recurso7t7.png', tall: 3.1, exclusive: true,
+      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' }
+  ];
+
+  /* build the scene: a rail, the garments on it, and the room's name high
+     on the far wall where a shop would put its sign */
+  var SKY = [];
+  RACKS.forEach(function (r) {
+    SKY.push({ k: 'rack', at: [r.x, 2.9, r.room * RL + 13], size: 5.8 });
+  });
+  WARDROBE.forEach(function (g) {
+    var rack = RACKS.filter(function (r) { return r.room === g.room; })[g.rail];
+    SKY.push({
+      k: 'garment', h: g.h, n: g.n, p: g.p, img: g.img, say: g.say,
+      sold: g.sold, exclusive: g.exclusive,
+      pillar: ROOMS[g.room].name,
+      at: [rack.x + g.slot * 1.15, RAIL - g.tall / 2, g.room * RL + 12.6],
+      size: g.tall
+    });
+  });
+  ROOMS.forEach(function (r, i) {
+    if (i === 4) return;
+    SKY.push({ k: 'verse', at: [0, 7.2, i * RL + 25.4], w: 720, wide: 10.5,
+      html: '<p class="big">' + r.name + '</p>' +
+            (r.sub ? '<p class="serif sub">' + r.sub + '</p>' : '') });
+  });
 
   /* ===================== the mark ===================================== */
   /* The mark: a quatrefoil with a window cut through it as a cross.
@@ -470,8 +494,20 @@
       + '</svg>';
   }
 
+  /* The house already serves its own mark from Shopify; use it, and keep
+     the drawn one underneath for when that file cannot be reached. */
+  var REAL_MARK = CDN + 'IMG_9568_copia.gif';
   [].forEach.call(document.querySelectorAll('[data-mark]'), function (s) {
     s.innerHTML = cloudWindow(s.getAttribute('data-mark'));
+    if (!CDN) return;
+    var real = new Image();
+    real.alt = 'Clout Native';
+    real.className = 'real-mark';
+    real.addEventListener('load', function () {
+      s.innerHTML = '';
+      s.appendChild(real);
+    });
+    real.src = REAL_MARK;
   });
 
   /* =====================================================================
@@ -496,16 +532,27 @@
     'uniform vec2  uRes;',
     'uniform float uTime;',
     'uniform vec3  uCam, uFwd, uRight, uUp;',
-    'uniform float uTanY;',
-    'uniform vec3  uDeep, uPale, uCloud, uGrassA, uGrassB, uGlow;',
-    'uniform float uCover, uLight, uStars, uSwing;',
+    'uniform float uTanY, uSwing, uRoom0;',
+    /* three hours, six colours each: deep, pale, cloud, grassA, grassB, glow */
+    'uniform vec3  uPal[18];',
+    'uniform vec3  uCfg[3];',        /* x cover, y light, z stars */
+    'uniform float uRoomHour[6];',   /* which hour each room keeps */
 
-    /* the room: a box you are inside, repeated down the corridor */
-    'const float RW = 9.0;',    /* half width  */
-    'const float RH = 11.0;',   /* height      */
-    'const float RL = 26.0;',   /* room length */
-    'const float DW = 1.75;',   /* door half width */
-    'const float DH = 4.9;',    /* door height */
+    'const float RW = 9.0;',
+    'const float RH = 11.0;',
+    'const float RL = 26.0;',
+    'const float DW = 1.75;',
+    'const float DH = 4.9;',
+
+    /* the hour of whichever room the ray is currently crossing */
+    'vec3 gDeep, gPale, gCloud, gGA, gGB, gGlow;',
+    'float gCover, gLight, gStars;',
+    'void hourOf(int r){',
+    '  int i = int(uRoomHour[clamp(r, 0, 5)]);',
+    '  gDeep = uPal[i*6]; gPale = uPal[i*6+1]; gCloud = uPal[i*6+2];',
+    '  gGA = uPal[i*6+3]; gGB = uPal[i*6+4]; gGlow = uPal[i*6+5];',
+    '  gCover = uCfg[i].x; gLight = uCfg[i].y; gStars = uCfg[i].z;',
+    '}',
 
     'float hash(vec3 p){',
     '  p = fract(p * 0.3183099 + vec3(0.71, 0.113, 0.419));',
@@ -527,23 +574,24 @@
     '  return s;',
     '}',
 
-    /* the sky is paint on a wall, not distance — so it is a flat field */
     'vec3 mural(vec2 uv, float hi, float drift){',
     '  float f = fbm(vec3(uv * 0.105 + vec2(drift, 0.0), 11.0));',
-    '  vec3 sky = mix(uPale, uDeep, clamp(hi, 0.0, 1.0));',
+    '  vec3 sky = mix(gPale, gDeep, clamp(hi, 0.0, 1.0));',
     '  float soft = smoothstep(0.40, 0.55, f);',
-    '  float core = smoothstep(0.545 - uCover * 0.09, 0.655, f);',
-    /*  the grey underside a cumulus carries, then the lit top */
-    '  vec3 c = mix(sky, uCloud * 0.86, soft * 0.80);',
-    '  c = mix(c, uCloud, core);',
-    /*  whoever painted it painted over breeze block, and it still shows */
+    '  float core = smoothstep(0.545 - gCover * 0.09, 0.655, f);',
+    '  vec3 c = mix(sky, gCloud * 0.86, soft * 0.80);',
+    '  c = mix(c, gCloud, core);',
     '  vec2 g = abs(fract(uv / vec2(5.2, 2.5) + 0.5) - 0.5);',
     '  float seam = max(smoothstep(0.47, 0.5, g.x), smoothstep(0.46, 0.5, g.y));',
     '  c *= 1.0 - seam * 0.028;',
     '  c *= 0.97 + 0.06 * vnoise(vec3(uv * 5.5, 2.0));',
-    '  if (uStars > 0.5) {',
-    '    float v = hash(floor(vec3(uv * 9.0, 1.0)));',
-    '    c += vec3(step(0.986, v) * (1.0 - core) * 0.9);',
+    '  if (gStars > 0.5) {',
+    '    vec2 sc = uv * 6.0; vec2 ci = floor(sc), cf = fract(sc);',
+    '    float v = hash(vec3(ci, 1.0));',
+    '    vec2 sp = vec2(hash(vec3(ci, 2.0)), hash(vec3(ci, 3.0)));',
+    '    float d = length((cf - sp) * vec2(1.0, 1.0));',
+    '    float star = step(0.88, v) * smoothstep(0.075, 0.0, d);',
+    '    c += vec3(star * (1.0 - core) * (0.45 + 0.55 * fract(v * 31.0)));',
     '  }',
     '  return c;',
     '}',
@@ -551,7 +599,7 @@
     'vec3 turf(vec2 uv, float pool){',
     '  float n = fbm(vec3(uv * 0.5, 3.0));',
     '  float blade = vnoise(vec3(uv.x * 26.0, uv.y * 9.0, 5.0));',
-    '  vec3 g = mix(uGrassA, uGrassB, clamp(n * 1.05 + blade * 0.38 - 0.12, 0.0, 1.0));',
+    '  vec3 g = mix(gGA, gGB, clamp(n * 1.05 + blade * 0.38 - 0.12, 0.0, 1.0));',
     '  return g * (0.55 + 0.95 * pool);',
     '}',
 
@@ -563,12 +611,14 @@
     '  rd.z = max(rd.z, 0.05); rd = normalize(rd);',
     '  float drift = uTime * 0.004;',
 
-    /*  the doorway of the room you are standing in */
+    '  int room = int(uRoom0);',
+    '  hourOf(room);',
     '  float zw0 = (floor(ro.z / RL) + 1.0) * RL;',
     '  float zw  = zw0;',
-    '  vec3 col = uPale; float tHit = 1e9; float beyond = 0.0; float jamb = 1.0;',
+    '  vec3 col = gPale; float tHit = 1e9; float beyond = 0.0; float jamb = 1.0;',
 
     '  for (int seg = 0; seg < 5; seg++) {',
+    '    hourOf(room + seg);',
     '    float tx = 1e9, ty = 1e9;',
     '    if (abs(rd.x) > 1e-4) tx = ((rd.x > 0.0 ? RW : -RW) - ro.x) / rd.x;',
     '    if (abs(rd.y) > 1e-4) ty = ((rd.y > 0.0 ? RH : 0.0) - ro.y) / rd.y;',
@@ -577,9 +627,7 @@
     '    vec3 p = ro + rd * tm;',
 
     '    if (tm == tz) {',
-    /*     the doorway is a hole: the ray carries on into the next room */
     '      if (abs(p.x) < DW && p.y < DH) {',
-    /*       the wall has thickness, so its cut edge catches shadow */
     '        float ed = min(DW - abs(p.x), DH - p.y);',
     '        jamb *= 0.55 + 0.45 * smoothstep(0.0, 0.42, ed);',
     '        beyond += 1.0; zw += RL; continue;',
@@ -594,9 +642,8 @@
     '        float ao = smoothstep(0.0, 5.0, RW - abs(p.x)) * smoothstep(0.0, 6.0, zw - p.z);',
     '        col = mural(vec2(p.x, p.z) * 1.9, 0.62, drift) * (0.80 + 0.20 * ao);',
     '      } else {',
-    '        float pool = smoothstep(21.0, 1.5, length(vec2(p.x, p.z - zw0))) * uLight;',
+    '        float pool = smoothstep(21.0, 1.5, length(vec2(p.x, p.z - zw0))) * gLight;',
     '        float ao = smoothstep(0.0, 4.5, RW - abs(p.x));',
-    /*      the door casts onto the grass it is standing on */
     '        vec2 sh = vec2(p.x + DW - DW * cos(uSwing), p.z - zw0 - DW * sin(uSwing));',
     '        float shd = 1.0 - 0.34 * smoothstep(2.6, 0.5, length(sh * vec2(0.7, 1.0)));',
     '        col = turf(vec2(p.x, p.z), pool * 0.85 + 0.25) * (0.66 + 0.34 * ao) * shd;',
@@ -608,7 +655,6 @@
     '    tHit = tm; break;',
     '  }',
 
-    /*  the white door itself, hinged at the left of the first opening */
     '  vec3 hp = vec3(-DW, 0.0, zw0);',
     '  float A = uSwing;',
     '  vec3 dir = vec3(cos(A), 0.0, sin(A));',
@@ -623,16 +669,12 @@
     '      if (u > 0.0 && u < 1.0 && v > 0.0 && v < 1.0) {',
     '        float face = den < 0.0 ? 1.06 : 0.74;',
     '        vec3 d = vec3(0.97, 0.972, 0.978) * face;',
-    /*       two sunk panels, the way a panel door is built */
     '        vec2 pu = vec2(u, v);',
     '        float p1 = step(0.14, pu.x) * step(pu.x, 0.86) * step(0.09, pu.y) * step(pu.y, 0.47);',
     '        float p2 = step(0.14, pu.x) * step(pu.x, 0.86) * step(0.55, pu.y) * step(pu.y, 0.93);',
-    '        float pan = max(p1, p2);',
-    '        d *= 1.0 - pan * 0.055;',
-    /*      hinge side sits in its own shadow, the swung edge catches the light */
+    '        d *= 1.0 - max(p1, p2) * 0.055;',
     '        d *= 0.86 + 0.20 * smoothstep(0.0, 0.55, u);',
     '        d *= 0.94 + 0.06 * smoothstep(0.0, 0.10, v);',
-    /*       the handle */
     '        float hd = length((pu - vec2(0.83, 0.44)) * vec2(1.0, 2.1));',
     '        d = mix(d, vec3(0.42, 0.40, 0.36), smoothstep(0.035, 0.022, hd));',
     '        col = d; tHit = td;',
@@ -640,11 +682,9 @@
     '    }',
     '  }',
 
-    /*  light coming through the opening, and the room falling back into it */
     '  col *= jamb;',
-    /*  every doorway you are seeing through puts more light between you and it */
-    '  col = mix(col, uGlow, clamp(beyond * 0.26, 0.0, 0.62));',
-    '  col = mix(col, uGlow, smoothstep(16.0, 74.0, tHit) * 0.45);',
+    '  col = mix(col, gGlow, clamp(beyond * 0.26, 0.0, 0.62));',
+    '  col = mix(col, gGlow, smoothstep(16.0, 74.0, tHit) * 0.45);',
     '  vec2 vg = gl_FragCoord.xy / uRes - 0.5;',
     '  col *= 1.0 - dot(vg, vg) * 0.30;',
     '  col = col / (col + 0.82) * 1.42;',
@@ -685,8 +725,8 @@
   } else {
     gl.useProgram(prog);
     gl.bindVertexArray(gl.createVertexArray());
-    ['uRes','uTime','uCam','uFwd','uRight','uUp','uTanY','uDeep','uPale','uCloud',
-     'uGrassA','uGrassB','uGlow','uCover','uLight','uStars','uSwing'].forEach(function (n) {
+    ['uRes','uTime','uCam','uFwd','uRight','uUp','uTanY','uSwing','uRoom0',
+     'uPal','uCfg','uRoomHour'].forEach(function (n) {
       U[n] = gl.getUniformLocation(prog, n);
     });
     renderScale = Math.min(window.devicePixelRatio || 1, 1) * 0.78;
@@ -704,59 +744,117 @@
   window.addEventListener('resize', resize);
   resize();
 
-  /* ===================== the hour of the sky =========================== */
-  var TINTS = ['deep','pale','cloud','grassA','grassB','glow'];
-  var now = { deep:[0,0,0], pale:[0,0,0], cloud:[0,0,0], grassA:[0,0,0], grassB:[0,0,0],
-              glow:[0,0,0], cover: 0.5, light: 1, stars: 0 };
-  var want = null, hour = 'peace';
-  var themeMeta = document.querySelector('meta[name="theme-color"]');
-
-  function setHour(name, instant) {
-    if (!HOURS[name]) return;
-    hour = name;
-    want = HOURS[name];
-    if (instant) {
-      TINTS.forEach(function (k) { now[k] = want[k].slice(); });
-      now.cover = want.cover; now.stars = want.stars; now.light = want.light;
+  /* ===================== the hour of each room ========================= */
+  var HOUR_ORDER = ['peace', 'mystery', 'nostalgia'];
+  var HOURS = {
+    peace: {
+      deep: [0.11, 0.41, 0.74], pale: [0.71, 0.86, 0.96], cloud: [1.00, 1.00, 1.00],
+      grassA: [0.17, 0.31, 0.11], grassB: [0.55, 0.74, 0.31],
+      glow: [0.95, 0.98, 1.00], cover: 0.44, light: 1.00, stars: 0.0, page: '#9fc4dd'
+    },
+    mystery: {
+      deep: [0.022, 0.045, 0.13], pale: [0.10, 0.15, 0.30], cloud: [0.38, 0.44, 0.62],
+      grassA: [0.045, 0.085, 0.065], grassB: [0.14, 0.22, 0.17],
+      glow: [0.09, 0.13, 0.26], cover: 0.50, light: 0.52, stars: 1.0, page: '#0b1020'
+    },
+    nostalgia: {
+      deep: [0.66, 0.36, 0.20], pale: [0.96, 0.82, 0.62], cloud: [1.00, 0.93, 0.82],
+      grassA: [0.29, 0.26, 0.10], grassB: [0.72, 0.64, 0.31],
+      glow: [0.99, 0.90, 0.76], cover: 0.47, light: 0.90, stars: 0.0, page: '#dcae80'
     }
-    document.documentElement.setAttribute('data-sky', name);
-    if (themeMeta) themeMeta.setAttribute('content', want.page);
-    document.body.style.background = want.page;
-    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b) {
-      b.setAttribute('aria-pressed', String(b.getAttribute('data-sky') === name));
-    });
-    try { localStorage.setItem('cn-hour', name); } catch (e) {}
-  }
-  try { var kept = localStorage.getItem('cn-hour'); } catch (e) {}
-  setHour(kept && HOURS[kept] ? kept : 'peace', true);
+  };
 
-  document.querySelector('.hud-skies').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-sky]');
-    if (b) setHour(b.getAttribute('data-sky'));
+  /* flattened once; the shader reads a room's hour straight out of these,
+     which is why you can stand in daylight and see night through the door */
+  var PAL = [], CFG = [];
+  HOUR_ORDER.forEach(function (name) {
+    var h = HOURS[name];
+    ['deep','pale','cloud','grassA','grassB','glow'].forEach(function (k) {
+      PAL.push(h[k][0], h[k][1], h[k][2]);
+    });
+    CFG.push(h.cover, h.light, h.stars);
   });
+  var ROOM_HOUR = ROOMS.map(function (r) { return HOUR_ORDER.indexOf(r.hour); });
+  while (ROOM_HOUR.length < 6) ROOM_HOUR.push(ROOM_HOUR[ROOM_HOUR.length - 1]);
+
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var roomNow = -1;
+
+  /* the marks have to invert inside a night room or they disappear into it */
+  function wearRoom(i) {
+    i = Math.max(0, Math.min(i, ROOMS.length - 1));
+    if (i === roomNow) return;
+    roomNow = i;
+    var r = ROOMS[i];
+    document.documentElement.setAttribute('data-sky', r.hour);
+    if (themeMeta) themeMeta.setAttribute('content', HOURS[r.hour].page);
+    document.body.style.background = HOURS[r.hour].page;
+    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-sky') === r.hour));
+    });
+  }
+  wearRoom(0);
 
   function ease(a, b, k) { return a + (b - a) * k; }
-  function drift(dtk) {
-    if (!want) return;
-    TINTS.forEach(function (k) {
-      for (var i = 0; i < 3; i++) now[k][i] = ease(now[k][i], want[k][i], dtk);
-    });
-    now.cover = ease(now.cover, want.cover, dtk);
-    now.light = ease(now.light, want.light, dtk);
-    now.stars = ease(now.stars, want.stars, dtk);
-  }
+
+  /* the three words are no longer a theme switch: they walk you to the
+     room that keeps that hour */
+  document.querySelector('.hud-skies').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-sky]');
+    if (!b || !through) return;
+    var want = b.getAttribute('data-sky'), room = -1;
+    for (var i = 1; i < ROOMS.length; i++) if (ROOMS[i].hour === want) { room = i; break; }
+    if (room < 0) return;
+    var max = runway.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: max * ((room * RL + 13 - Z0) / ZSPAN),
+                      behavior: still ? 'auto' : 'smooth' });
+  });
 
   /* ===================== the field ==================================== */
   var field = document.getElementById('field');
   var things = [];
 
+  /* A shop rail: two posts, two feet, a chrome tube across the top, and the
+     shadow it drops on the grass. Flat, because a rail square-on to the
+     aisle very nearly is. */
+  var RAIL_SVG =
+    '<svg viewBox="0 0 380 400" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="rl" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="#fbfcfd"/><stop offset="30%" stop-color="#c3cad2"/>' +
+          '<stop offset="52%" stop-color="#6d757e"/><stop offset="68%" stop-color="#cdd4db"/>' +
+          '<stop offset="100%" stop-color="#8a929a"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="ps" x1="0" y1="0" x2="1" y2="0">' +
+          '<stop offset="0%" stop-color="#8d959d"/><stop offset="34%" stop-color="#f4f7f9"/>' +
+          '<stop offset="62%" stop-color="#9aa2aa"/><stop offset="100%" stop-color="#6a727a"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<ellipse cx="190" cy="393" rx="168" ry="11" fill="#0d1a24" opacity=".22"/>' +
+      '<rect x="14" y="379" width="52" height="10" rx="5" fill="url(#rl)"/>' +
+      '<rect x="314" y="379" width="52" height="10" rx="5" fill="url(#rl)"/>' +
+      '<rect x="33" y="28" width="11" height="353" rx="5.5" fill="url(#ps)"/>' +
+      '<rect x="336" y="28" width="11" height="353" rx="5.5" fill="url(#ps)"/>' +
+      '<rect x="24" y="22" width="332" height="12" rx="6" fill="url(#rl)"/>' +
+    '</svg>';
+
+  /* the hanger each garment hangs from */
+  var HOOK_SVG =
+    '<svg class="hook" viewBox="0 0 40 30" aria-hidden="true">' +
+      '<path d="M20 27 L6 15 h28 z" fill="none" stroke="currentColor" stroke-opacity=".42" stroke-width="1.6" stroke-linejoin="round"/>' +
+      '<path d="M20 15 V8 a3.4 3.4 0 1 1 3.4 -3.4" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.8" stroke-linecap="round"/>' +
+    '</svg>';
+
   SKY.forEach(function (it, i) {
     var el = document.createElement(it.k === 'garment' ? 'button' : 'div');
-    el.className = 'drift ' + (it.k === 'garment' ? 'garment' : 'verse');
-    if (it.k === 'garment') {
+    el.className = 'drift ' + it.k;
+    if (it.k === 'rack') {
+      el.innerHTML = RAIL_SVG;
+      el.setAttribute('aria-hidden', 'true');
+    } else if (it.k === 'garment') {
       el.type = 'button';
       el.innerHTML =
-        '<figure><span class="plate">' +
+        '<figure>' + HOOK_SVG + '<span class="plate">' +
           '<img alt="' + it.n.replace(/"/g, '') + '" loading="lazy" decoding="async"' +
           ' src="' + CDN + encodeURIComponent(it.img) + '?width=760"></span>' +
         '<figcaption><span class="n">' + it.n + '</span>' +
@@ -768,10 +866,11 @@
     } else {
       el.innerHTML = it.html;
       el.style.width = it.w + 'px';
-      el.setAttribute('aria-hidden', 'false');
     }
     field.appendChild(el);
-    things.push({ d: it, el: el, seed: i * 1.7, shown: null });
+    things.push({ d: it, el: el, seed: i * 1.7, shown: null,
+                  fig: it.k === 'garment' ? el.querySelector('figure') : null,
+                  room: Math.floor(it.at[2] / RL) });
   });
 
   /* ===================== the flight =================================== */
@@ -781,7 +880,7 @@
   var dive = 0, diving = false, through = false;
   var px = 0, py = 0, cx = 0, cy = 0;
 
-  var Z0 = 28, ZSPAN = 100;   /* four rooms, 26 deep each */
+  var Z0 = 28, ZSPAN = 92;   /* in at room 1, out through room 4 */
   var runway = document.getElementById('runway');
 
   function flightProgress() {
@@ -822,16 +921,30 @@
   /* the same camera, used to place the things in the sky on the screen */
   function place(t) {
     var halfH = H * 0.5, k = halfH / tanY;
+    var camRoom = Math.max(0, Math.floor(cam[2] / RL));
+    /* how far you still are from the doorway ahead, 1 = far, 0 = in it */
+    var toDoor = Math.min(1, Math.max(0, ((camRoom + 1) * RL - cam[2]) / 3.2));
     for (var i = 0; i < things.length; i++) {
       var th = things[i], a = th.d.at;
-      var bob = Math.sin(t * 0.36 + th.seed) * 1.5;
+      var sway = th.d.k === 'garment' ? Math.sin(t * 0.45 + th.seed) * 0.55 : 0;
+      var bob = 0;
       var relX = a[0] - cam[0], relY = a[1] + bob - cam[1], relZ = a[2] - cam[2];
       var zc = relX * fwd[0] + relY * fwd[1] + relZ * fwd[2];
 
-      var verse = th.d.k === 'verse';
+      /* a DOM element cannot be hidden by a wall the shader drew, so the
+         walls are enforced here: the room ahead is only visible through
+         the doorway, and a rail at the side of it is not in that cone */
+      var gate = 1;
+      if (th.room > camRoom) {
+        gate = (Math.abs(a[0]) < 2.4 && a[1] < 4.4) ? 1 : 1 - toDoor;
+      } else if (th.room < camRoom) {
+        gate = 0;
+      }
+
+      var verse = th.d.k === 'verse', rack = th.d.k === 'rack';
       /* a garment can pass you; a line of text has to hold its distance
          or it stops being readable and starts being wallpaper */
-      var vis = zc > (verse ? 7 : 1.4) && zc < 92;
+      var vis = gate > 0.002 && zc > (verse ? 7 : 1.4) && zc < 92;
       if (!vis) {
         if (th.shown !== false) {
           th.el.style.opacity = '0'; th.el.style.visibility = 'hidden';
@@ -849,14 +962,15 @@
       var near = verse ? Math.min(1, Math.max(0, (zc - 7.5) / 6))
                        : Math.min(1, Math.max(0, (zc - 1.6) / 2.6));
       var far  = Math.min(1, Math.max(0, (86 - zc) / 26));
-      var op = near * far;
+      var op = near * far * gate;
       var scale = verse ? Math.min(th.d.wide * scr / th.d.w, W * 0.86 / th.d.w)
-                        : Math.min(th.d.size * scr / 380, H * 1.15 / 380);
+                        : Math.min(th.d.size * scr / 380, H * (rack ? 2.4 : 1.15) / 380);
 
       th.el.style.transform =
         'translate(' + ((sx * 0.5 + 0.5) * W).toFixed(1) + 'px,' +
                        ((0.5 - sy * 0.5) * H).toFixed(1) + 'px) ' +
         'scale(' + scale.toFixed(4) + ') translate(-50%,-50%)';
+      if (th.fig) th.fig.style.transform = 'rotate(' + sway.toFixed(2) + 'deg)';
       th.el.style.opacity = op.toFixed(3);
       th.el.style.zIndex = String(1000 - Math.round(zc * 8));
       if (th.shown !== true) {
@@ -878,9 +992,10 @@
 
   function report(p) {
     flown.style.width = (p * 100).toFixed(1) + '%';
-    depth.textContent = 'Room ' + Math.min(4, 1 + Math.floor(p * 3.99));
-    var w = p < 0.26 ? 'The first room' : p < 0.52 ? 'The wardrobe'
-          : p < 0.78 ? 'Our meaning' : 'The last door';
+    var room = Math.min(ROOMS.length - 1, Math.floor((Z0 + p * ZSPAN) / RL));
+    wearRoom(room);
+    depth.textContent = 'Room ' + room + ' of ' + (ROOMS.length - 1);
+    var w = ROOMS[room].name;
     if (w !== lastWhere) { where.textContent = w; lastWhere = w; }
     shore.classList.toggle('here', p > 0.955);
   }
@@ -946,6 +1061,12 @@
   }
 
   /* ===================== the loop ===================================== */
+  if (gl) {
+    gl.uniform3fv(U.uPal, new Float32Array(PAL));
+    gl.uniform3fv(U.uCfg, new Float32Array(CFG));
+    gl.uniform1fv(U.uRoomHour, new Float32Array(ROOM_HOUR));
+  }
+
   var frames = 0, acc = 0, last = performance.now(), quality = 2;
 
   function frame(ms) {
@@ -954,7 +1075,6 @@
 
     cx += (px - cx) * 0.045;
     cy += (py - cy) * 0.045;
-    drift(Math.min(1, dt * 2.0));
 
     var p = buildCamera(t0);
     place(t0);
@@ -968,11 +1088,8 @@
       gl.uniform3f(U.uRight, rgt[0], rgt[1], rgt[2]);
       gl.uniform3f(U.uUp, upv[0], upv[1], upv[2]);
       gl.uniform1f(U.uTanY, tanY);
-      TINTS.forEach(function (k) { gl.uniform3f(U['u' + k[0].toUpperCase() + k.slice(1)],
-                                                now[k][0], now[k][1], now[k][2]); });
-      gl.uniform1f(U.uCover, now.cover);
-      gl.uniform1f(U.uLight, now.light);
-      gl.uniform1f(U.uStars, now.stars);
+      /* the palette table never changes; only which room you stand in does */
+      gl.uniform1f(U.uRoom0, Math.max(0, Math.floor(cam[2] / RL)));
       /* the door swings open as you go through it, then stays open ahead */
       gl.uniform1f(U.uSwing, 0.46 + (through ? 0.82 : dive * 0.82));
       gl.drawArrays(gl.TRIANGLES, 0, 3);

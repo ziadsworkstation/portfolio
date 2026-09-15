@@ -53,32 +53,59 @@ nubes, la hierba, la luz que entra por la puerta y las estrellas. Están en
 
 ## El logo
 
-`cloudWindow()` dibuja el cuatrifolio con la ventana en cruz, con degradado
-cromado. **Es una reconstrucción**, no el vector oficial — si tienes el SVG
-bueno, sustituye lo que devuelve esa función y todo lo demás sigue igual.
+La página carga el logo real de la marca desde donde ya lo sirve su Shopify
+(`IMG_9568_copia.gif`). `cloudWindow()` dibuja debajo una reconstrucción del
+cuatrifolio con la ventana en cruz, que solo se ve si ese archivo no llega.
 
-## Lo que hay en cada habitación
+**No se pudo comprobar que el GIF cargue** — no hay salida a internet desde
+donde se construyó esto. Hay que abrirlo una vez con red. Si el archivo no es
+el bueno, cambia `REAL_MARK`; si prefieres un SVG, sustituye lo que devuelve
+`cloudWindow()` y quita el bloque que carga la imagen.
 
-Todo se declara en el array `SKY`, en orden de profundidad:
+## Salas, colecciones y horas
 
-    { k: 'garment',
-      h: 'black-stone',          // handle de Shopify: define el enlace
+Cada sala **es** una colección y **tiene** una hora fija. Se declara todo junto
+en `ROOMS`:
+
+    { hour: 'mystery', name: 'Mystery', sub: 'What the window does not show you' }
+
+El shader recibe la tabla entera de paletas (`uPal`, `uCfg`) y qué hora guarda
+cada sala (`uRoomHour`), así que **pinta cada tramo del corredor con su propia
+hora**. Por eso, de pie en la sala de día, por el hueco de la puerta ves la de
+noche. No hay transición que programar: la sala siguiente ya se está pintando
+con su color antes de que entres.
+
+Las tres palabras de arriba a la derecha ya no cambian el tema: te llevan
+andando a la sala que guarda esa hora.
+
+## Las burras y lo que cuelga
+
+`RACKS` pone dos burras por sala, a `x = ±4.9`, apartadas del eje de la puerta.
+`WARDROBE` dice de qué burra y en qué hueco cuelga cada prenda:
+
+    { h: 'black-stone',        // handle de Shopify: define el enlace
       n: 'Black Stone "WiP?"',
       p: 39.99,
-      pillar: 'Mystery',
-      img: 'IMG-0276.jpg',       // fichero en el CDN de Shopify
-      at: [-5.4, 6.2, 66],       // x, y, z dentro del corredor
-      size: 3.1,                 // alto en unidades de mundo (la sala mide 11)
-      sold: true,                // opcional
-      say: '…' }                 // texto de la ficha
+      room: 2,                 // en qué sala
+      rail: 0,                 // 0 izquierda, 1 derecha
+      slot: -1,                // -1, 0 o 1 a lo largo de la barra
+      img: 'IMG-0276.jpg',
+      tall: 3.1,               // alto en unidades de mundo (la sala mide 11)
+      say: '…' }
 
-    { k: 'verse', at: [0, 8.4, 56], w: 760, wide: 12.5, html: '…' }
+La posición se calcula sola: `RAIL - tall/2`, así que **todas las prendas
+cuelgan con el hombro a la altura de la barra** sea cual sea su largo.
 
-Los versos van a y=8.4, por encima del dintel: se leen como rótulo de la sala.
-Las prendas se apartan del eje (|x| > 3) para no tapar la puerta.
+La burra es un SVG plano (dos pies, dos montantes, tubo cromado y su sombra),
+porque una barra puesta de frente al pasillo es casi plana de verdad.
 
-**No hay carrito.** Cada prenda enlaza a su página real en Shopify, que es
-donde están las tallas, el stock y el checkout.
+## Las paredes mandan sobre el DOM
+
+Las prendas son elementos del DOM, así que **el shader no puede taparlas**: sin
+más, una burra de la sala 3 se vería a través de la pared de la sala 1. Eso lo
+impone `place()` a mano — solo se ve lo que está en tu sala, más lo que cabría
+por el hueco de la puerta (`|x| < 2.4` y `y < 4.4`). Si tocas la geometría de
+la sala, hay que tocar también ese cono.
 
 ## Rendimiento
 
