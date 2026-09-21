@@ -86,7 +86,7 @@
   }
 
   /* the scroll is the flight — this is the only thing giving it length */
-  #runway { position: relative; z-index: 1; height: 760vh; pointer-events: none; }
+  #runway { position: relative; z-index: 1; height: 1150vh; pointer-events: none; }
 
   /* =====================================================================
      THE FIELD — garments and words, placed in the sky in three dimensions
@@ -146,6 +146,7 @@
   .verse { width: 640px; text-align: center; }
   .verse p { font-size: 40px; line-height: 1.22; }
   .verse .sub { font-size: 25px; margin-top: 10px; opacity: 0.74; }
+  .verse .ask { font-size: 64px; letter-spacing: -0.01em; }
   .verse .big {
     font-family: var(--sans); font-weight: 800; letter-spacing: -0.05em;
     text-transform: uppercase; font-size: 86px; line-height: 0.88;
@@ -165,7 +166,7 @@
   .m .real-mark { width: 100%; height: auto; }
   .hud-mark b { font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; }
 
-  .hud-skies { right: var(--gut); top: calc(var(--gut) + env(safe-area-inset-top, 0px)); display: flex; gap: 16px; }
+  .hud-skies { right: var(--gut); top: calc(var(--gut) + env(safe-area-inset-top, 0px)); display: flex; gap: 14px; }
   .hud-skies button {
     font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--ink-faint); padding-bottom: 4px; position: relative;
@@ -309,10 +310,12 @@
   <b>Clout Native</b>
 </div>
 
-<div class="hud hud-skies" role="group" aria-label="The hour of the sky">
-  <button type="button" data-sky="peace" aria-pressed="true">Peace</button>
-  <button type="button" data-sky="mystery" aria-pressed="false">Mystery</button>
-  <button type="button" data-sky="nostalgia" aria-pressed="false">Nostalgia</button>
+<div class="hud hud-skies" role="group" aria-label="The collection">
+  <button type="button" data-room="1" aria-pressed="false">Bone</button>
+  <button type="button" data-room="2" aria-pressed="false">Water</button>
+  <button type="button" data-room="3" aria-pressed="false">Stone</button>
+  <button type="button" data-room="4" aria-pressed="false">Black</button>
+  <button type="button" data-room="5" aria-pressed="false">Candy</button>
 </div>
 
 <div class="hud hud-rail">
@@ -348,10 +351,10 @@
 
 <!-- ============================ THE FAR SIDE =========================== -->
 <div id="shore">
-  <p class="tag">The last room</p>
-  <p class="serif">Return to your essence, create from calm, and <em>find your peace</em>.</p>
+  <p class="tag">The far side</p>
+  <p class="serif">Five shirts, one question. <em>What is peace?</em></p>
   <div class="ways">
-    <a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The whole drop</a>
+    <a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The collection</a>
     <a href="https://www.instagram.com/cloutnative/" target="_blank" rel="noopener">Instagram</a>
     <a href="https://cloutnative.com/pages/our-meaning" target="_blank" rel="noopener">Our meaning</a>
   </div>
@@ -380,84 +383,61 @@
      ===================================================================== */
   var RL = 26, RAIL = 5.44;          /* room depth, and the height of a rail */
 
-  /* Each room is one collection and keeps one hour. Rooms are RL deep, so
-     room n runs from n*RL to (n+1)*RL. Room 0 is the way in, 4 the way out. */
-  var ROOMS = [
-    { hour: 'peace',     name: 'The first room', sub: 'You are inside the cloud' },
-    { hour: 'peace',     name: 'Peace',     sub: 'What is peace? — one question, five colours' },
-    { hour: 'mystery',   name: 'Mystery',   sub: 'Six letters nobody outside will decode' },
-    { hour: 'nostalgia', name: 'Nostalgia', sub: 'Sun-faded film, a memory you did not know you had' },
-    { hour: 'peace',     name: 'The last door', sub: '' }
-  ];
-
-  /* what each piece is. Where it hangs is decided by the rails below. */
+  /* One collection: "What is Peace?" — one question printed in five colours.
+     So one room per shirt, and each room's sky is tuned to the cloth that
+     hangs in it. Room 0 is the way in, the last one the way out. */
   var PIECES = {
-    'white-bones': { n: 'White Bones "WiP?"', p: 39.99, tall: 3.1, img: 'assets/garments/white-bones.webp',
-      say: 'Bone cotton, the question in black. The quietest of the five.' },
-    'pure-water-wip-t-shirt': { n: 'Pure Water "WiP?"', p: 39.99, tall: 3.1,
-      img: 'assets/garments/pure-water.webp',
-      say: 'Washed blue, the colour of the inner space the house is named after.' },
-    'greek-stone-wip-t-shirt': { n: 'Greek Stone "WiP?"', p: 39.99, tall: 3.1,
-      img: 'assets/garments/greek-stone.webp',
+    'white-bones': {
+      n: 'White Bones', full: 'White Bones "WiP?" T-shirt', p: 39.99, tall: 3.1,
+      short: 'Bone', cloth: '#c8c8b4', img: 'assets/garments/white-bones.webp',
+      say: 'Bone cotton, the question in black. The quietest of the five, and the most worn — the ink has begun to crack.' },
+    'pure-water-wip-t-shirt': {
+      n: 'Pure Water', full: 'Pure Water "WiP?" T-shirt', p: 39.99, tall: 3.1,
+      short: 'Water', cloth: '#c7d5dd', img: 'assets/garments/pure-water.webp',
+      say: 'Washed blue, the colour of the calm inner space the house is named after.' },
+    'greek-stone-wip-t-shirt': {
+      n: 'Greek Stone', full: 'Greek Stone "WiP?" T-shirt', p: 39.99, tall: 3.1,
+      short: 'Stone', cloth: '#787675', img: 'assets/garments/greek-stone.webp',
       say: 'Marble grey, marled. Patience, cut for a Tuesday.' },
-    'black-stone': { n: 'Black Stone "WiP?"', p: 39.99, tall: 3.1, img: 'assets/garments/black-stone.webp',
-      say: 'The only one of the five that turns the ink over: white on black.' },
-    'cotton-candy-wip-t-shirt': { n: 'Cotton Candy "WiP?"', p: 39.99, tall: 3.1,
-      img: 'assets/garments/cotton-candy.webp', say: 'Dusty pink, sun-faded on purpose.' },
-
-    'ycsfpotd-hoodie': { n: '"YCSFPOTD" Hoodie', p: 64.99, tall: 3.7,
-      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg',
-      say: 'Six letters nobody outside will decode. The house keeps something back.' },
-    'ycsfpotd-pants': { n: '"YCSFPOTD" Pants', p: 64.99, tall: 3.9,
-      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg',
-      say: 'The set completed. Same weight, same cipher, running down the leg.' },
-
-    'sweet-lemon-hoodie': { n: '"Sweet Lemon" Hoodie', p: 64.99, tall: 3.7, sold: true,
-      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg',
-      say: 'The hoodie that opened the house to a wider room. Citrus left in the sun.' },
-    'sweet-lemon-pants': { n: '"Sweet Lemon" Pants', p: 64.99, tall: 3.9,
-      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg',
-      say: 'Its other half. Wide leg, same fleece, same faded citrus.' },
-    'native-pinky-stars-shirt': { n: 'Native Magnolia Shirt', p: 35.00, tall: 3.1, exclusive: true,
-      img: 'Recurso7t7.png',
-      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' },
-    'native-flower-shirt': { n: 'Native Life in Flowers', p: 35.00, tall: 3.1, exclusive: true,
-      img: 'Recurso11T1BACK.png',
-      say: 'Life in flowers, front and back. The softest statement in the archive.' }
+    'black-stone': {
+      n: 'Black Stone', full: 'Black Stone "WiP?" T-shirt', p: 39.99, tall: 3.1,
+      short: 'Black', cloth: '#0f0e13', img: 'assets/garments/black-stone.webp',
+      say: 'The only one of the five that turns the ink over: white on black, sleeve label included.' },
+    'cotton-candy-wip-t-shirt': {
+      n: 'Cotton Candy', full: 'Cotton Candy "WiP?" T-shirt', p: 39.99, tall: 3.1,
+      short: 'Candy', cloth: '#cfa7b5', img: 'assets/garments/cotton-candy.webp',
+      say: 'Dusty pink, sun-faded on purpose. Quieter in the hand than it looks from across a room.' }
   };
 
-  /* The five WiP? tees are one question printed five times, so they hang
-     together on the Peace rails rather than being scattered by colour.
-     `span` is the length of the bar in world units; the pieces space
-     themselves along it. */
-  var RAILS = [
-    { room: 1, x: -5.0, span: 6.4, on: ['white-bones', 'pure-water-wip-t-shirt', 'greek-stone-wip-t-shirt'] },
-    { room: 1, x:  5.2, span: 4.6, on: ['black-stone', 'cotton-candy-wip-t-shirt'] },
-    { room: 2, x: -4.9, span: 3.0, on: ['ycsfpotd-hoodie'] },
-    { room: 2, x:  4.9, span: 3.0, on: ['ycsfpotd-pants'] },
-    { room: 3, x: -4.9, span: 4.6, on: ['sweet-lemon-hoodie', 'sweet-lemon-pants'] },
-    { room: 3, x:  4.9, span: 4.6, on: ['native-pinky-stars-shirt', 'native-flower-shirt'] }
+  /* the order you walk them, and which side of the aisle each hangs on */
+  var WALK = [
+    { h: 'white-bones',              hour: 'dawn',      side: -1 },
+    { h: 'pure-water-wip-t-shirt',   hour: 'clear',     side:  1 },
+    { h: 'greek-stone-wip-t-shirt',  hour: 'overcast',  side: -1 },
+    { h: 'black-stone',              hour: 'night',     side:  1 },
+    { h: 'cotton-candy-wip-t-shirt', hour: 'dusk',      side: -1 }
   ];
 
-  var SKY = [];
-  RAILS.forEach(function (r) {
-    var z = r.room * RL + 13;
-    SKY.push({ k: 'rack', at: [r.x, 2.9, z], size: 5.8, span: r.span });
-    r.on.forEach(function (h, i) {
-      var g = PIECES[h], n = r.on.length;
-      SKY.push({
-        k: 'garment', h: h, n: g.n, p: g.p, img: g.img, say: g.say,
-        sold: g.sold, exclusive: g.exclusive, pillar: ROOMS[r.room].name,
-        at: [r.x + (i - (n - 1) / 2) * (r.span / n), RAIL - g.tall / 2, z - 0.4],
-        size: g.tall
-      });
-    });
+  var ROOMS = [{ hour: 'clear', name: 'The first room', sub: '' }];
+  WALK.forEach(function (w) {
+    ROOMS.push({ hour: w.hour, name: PIECES[w.h].n, sub: PIECES[w.h].full });
   });
+  ROOMS.push({ hour: 'dusk', name: 'The last door', sub: '' });
+
+  var SKY = [];
+  WALK.forEach(function (w, i) {
+    var room = i + 1, z = room * RL + 13, g = PIECES[w.h];
+    SKY.push({ k: 'rack', at: [w.side * 4.8, 2.9, z], size: 5.8, span: 3.2 });
+    SKY.push({ k: 'garment', h: w.h, n: g.n, p: g.p, img: g.img, say: g.say,
+               pillar: g.full, at: [w.side * 4.8, RAIL - g.tall / 2, z - 0.4], size: g.tall });
+  });
+  /* the question stands in the first room, in the voice it is printed in */
+  SKY.push({ k: 'verse', at: [0, 7.2, 25.4], w: 760, wide: 11.5,
+             html: '<p class="serif ask">what is peace?</p>' });
   ROOMS.forEach(function (r, i) {
-    if (i === 4) return;
-    SKY.push({ k: 'verse', at: [0, 7.2, i * RL + 25.4], w: 720, wide: 10.5,
-      html: '<p class="big">' + r.name + '</p>' +
-            (r.sub ? '<p class="serif sub">' + r.sub + '</p>' : '') });
+    if (i === 0 || i === ROOMS.length - 1) return;
+    SKY.push({ k: 'verse', at: [0, 7.2, i * RL + 25.4], w: 720, wide: 9.5,
+      html: '<p class="big">' + r.name + '</p>' });
   });
 
   /* ===================== the mark ===================================== */
@@ -514,9 +494,9 @@
     'uniform vec3  uCam, uFwd, uRight, uUp;',
     'uniform float uTanY, uSwing, uRoom0;',
     /* three hours, six colours each: deep, pale, cloud, grassA, grassB, glow */
-    'uniform vec3  uPal[18];',
-    'uniform vec3  uCfg[3];',        /* x cover, y light, z stars */
-    'uniform float uRoomHour[6];',   /* which hour each room keeps */
+    'uniform vec3  uPal[30];',
+    'uniform vec3  uCfg[5];',        /* x cover, y light, z stars */
+    'uniform float uRoomHour[8];',   /* which hour each room keeps */
 
     'const float RW = 9.0;',
     'const float RH = 11.0;',
@@ -528,7 +508,7 @@
     'vec3 gDeep, gPale, gCloud, gGA, gGB, gGlow;',
     'float gCover, gLight, gStars;',
     'void hourOf(int r){',
-    '  int i = int(uRoomHour[clamp(r, 0, 5)]);',
+    '  int i = int(uRoomHour[clamp(r, 0, 7)]);',
     '  gDeep = uPal[i*6]; gPale = uPal[i*6+1]; gCloud = uPal[i*6+2];',
     '  gGA = uPal[i*6+3]; gGB = uPal[i*6+4]; gGlow = uPal[i*6+5];',
     '  gCover = uCfg[i].x; gLight = uCfg[i].y; gStars = uCfg[i].z;',
@@ -725,22 +705,40 @@
   resize();
 
   /* ===================== the hour of each room ========================= */
-  var HOUR_ORDER = ['peace', 'mystery', 'nostalgia'];
+  /* Each sky is pulled toward the cloth that hangs under it: the bone shirt
+     gets a warm morning haze, the marl an overcast flat light, the black a
+     night, the pink a dusk. */
+  var HOUR_ORDER = ['dawn', 'clear', 'overcast', 'night', 'dusk'];
   var HOURS = {
-    peace: {
+    dawn: {
+      deep: [0.44, 0.48, 0.52], pale: [0.92, 0.88, 0.78], cloud: [1.00, 0.99, 0.95],
+      grassA: [0.28, 0.31, 0.19], grassB: [0.64, 0.67, 0.45],
+      glow: [0.97, 0.95, 0.88], cover: 0.60, light: 0.86, stars: 0.0,
+      page: '#d8d2c0', dark: false
+    },
+    clear: {
       deep: [0.11, 0.41, 0.74], pale: [0.71, 0.86, 0.96], cloud: [1.00, 1.00, 1.00],
       grassA: [0.17, 0.31, 0.11], grassB: [0.55, 0.74, 0.31],
-      glow: [0.95, 0.98, 1.00], cover: 0.44, light: 1.00, stars: 0.0, page: '#9fc4dd'
+      glow: [0.95, 0.98, 1.00], cover: 0.44, light: 1.00, stars: 0.0,
+      page: '#9fc4dd', dark: false
     },
-    mystery: {
+    overcast: {
+      deep: [0.37, 0.38, 0.40], pale: [0.72, 0.72, 0.71], cloud: [0.88, 0.88, 0.87],
+      grassA: [0.21, 0.25, 0.17], grassB: [0.47, 0.52, 0.37],
+      glow: [0.76, 0.76, 0.75], cover: 0.74, light: 0.68, stars: 0.0,
+      page: '#a9a9a6', dark: false
+    },
+    night: {
       deep: [0.022, 0.045, 0.13], pale: [0.10, 0.15, 0.30], cloud: [0.38, 0.44, 0.62],
-      grassA: [0.045, 0.085, 0.065], grassB: [0.14, 0.22, 0.17],
-      glow: [0.09, 0.13, 0.26], cover: 0.50, light: 0.52, stars: 1.0, page: '#0b1020'
+      grassA: [0.035, 0.065, 0.050], grassB: [0.11, 0.18, 0.13],
+      glow: [0.09, 0.13, 0.26], cover: 0.50, light: 0.52, stars: 1.0,
+      page: '#0b1020', dark: true
     },
-    nostalgia: {
-      deep: [0.66, 0.36, 0.20], pale: [0.96, 0.82, 0.62], cloud: [1.00, 0.93, 0.82],
-      grassA: [0.29, 0.26, 0.10], grassB: [0.72, 0.64, 0.31],
-      glow: [0.99, 0.90, 0.76], cover: 0.47, light: 0.90, stars: 0.0, page: '#dcae80'
+    dusk: {
+      deep: [0.34, 0.25, 0.44], pale: [0.95, 0.74, 0.73], cloud: [1.00, 0.89, 0.88],
+      grassA: [0.17, 0.18, 0.13], grassB: [0.44, 0.43, 0.30],
+      glow: [0.97, 0.85, 0.83], cover: 0.52, light: 0.82, stars: 0.0,
+      page: '#e0b3ae', dark: false
     }
   };
 
@@ -755,7 +753,7 @@
     CFG.push(h.cover, h.light, h.stars);
   });
   var ROOM_HOUR = ROOMS.map(function (r) { return HOUR_ORDER.indexOf(r.hour); });
-  while (ROOM_HOUR.length < 6) ROOM_HOUR.push(ROOM_HOUR[ROOM_HOUR.length - 1]);
+  while (ROOM_HOUR.length < 8) ROOM_HOUR.push(ROOM_HOUR[ROOM_HOUR.length - 1]);
 
   var themeMeta = document.querySelector('meta[name="theme-color"]');
   var roomNow = -1;
@@ -765,28 +763,24 @@
     i = Math.max(0, Math.min(i, ROOMS.length - 1));
     if (i === roomNow) return;
     roomNow = i;
-    var r = ROOMS[i];
-    document.documentElement.setAttribute('data-sky', r.hour);
-    if (themeMeta) themeMeta.setAttribute('content', HOURS[r.hour].page);
-    document.body.style.background = HOURS[r.hour].page;
+    var h = HOURS[ROOMS[i].hour];
+    document.documentElement.setAttribute('data-sky', h.dark ? 'mystery' : 'day');
+    if (themeMeta) themeMeta.setAttribute('content', h.page);
+    document.body.style.background = h.page;
     [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b) {
-      b.setAttribute('aria-pressed', String(b.getAttribute('data-sky') === r.hour));
+      b.setAttribute('aria-pressed', String(+b.getAttribute('data-room') === i));
     });
   }
   wearRoom(0);
 
   function ease(a, b, k) { return a + (b - a) * k; }
 
-  /* the three words are no longer a theme switch: they walk you to the
-     room that keeps that hour */
+  /* the row of names is the shop's index: it walks you to that room */
   document.querySelector('.hud-skies').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-sky]');
+    var b = e.target.closest('button[data-room]');
     if (!b || !through) return;
-    var want = b.getAttribute('data-sky'), room = -1;
-    for (var i = 1; i < ROOMS.length; i++) if (ROOMS[i].hour === want) { room = i; break; }
-    if (room < 0) return;
     var max = runway.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: max * ((room * RL + 13 - Z0) / ZSPAN),
+    window.scrollTo({ top: max * ((+b.getAttribute('data-room') * RL + 13 - Z0) / ZSPAN),
                       behavior: still ? 'auto' : 'smooth' });
   });
 
@@ -871,7 +865,7 @@
   var dive = 0, diving = false, through = false;
   var px = 0, py = 0, cx = 0, cy = 0;
 
-  var Z0 = 28, ZSPAN = 92;   /* in at room 1, out through room 4 */
+  var Z0 = 28, ZSPAN = 141;  /* in at the first shirt, out past the last */
   var runway = document.getElementById('runway');
 
   function flightProgress() {
@@ -986,7 +980,8 @@
     flown.style.width = (p * 100).toFixed(1) + '%';
     var room = Math.min(ROOMS.length - 1, Math.floor((Z0 + p * ZSPAN) / RL));
     wearRoom(room);
-    depth.textContent = 'Room ' + room + ' of ' + (ROOMS.length - 1);
+    depth.textContent = room >= 1 && room <= WALK.length
+      ? room + ' of ' + WALK.length : '\u2014';
     var w = ROOMS[room].name;
     if (w !== lastWhere) { where.textContent = w; lastWhere = w; }
     shore.classList.toggle('here', p > 0.955);
