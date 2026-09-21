@@ -68,52 +68,37 @@ Lo importante de la forma, que la versión anterior tenía al revés: el
 cuatrifolio es **hueco**, no macizo, y cada uno de los cuatro paños lleva una
 púa curvada hacia dentro.
 
-## Salas, colecciones y horas
+## Una sala, cinco respuestas
 
-Cada sala **es** una colección y **tiene** una hora fija. Se declara todo junto
-en `ROOMS`:
+La web es una sola colección: *What is Peace?* — una pregunta estampada en
+cinco colores. Así que es **una sola habitación**, sin pasillo y sin scroll.
+Entras por la puerta, te quedas de pie delante de las cinco, y ya está.
 
-    { hour: 'mystery', name: 'Mystery', sub: 'What the window does not show you' }
+`PIECES` es la colección en orden. `RAILS` dice qué cuelga de cada barra —
+tres a la izquierda del vano, dos a la derecha — y las prendas se reparten
+solas a lo largo del largo que se le dé a la barra.
 
-El shader recibe la tabla entera de paletas (`uPal`, `uCfg`) y qué hora guarda
-cada sala (`uRoomHour`), así que **pinta cada tramo del corredor con su propia
-hora**. Por eso, de pie en la sala de día, por el hueco de la puerta ves la de
-noche. No hay transición que programar: la sala siguiente ya se está pintando
-con su color antes de que entres.
+## La sala toma la hora de la prenda que miras
 
-Las tres palabras de arriba a la derecha ya no cambian el tema: te llevan
-andando a la sala que guarda esa hora.
+Cada camiseta tiene su hora (`hour`), sacada del color de su tela:
 
-## Las burras y lo que cuelga
+    White Bones   dawn      bruma cálida de amanecer
+    Pure Water    clear     día limpio, el azul que le da nombre
+    Greek Stone   overcast  cubierto, luz plana
+    Black Stone   night     noche con estrellas
+    Cotton Candy  dusk      atardecer malva
 
-`RAILS` pone las burras: sala, posición, **largo de la barra** y qué cuelga de
-ella. Las prendas se reparten solas a lo largo del largo que se le dé, así que
-una barra de tres es más larga que una de una. `PIECES` dice qué es cada
-prenda, sin decir dónde va:
+Al pasar por encima de una, la sala **deriva** hacia su hora; al quitarte,
+vuelve a `clear`. Al pulsarla se queda ahí, las otras cuatro se apagan y sale
+su ficha. `drift()` interpola todas las variables del cielo cada fotograma —
+no hay transición escrita, es el cielo moviéndose.
 
-    RAILS: { room: 1, x: -5.0, span: 6.4,
-             on: ['white-bones', 'pure-water-wip-t-shirt', 'greek-stone-wip-t-shirt'] }
+Los textos de la interfaz **no se invierten cuando eliges la noche, sino
+cuando la sala se ha oscurecido de verdad**: `drift()` mide la luminancia del
+cielo interpolado y cambia `data-sky` al cruzar el umbral. Si se invirtieran
+al pulsar, quedarían blancos sobre un cielo todavía claro.
 
-    PIECES: 'black-stone': {     // la clave es el handle de Shopify
-              n: 'Black Stone "WiP?"',
-              p: 39.99,
-              img: 'IMG-0276.jpg',
-              tall: 3.1,         // alto en unidades de mundo (la sala mide 11)
-              say: '…' }
-
-La posición se calcula sola: `RAIL - tall/2`, así que **todas las prendas
-cuelgan con el hombro a la altura de la barra** sea cual sea su largo.
-
-La burra es un SVG plano (dos pies, dos montantes, tubo cromado y su sombra),
-porque una barra puesta de frente al pasillo es casi plana de verdad. Se
-construye a medida con `railSVG(span)`: el tubo se alarga, los montantes y los
-pies no cambian de grosor.
-
-**Las salas son colecciones y el reparto sale de las prendas, no de un
-criterio**: las cinco WiP? llevan *"what is peace?"* escrito en el pecho, así
-que van juntas en la sala Peace.
-
-## Las paredes mandan sobre el DOM
+## Las paredes mandan sobre el DOM## Las paredes mandan sobre el DOM
 
 Las prendas son elementos del DOM, así que **el shader no puede taparlas**: sin
 más, una burra de la sala 3 se vería a través de la pared de la sala 1. Eso lo

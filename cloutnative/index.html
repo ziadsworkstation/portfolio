@@ -181,10 +181,20 @@
   .hud-skies button[aria-pressed="true"]::after { width: 100%; }
 
   /* how far through the sky you are */
-  .hud-rail { left: var(--gut); right: var(--gut); bottom: calc(var(--gut) + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 14px; }
-  .hud-rail .line { flex: 1; height: 1px; background: var(--edge); position: relative; }
-  .hud-rail .line i { position: absolute; inset: 0 auto 0 0; width: 0%; background: currentColor; }
-  .hud-rail .where { white-space: nowrap; }
+  /* the question stays in the room, set the way it is printed */
+  .hud-ask {
+    left: var(--gut); bottom: calc(var(--gut) + env(safe-area-inset-bottom, 0px));
+    font-size: clamp(20px, 2.4vw, 32px); color: var(--ink); opacity: 0.85;
+  }
+  .hud-out {
+    right: var(--gut); bottom: calc(var(--gut) + env(safe-area-inset-bottom, 0px));
+  }
+  .hud-out a { border-bottom: 1px solid var(--edge); padding-bottom: 3px; }
+  .hud-out a:hover { border-color: currentColor; }
+
+  /* once one is chosen the others stand back */
+  .garment { transition: opacity 700ms ease; }
+  .garment.dim { opacity: 0.28 !important; }
 
   .hud-hint {
     left: 50%; bottom: calc(var(--gut) + 34px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
@@ -298,9 +308,6 @@
 <div id="flat" aria-hidden="true"></div>
 <div id="veil" aria-hidden="true"></div>
 
-<!-- the flight is a scroll; this is the only thing giving it length -->
-<div id="runway" aria-hidden="true"></div>
-
 <!-- garments and verses, placed in the sky and projected each frame -->
 <div id="field"></div>
 
@@ -311,20 +318,18 @@
 </div>
 
 <div class="hud hud-skies" role="group" aria-label="The collection">
-  <button type="button" data-room="1" aria-pressed="false">Bone</button>
-  <button type="button" data-room="2" aria-pressed="false">Water</button>
-  <button type="button" data-room="3" aria-pressed="false">Stone</button>
-  <button type="button" data-room="4" aria-pressed="false">Black</button>
-  <button type="button" data-room="5" aria-pressed="false">Candy</button>
+  <button type="button" data-pick="0" aria-pressed="false">Bone</button>
+  <button type="button" data-pick="1" aria-pressed="false">Water</button>
+  <button type="button" data-pick="2" aria-pressed="false">Stone</button>
+  <button type="button" data-pick="3" aria-pressed="false">Black</button>
+  <button type="button" data-pick="4" aria-pressed="false">Candy</button>
 </div>
 
-<div class="hud hud-rail">
-  <span class="tag where" id="where">Above the deck</span>
-  <span class="line"><i id="flown"></i></span>
-  <span class="tag" id="depth">Room 1</span>
-</div>
+<p class="hud hud-ask serif">what is peace?</p>
 
-<p class="hud hud-hint tag" id="hint">Scroll to walk</p>
+<p class="hud hud-out tag"><a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The whole store</a></p>
+
+<p class="hud hud-hint tag" id="hint">Look at one</p>
 
 <!-- ============================ THE WAY IN ============================ -->
 <div id="door">
@@ -349,18 +354,6 @@
   </div>
 </div>
 
-<!-- ============================ THE FAR SIDE =========================== -->
-<div id="shore">
-  <p class="tag">The far side</p>
-  <p class="serif">Five shirts, one question. <em>What is peace?</em></p>
-  <div class="ways">
-    <a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The collection</a>
-    <a href="https://www.instagram.com/cloutnative/" target="_blank" rel="noopener">Instagram</a>
-    <a href="https://cloutnative.com/pages/our-meaning" target="_blank" rel="noopener">Our meaning</a>
-  </div>
-  <p class="tag">Clout Native — Barcelona</p>
-</div>
-
 <script>
 /* =======================================================================
    CLOUT NATIVE — the sky is raymarched, the garments hang in it.
@@ -383,61 +376,45 @@
      ===================================================================== */
   var RL = 26, RAIL = 5.44;          /* room depth, and the height of a rail */
 
-  /* One collection: "What is Peace?" — one question printed in five colours.
-     So one room per shirt, and each room's sky is tuned to the cloth that
-     hangs in it. Room 0 is the way in, the last one the way out. */
-  var PIECES = {
-    'white-bones': {
-      n: 'White Bones', full: 'White Bones "WiP?" T-shirt', p: 39.99, tall: 3.1,
-      short: 'Bone', cloth: '#c8c8b4', img: 'assets/garments/white-bones.webp',
+  /* One room, one question, five answers on two rails. The room takes the
+     hour of whichever shirt you are looking at. */
+  var PIECES = [
+    { h: 'white-bones', n: 'White Bones', short: 'Bone', p: 39.99, tall: 3.1,
+      hour: 'dawn', cloth: '#c8c8b4', img: 'assets/garments/white-bones.webp',
       say: 'Bone cotton, the question in black. The quietest of the five, and the most worn — the ink has begun to crack.' },
-    'pure-water-wip-t-shirt': {
-      n: 'Pure Water', full: 'Pure Water "WiP?" T-shirt', p: 39.99, tall: 3.1,
-      short: 'Water', cloth: '#c7d5dd', img: 'assets/garments/pure-water.webp',
+    { h: 'pure-water-wip-t-shirt', n: 'Pure Water', short: 'Water', p: 39.99, tall: 3.1,
+      hour: 'clear', cloth: '#c7d5dd', img: 'assets/garments/pure-water.webp',
       say: 'Washed blue, the colour of the calm inner space the house is named after.' },
-    'greek-stone-wip-t-shirt': {
-      n: 'Greek Stone', full: 'Greek Stone "WiP?" T-shirt', p: 39.99, tall: 3.1,
-      short: 'Stone', cloth: '#787675', img: 'assets/garments/greek-stone.webp',
+    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone', short: 'Stone', p: 39.99, tall: 3.1,
+      hour: 'overcast', cloth: '#787675', img: 'assets/garments/greek-stone.webp',
       say: 'Marble grey, marled. Patience, cut for a Tuesday.' },
-    'black-stone': {
-      n: 'Black Stone', full: 'Black Stone "WiP?" T-shirt', p: 39.99, tall: 3.1,
-      short: 'Black', cloth: '#0f0e13', img: 'assets/garments/black-stone.webp',
+    { h: 'black-stone', n: 'Black Stone', short: 'Black', p: 39.99, tall: 3.1,
+      hour: 'night', cloth: '#0f0e13', img: 'assets/garments/black-stone.webp',
       say: 'The only one of the five that turns the ink over: white on black, sleeve label included.' },
-    'cotton-candy-wip-t-shirt': {
-      n: 'Cotton Candy', full: 'Cotton Candy "WiP?" T-shirt', p: 39.99, tall: 3.1,
-      short: 'Candy', cloth: '#cfa7b5', img: 'assets/garments/cotton-candy.webp',
+    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy', short: 'Candy', p: 39.99, tall: 3.1,
+      hour: 'dusk', cloth: '#cfa7b5', img: 'assets/garments/cotton-candy.webp',
       say: 'Dusty pink, sun-faded on purpose. Quieter in the hand than it looks from across a room.' }
-  };
-
-  /* the order you walk them, and which side of the aisle each hangs on */
-  var WALK = [
-    { h: 'white-bones',              hour: 'dawn',      side: -1 },
-    { h: 'pure-water-wip-t-shirt',   hour: 'clear',     side:  1 },
-    { h: 'greek-stone-wip-t-shirt',  hour: 'overcast',  side: -1 },
-    { h: 'black-stone',              hour: 'night',     side:  1 },
-    { h: 'cotton-candy-wip-t-shirt', hour: 'dusk',      side: -1 }
   ];
 
-  var ROOMS = [{ hour: 'clear', name: 'The first room', sub: '' }];
-  WALK.forEach(function (w) {
-    ROOMS.push({ hour: w.hour, name: PIECES[w.h].n, sub: PIECES[w.h].full });
-  });
-  ROOMS.push({ hour: 'dusk', name: 'The last door', sub: '' });
+  var ROOM = 1;                      /* the room the collection stands in */
+  var ZR = ROOM * RL + 13;           /* how far down it the rails stand */
+
+  /* three on the left of the doorway, two on the right */
+  var RAILS = [
+    { x: -5.0, span: 6.4, on: [0, 1, 2] },
+    { x:  5.2, span: 4.6, on: [3, 4] }
+  ];
 
   var SKY = [];
-  WALK.forEach(function (w, i) {
-    var room = i + 1, z = room * RL + 13, g = PIECES[w.h];
-    SKY.push({ k: 'rack', at: [w.side * 4.8, 2.9, z], size: 5.8, span: 3.2 });
-    SKY.push({ k: 'garment', h: w.h, n: g.n, p: g.p, img: g.img, say: g.say,
-               pillar: g.full, at: [w.side * 4.8, RAIL - g.tall / 2, z - 0.4], size: g.tall });
-  });
-  /* the question stands in the first room, in the voice it is printed in */
-  SKY.push({ k: 'verse', at: [0, 7.2, 25.4], w: 760, wide: 11.5,
-             html: '<p class="serif ask">what is peace?</p>' });
-  ROOMS.forEach(function (r, i) {
-    if (i === 0 || i === ROOMS.length - 1) return;
-    SKY.push({ k: 'verse', at: [0, 7.2, i * RL + 25.4], w: 720, wide: 9.5,
-      html: '<p class="big">' + r.name + '</p>' });
+  RAILS.forEach(function (r) {
+    SKY.push({ k: 'rack', at: [r.x, 2.9, ZR], size: 5.8, span: r.span });
+    r.on.forEach(function (idx, i) {
+      var g = PIECES[idx], n = r.on.length;
+      SKY.push({ k: 'garment', i: idx, h: g.h, n: g.n, p: g.p, img: g.img, say: g.say,
+                 hour: g.hour,
+                 at: [r.x + (i - (n - 1) / 2) * (r.span / n), RAIL - g.tall / 2, ZR - 0.4],
+                 size: g.tall });
+    });
   });
 
   /* ===================== the mark ===================================== */
@@ -492,11 +469,10 @@
     'uniform vec2  uRes;',
     'uniform float uTime;',
     'uniform vec3  uCam, uFwd, uRight, uUp;',
-    'uniform float uTanY, uSwing, uRoom0;',
+    'uniform float uTanY, uSwing;',
     /* three hours, six colours each: deep, pale, cloud, grassA, grassB, glow */
-    'uniform vec3  uPal[30];',
-    'uniform vec3  uCfg[5];',        /* x cover, y light, z stars */
-    'uniform float uRoomHour[8];',   /* which hour each room keeps */
+    'uniform vec3  uDeep, uPale, uCloud, uGA, uGB, uGlow;',
+    'uniform float uCover, uLight, uStars;',
 
     'const float RW = 9.0;',
     'const float RH = 11.0;',
@@ -504,15 +480,6 @@
     'const float DW = 1.75;',
     'const float DH = 4.9;',
 
-    /* the hour of whichever room the ray is currently crossing */
-    'vec3 gDeep, gPale, gCloud, gGA, gGB, gGlow;',
-    'float gCover, gLight, gStars;',
-    'void hourOf(int r){',
-    '  int i = int(uRoomHour[clamp(r, 0, 7)]);',
-    '  gDeep = uPal[i*6]; gPale = uPal[i*6+1]; gCloud = uPal[i*6+2];',
-    '  gGA = uPal[i*6+3]; gGB = uPal[i*6+4]; gGlow = uPal[i*6+5];',
-    '  gCover = uCfg[i].x; gLight = uCfg[i].y; gStars = uCfg[i].z;',
-    '}',
 
     'float hash(vec3 p){',
     '  p = fract(p * 0.3183099 + vec3(0.71, 0.113, 0.419));',
@@ -536,16 +503,16 @@
 
     'vec3 mural(vec2 uv, float hi, float drift){',
     '  float f = fbm(vec3(uv * 0.105 + vec2(drift, 0.0), 11.0));',
-    '  vec3 sky = mix(gPale, gDeep, clamp(hi, 0.0, 1.0));',
+    '  vec3 sky = mix(uPale, uDeep, clamp(hi, 0.0, 1.0));',
     '  float soft = smoothstep(0.40, 0.55, f);',
-    '  float core = smoothstep(0.545 - gCover * 0.09, 0.655, f);',
-    '  vec3 c = mix(sky, gCloud * 0.86, soft * 0.80);',
-    '  c = mix(c, gCloud, core);',
+    '  float core = smoothstep(0.545 - uCover * 0.09, 0.655, f);',
+    '  vec3 c = mix(sky, uCloud * 0.86, soft * 0.80);',
+    '  c = mix(c, uCloud, core);',
     '  vec2 g = abs(fract(uv / vec2(5.2, 2.5) + 0.5) - 0.5);',
     '  float seam = max(smoothstep(0.47, 0.5, g.x), smoothstep(0.46, 0.5, g.y));',
     '  c *= 1.0 - seam * 0.028;',
     '  c *= 0.97 + 0.06 * vnoise(vec3(uv * 5.5, 2.0));',
-    '  if (gStars > 0.5) {',
+    '  if (uStars > 0.5) {',
     '    vec2 sc = uv * 6.0; vec2 ci = floor(sc), cf = fract(sc);',
     '    float v = hash(vec3(ci, 1.0));',
     '    vec2 sp = vec2(hash(vec3(ci, 2.0)), hash(vec3(ci, 3.0)));',
@@ -559,7 +526,7 @@
     'vec3 turf(vec2 uv, float pool){',
     '  float n = fbm(vec3(uv * 0.5, 3.0));',
     '  float blade = vnoise(vec3(uv.x * 26.0, uv.y * 9.0, 5.0));',
-    '  vec3 g = mix(gGA, gGB, clamp(n * 1.05 + blade * 0.38 - 0.12, 0.0, 1.0));',
+    '  vec3 g = mix(uGA, uGB, clamp(n * 1.05 + blade * 0.38 - 0.12, 0.0, 1.0));',
     '  return g * (0.55 + 0.95 * pool);',
     '}',
 
@@ -571,14 +538,11 @@
     '  rd.z = max(rd.z, 0.05); rd = normalize(rd);',
     '  float drift = uTime * 0.004;',
 
-    '  int room = int(uRoom0);',
-    '  hourOf(room);',
     '  float zw0 = (floor(ro.z / RL) + 1.0) * RL;',
     '  float zw  = zw0;',
-    '  vec3 col = gPale; float tHit = 1e9; float beyond = 0.0; float jamb = 1.0;',
+    '  vec3 col = uPale; float tHit = 1e9; float beyond = 0.0; float jamb = 1.0;',
 
     '  for (int seg = 0; seg < 5; seg++) {',
-    '    hourOf(room + seg);',
     '    float tx = 1e9, ty = 1e9;',
     '    if (abs(rd.x) > 1e-4) tx = ((rd.x > 0.0 ? RW : -RW) - ro.x) / rd.x;',
     '    if (abs(rd.y) > 1e-4) ty = ((rd.y > 0.0 ? RH : 0.0) - ro.y) / rd.y;',
@@ -602,7 +566,7 @@
     '        float ao = smoothstep(0.0, 5.0, RW - abs(p.x)) * smoothstep(0.0, 6.0, zw - p.z);',
     '        col = mural(vec2(p.x, p.z) * 1.9, 0.62, drift) * (0.80 + 0.20 * ao);',
     '      } else {',
-    '        float pool = smoothstep(21.0, 1.5, length(vec2(p.x, p.z - zw0))) * gLight;',
+    '        float pool = smoothstep(21.0, 1.5, length(vec2(p.x, p.z - zw0))) * uLight;',
     '        float ao = smoothstep(0.0, 4.5, RW - abs(p.x));',
     '        vec2 sh = vec2(p.x + DW - DW * cos(uSwing), p.z - zw0 - DW * sin(uSwing));',
     '        float shd = 1.0 - 0.34 * smoothstep(2.6, 0.5, length(sh * vec2(0.7, 1.0)));',
@@ -643,8 +607,8 @@
     '  }',
 
     '  col *= jamb;',
-    '  col = mix(col, gGlow, clamp(beyond * 0.26, 0.0, 0.62));',
-    '  col = mix(col, gGlow, smoothstep(16.0, 74.0, tHit) * 0.45);',
+    '  col = mix(col, uGlow, clamp(beyond * 0.26, 0.0, 0.62));',
+    '  col = mix(col, uGlow, smoothstep(16.0, 74.0, tHit) * 0.45);',
     '  vec2 vg = gl_FragCoord.xy / uRes - 0.5;',
     '  col *= 1.0 - dot(vg, vg) * 0.30;',
     '  col = col / (col + 0.82) * 1.42;',
@@ -685,8 +649,9 @@
   } else {
     gl.useProgram(prog);
     gl.bindVertexArray(gl.createVertexArray());
-    ['uRes','uTime','uCam','uFwd','uRight','uUp','uTanY','uSwing','uRoom0',
-     'uPal','uCfg','uRoomHour'].forEach(function (n) {
+    ['uRes','uTime','uCam','uFwd','uRight','uUp','uTanY','uSwing',
+     'uDeep','uPale','uCloud','uGA','uGB','uGlow',
+     'uCover','uLight','uStars'].forEach(function (n) {
       U[n] = gl.getUniformLocation(prog, n);
     });
     renderScale = Math.min(window.devicePixelRatio || 1, 1) * 0.78;
@@ -704,11 +669,10 @@
   window.addEventListener('resize', resize);
   resize();
 
-  /* ===================== the hour of each room ========================= */
-  /* Each sky is pulled toward the cloth that hangs under it: the bone shirt
-     gets a warm morning haze, the marl an overcast flat light, the black a
-     night, the pink a dusk. */
-  var HOUR_ORDER = ['dawn', 'clear', 'overcast', 'night', 'dusk'];
+  /* ===================== the hour of the room ========================== */
+  /* Five weathers, one per shirt. The room is not fixed to any of them: it
+     drifts toward whichever piece you are looking at, and settles back to
+     the clear day when you look away. */
   var HOURS = {
     dawn: {
       deep: [0.44, 0.48, 0.52], pale: [0.92, 0.88, 0.78], cloud: [1.00, 0.99, 0.95],
@@ -741,48 +705,67 @@
       page: '#e0b3ae', dark: false
     }
   };
+  var TINTS = ['deep', 'pale', 'cloud', 'grassA', 'grassB', 'glow'];
+  var REST = 'clear';
 
-  /* flattened once; the shader reads a room's hour straight out of these,
-     which is why you can stand in daylight and see night through the door */
-  var PAL = [], CFG = [];
-  HOUR_ORDER.forEach(function (name) {
-    var h = HOURS[name];
-    ['deep','pale','cloud','grassA','grassB','glow'].forEach(function (k) {
-      PAL.push(h[k][0], h[k][1], h[k][2]);
-    });
-    CFG.push(h.cover, h.light, h.stars);
-  });
-  var ROOM_HOUR = ROOMS.map(function (r) { return HOUR_ORDER.indexOf(r.hour); });
-  while (ROOM_HOUR.length < 8) ROOM_HOUR.push(ROOM_HOUR[ROOM_HOUR.length - 1]);
+  function blank() {
+    var o = { cover: 0, light: 0, stars: 0 };
+    TINTS.forEach(function (k) { o[k] = [0, 0, 0]; });
+    return o;
+  }
+  var now = blank(), want = HOURS[REST], hourNow = REST;
+  TINTS.forEach(function (k) { now[k] = want[k].slice(); });
+  now.cover = want.cover; now.light = want.light; now.stars = want.stars;
 
   var themeMeta = document.querySelector('meta[name="theme-color"]');
-  var roomNow = -1;
 
-  /* the marks have to invert inside a night room or they disappear into it */
-  function wearRoom(i) {
-    i = Math.max(0, Math.min(i, ROOMS.length - 1));
-    if (i === roomNow) return;
-    roomNow = i;
-    var h = HOURS[ROOMS[i].hour];
-    document.documentElement.setAttribute('data-sky', h.dark ? 'mystery' : 'day');
-    if (themeMeta) themeMeta.setAttribute('content', h.page);
-    document.body.style.background = h.page;
-    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b) {
-      b.setAttribute('aria-pressed', String(+b.getAttribute('data-room') === i));
-    });
+  function setHour(name) {
+    if (!HOURS[name] || name === hourNow) return;
+    hourNow = name;
+    want = HOURS[name];
+    if (themeMeta) themeMeta.setAttribute('content', want.page);
+    document.body.style.background = want.page;
   }
-  wearRoom(0);
 
   function ease(a, b, k) { return a + (b - a) * k; }
+  function drift(k) {
+    TINTS.forEach(function (t) {
+      for (var i = 0; i < 3; i++) now[t][i] = ease(now[t][i], want[t][i], k);
+    });
+    now.cover = ease(now.cover, want.cover, k);
+    now.light = ease(now.light, want.light, k);
+    now.stars = ease(now.stars, want.stars, k);
 
-  /* the row of names is the shop's index: it walks you to that room */
+    /* the few marks invert when the room has actually gone dark, not when
+       it was asked to — otherwise they turn white over a bright sky */
+    var lum = 0.2126 * now.pale[0] + 0.7152 * now.pale[1] + 0.0722 * now.pale[2];
+    var dark = lum < 0.45 ? 'mystery' : 'day';
+    if (dark !== darkNow) {
+      darkNow = dark;
+      document.documentElement.setAttribute('data-sky', dark);
+    }
+  }
+  var darkNow = 'day';
+
+  /* the row of names is the index: it picks a shirt without walking anywhere */
+  var picked = -1;
   document.querySelector('.hud-skies').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-room]');
-    if (!b || !through) return;
-    var max = runway.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: max * ((+b.getAttribute('data-room') * RL + 13 - Z0) / ZSPAN),
-                      behavior: still ? 'auto' : 'smooth' });
+    var b = e.target.closest('button[data-pick]');
+    if (!b) return;
+    var i = +b.getAttribute('data-pick');
+    if (picked === i) { look(-1); letgo(); } else { look(i); bring(i); }
+    used();
   });
+  function look(i) {
+    picked = i;
+    setHour(i < 0 ? REST : PIECES[i].hour);
+    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b, j) {
+      b.setAttribute('aria-pressed', String(j === i));
+    });
+    things.forEach(function (th) {
+      if (th.d.k === 'garment') th.el.classList.toggle('dim', picked >= 0 && th.d.i !== picked);
+    });
+  }
 
   /* ===================== the field ==================================== */
   var field = document.getElementById('field');
@@ -847,7 +830,12 @@
         '</span></figcaption></figure>';
       var im = el.querySelector('img');
       im.addEventListener('error', function () { im.style.visibility = 'hidden'; });
-      el.addEventListener('click', function () { bring(i); });
+      el.addEventListener('click', function () { look(it.i); bring(it.i); used(); });
+      /* before you have chosen, the room previews the weather you hover */
+      el.addEventListener('pointerenter', function () { if (picked < 0) setHour(it.hour); });
+      el.addEventListener('pointerleave', function () { if (picked < 0) setHour(REST); });
+      el.addEventListener('focus', function () { if (picked < 0) setHour(it.hour); });
+      el.addEventListener('blur', function () { if (picked < 0) setHour(REST); });
     } else {
       el.innerHTML = it.html;
       el.style.width = it.w + 'px';
@@ -865,27 +853,20 @@
   var dive = 0, diving = false, through = false;
   var px = 0, py = 0, cx = 0, cy = 0;
 
-  var Z0 = 28, ZSPAN = 141;  /* in at the first shirt, out past the last */
-  var runway = document.getElementById('runway');
-
-  function flightProgress() {
-    var max = runway.offsetHeight - window.innerHeight;
-    if (max <= 0) return 0;
-    return Math.min(1, Math.max(0, window.scrollY / max));
-  }
+  var Z0 = ZR - 10;          /* where you come to rest, ten back from the rails */
 
   function buildCamera(t) {
     aspect = W / H;
     tanY = aspect >= 1 ? 0.72 : 0.72 * (1 + (1 - aspect) * 0.5);
 
-    var p = through ? flightProgress() : 0;
     var d = diving || through ? dive : 0;
     var k = d * d * (3 - 2 * d);              /* walking through the door */
 
-    /* eye height, with the sway of someone actually walking */
-    cam[1] = 4.2 + (through ? Math.sin(t * 0.9) * 0.06 : 0);
-    cam[2] = ease(14, Z0, k) + (through ? p * ZSPAN : 0);
-    cam[0] = through ? Math.sin(t * 0.42) * 0.10 : 0;
+    /* eye height, with the sway of someone standing, not marching */
+    cam[1] = 4.2 + (through ? Math.sin(t * 0.55) * 0.05 : 0);
+    cam[2] = ease(14, Z0, k);
+    cam[0] = through ? Math.sin(t * 0.31) * 0.09 : 0;
+    var p = 0;
 
     /* the room is level; only the pointer moves the head */
     var yaw   = cx * 0.13;
@@ -968,40 +949,21 @@
     }
   }
 
-  /* ===================== the marks that report the flight ============== */
-  var flown = document.getElementById('flown');
-  var depth = document.getElementById('depth');
-  var where = document.getElementById('where');
-  var shore = document.getElementById('shore');
-  var hint  = document.getElementById('hint');
-  var lastWhere = '';
-
-  function report(p) {
-    flown.style.width = (p * 100).toFixed(1) + '%';
-    var room = Math.min(ROOMS.length - 1, Math.floor((Z0 + p * ZSPAN) / RL));
-    wearRoom(room);
-    depth.textContent = room >= 1 && room <= WALK.length
-      ? room + ' of ' + WALK.length : '\u2014';
-    var w = ROOMS[room].name;
-    if (w !== lastWhere) { where.textContent = w; lastWhere = w; }
-    shore.classList.toggle('here', p > 0.955);
-  }
+  var hint = document.getElementById('hint');
 
   /* ===================== a garment, brought close ====================== */
   var cu = document.getElementById('close-up');
   function bring(i) {
-    var it = SKY[i];
-    document.getElementById('cuPillar').textContent =
-      (it.exclusive ? 'Exclusive edition · ' : '') + it.pillar;
+    var it = PIECES[i];
+    document.getElementById('cuPillar').textContent = 'What is Peace? — ' + it.short;
     document.getElementById('cuName').textContent = it.n;
     document.getElementById('cuSay').textContent = it.say;
     var go = document.getElementById('cuGo');
     go.href = SHOP + it.h;
-    go.setAttribute('aria-disabled', String(!!it.sold));
-    go.textContent = it.sold ? 'Gone' : 'Take it down with you';
+    go.textContent = 'Take it home — €' + it.p.toFixed(2).replace('.', ',');
     cu.classList.add('up');
   }
-  function letgo() { cu.classList.remove('up'); }
+  function letgo() { cu.classList.remove('up'); look(-1); }
   document.getElementById('cuShut').addEventListener('click', letgo);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') letgo(); });
 
@@ -1036,9 +998,8 @@
   document.getElementById('enter').addEventListener('click', enter);
   document.querySelector('#door .m').addEventListener('click', enter);
 
-  window.addEventListener('scroll', function () {
-    if (window.scrollY > 40) hint.classList.add('gone');
-  }, { passive: true });
+  /* the hint is worth showing only until you have looked at something */
+  function used() { hint.classList.add('gone'); }
 
   if (!still) {
     window.addEventListener('pointermove', function (e) {
@@ -1048,12 +1009,6 @@
   }
 
   /* ===================== the loop ===================================== */
-  if (gl) {
-    gl.uniform3fv(U.uPal, new Float32Array(PAL));
-    gl.uniform3fv(U.uCfg, new Float32Array(CFG));
-    gl.uniform1fv(U.uRoomHour, new Float32Array(ROOM_HOUR));
-  }
-
   var frames = 0, acc = 0, last = performance.now(), quality = 2;
 
   function frame(ms) {
@@ -1062,10 +1017,10 @@
 
     cx += (px - cx) * 0.045;
     cy += (py - cy) * 0.045;
+    drift(Math.min(1, dt * 1.6));
 
     var p = buildCamera(t0);
     place(t0);
-    if (through) report(p);
 
     if (gl) {
       gl.uniform2f(U.uRes, cv.width, cv.height);
@@ -1075,8 +1030,15 @@
       gl.uniform3f(U.uRight, rgt[0], rgt[1], rgt[2]);
       gl.uniform3f(U.uUp, upv[0], upv[1], upv[2]);
       gl.uniform1f(U.uTanY, tanY);
-      /* the palette table never changes; only which room you stand in does */
-      gl.uniform1f(U.uRoom0, Math.max(0, Math.floor(cam[2] / RL)));
+      gl.uniform3f(U.uDeep, now.deep[0], now.deep[1], now.deep[2]);
+      gl.uniform3f(U.uPale, now.pale[0], now.pale[1], now.pale[2]);
+      gl.uniform3f(U.uCloud, now.cloud[0], now.cloud[1], now.cloud[2]);
+      gl.uniform3f(U.uGA, now.grassA[0], now.grassA[1], now.grassA[2]);
+      gl.uniform3f(U.uGB, now.grassB[0], now.grassB[1], now.grassB[2]);
+      gl.uniform3f(U.uGlow, now.glow[0], now.glow[1], now.glow[2]);
+      gl.uniform1f(U.uCover, now.cover);
+      gl.uniform1f(U.uLight, now.light);
+      gl.uniform1f(U.uStars, now.stars);
       /* the door swings open as you go through it, then stays open ahead */
       gl.uniform1f(U.uSwing, 0.46 + (through ? 0.82 : dive * 0.82));
       gl.drawArrays(gl.TRIANGLES, 0, 3);
