@@ -105,7 +105,6 @@
   }
 
   /* ---- a rail, standing on the grass ---- */
-  .rack { width: 380px; }
   .rack svg { width: 100%; height: auto; }
 
   /* ---- a garment, on its hanger ---- */
@@ -280,7 +279,6 @@
   @media (max-width: 760px) {
     .garment { width: 200px; }
     .garment .plate { width: 200px; height: 236px; }
-    .rack { width: 250px; }
     .verse { width: min(88vw, 420px); }
     .verse p { font-size: 27px; }
     .verse .big { font-size: 52px; }
@@ -382,76 +380,77 @@
      ===================================================================== */
   var RL = 26, RAIL = 5.44;          /* room depth, and the height of a rail */
 
+  /* Each room is one collection and keeps one hour. Rooms are RL deep, so
+     room n runs from n*RL to (n+1)*RL. Room 0 is the way in, 4 the way out. */
   var ROOMS = [
     { hour: 'peace',     name: 'The first room', sub: 'You are inside the cloud' },
-    { hour: 'peace',     name: 'Peace',     sub: 'Daylight, and the haze after rain' },
-    { hour: 'mystery',   name: 'Mystery',   sub: 'What the window does not show you' },
+    { hour: 'peace',     name: 'Peace',     sub: 'What is peace? — one question, five colours' },
+    { hour: 'mystery',   name: 'Mystery',   sub: 'Six letters nobody outside will decode' },
     { hour: 'nostalgia', name: 'Nostalgia', sub: 'Sun-faded film, a memory you did not know you had' },
     { hour: 'peace',     name: 'The last door', sub: '' }
   ];
 
-  /* each collection hangs on two rails, one either side of the doorway */
-  var RACKS = [
-    { room: 1, x: -4.9 }, { room: 1, x: 4.9 },
-    { room: 2, x: -4.9 }, { room: 2, x: 4.9 },
-    { room: 3, x: -4.9 }, { room: 3, x: 4.9 }
-  ];
-
-  var WARDROBE = [
-    /* --- room 1, PEACE ------------------------------------------------ */
-    { h: 'white-bones', n: 'White Bones "WiP?"', p: 39.99, room: 1, rail: 0, slot: -1,
-      img: 'IMG-0270.jpg', tall: 3.1,
-      say: 'Bare structure on bare cotton. The quietest thing the house makes.' },
-    { h: 'pure-water-wip-t-shirt', n: 'Pure Water "WiP?"', p: 39.99, room: 1, rail: 0, slot: 1,
-      img: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg', tall: 3.1,
+  /* what each piece is. Where it hangs is decided by the rails below. */
+  var PIECES = {
+    'white-bones': { n: 'White Bones "WiP?"', p: 39.99, tall: 3.1, img: 'IMG-0270.jpg',
+      say: 'Bone cotton, the question in black. The quietest of the five.' },
+    'pure-water-wip-t-shirt': { n: 'Pure Water "WiP?"', p: 39.99, tall: 3.1,
+      img: 'CA037851-9FA7-4C78-9CB1-EE602E30E22D.jpg',
       say: 'Washed blue, the colour of the inner space the house is named after.' },
-    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone "WiP?"', p: 39.99, room: 1, rail: 1, slot: -1,
-      img: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg', tall: 3.1,
-      say: 'Marble, columns, patience — cut for a Tuesday.' },
-    { h: 'native-flower-shirt', n: 'Native Life in Flowers', p: 35.00, room: 1, rail: 1, slot: 1,
-      img: 'Recurso11T1BACK.png', tall: 3.1, exclusive: true,
-      say: 'Life in flowers, front and back. The softest statement in the archive.' },
+    'greek-stone-wip-t-shirt': { n: 'Greek Stone "WiP?"', p: 39.99, tall: 3.1,
+      img: '41E903E7-2096-42FA-93E8-CBC1693A4255.jpg',
+      say: 'Marble grey, marled. Patience, cut for a Tuesday.' },
+    'black-stone': { n: 'Black Stone "WiP?"', p: 39.99, tall: 3.1, img: 'IMG-0276.jpg',
+      say: 'The only one of the five that turns the ink over: white on black.' },
+    'cotton-candy-wip-t-shirt': { n: 'Cotton Candy "WiP?"', p: 39.99, tall: 3.1,
+      img: 'IMG-8696.jpg', say: 'Dusty pink, sun-faded on purpose.' },
 
-    /* --- room 2, MYSTERY ---------------------------------------------- */
-    { h: 'black-stone', n: 'Black Stone "WiP?"', p: 39.99, room: 2, rail: 0, slot: -1,
-      img: 'IMG-0276.jpg', tall: 3.1,
-      say: 'The question mark, printed in the dark. It only gives itself up under light.' },
-    { h: 'ycsfpotd-hoodie', n: '"YCSFPOTD" Hoodie', p: 64.99, room: 2, rail: 0, slot: 1,
-      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg', tall: 3.7,
+    'ycsfpotd-hoodie': { n: '"YCSFPOTD" Hoodie', p: 64.99, tall: 3.7,
+      img: '34FDC100-BF42-455F-8533-4E79A99B31C3.jpg',
       say: 'Six letters nobody outside will decode. The house keeps something back.' },
-    { h: 'ycsfpotd-pants', n: '"YCSFPOTD" Pants', p: 64.99, room: 2, rail: 1, slot: 0,
-      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg', tall: 3.9,
+    'ycsfpotd-pants': { n: '"YCSFPOTD" Pants', p: 64.99, tall: 3.9,
+      img: '4845F6E3-96B4-4FBF-B54E-126F9BF53D7A.jpg',
       say: 'The set completed. Same weight, same cipher, running down the leg.' },
 
-    /* --- room 3, NOSTALGIA -------------------------------------------- */
-    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy "WiP?"', p: 39.99, room: 3, rail: 0, slot: -1,
-      img: 'IMG-8696.jpg', tall: 3.1,
-      say: 'Sugar pink, sun-faded on purpose.' },
-    { h: 'sweet-lemon-hoodie', n: '"Sweet Lemon" Hoodie', p: 64.99, room: 3, rail: 0, slot: 1,
-      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg', tall: 3.7, sold: true,
+    'sweet-lemon-hoodie': { n: '"Sweet Lemon" Hoodie', p: 64.99, tall: 3.7, sold: true,
+      img: '02505428-7951-4333-AFF5-EB3B4A15A1FB.jpg',
       say: 'The hoodie that opened the house to a wider room. Citrus left in the sun.' },
-    { h: 'sweet-lemon-pants', n: '"Sweet Lemon" Pants', p: 64.99, room: 3, rail: 1, slot: -1,
-      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg', tall: 3.9,
+    'sweet-lemon-pants': { n: '"Sweet Lemon" Pants', p: 64.99, tall: 3.9,
+      img: '5DD40C56-7AD7-49BB-972D-BECF13C006F9.jpg',
       say: 'Its other half. Wide leg, same fleece, same faded citrus.' },
-    { h: 'native-pinky-stars-shirt', n: 'Native Magnolia Shirt', p: 35.00, room: 3, rail: 1, slot: 1,
-      img: 'Recurso7t7.png', tall: 3.1, exclusive: true,
-      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' }
+    'native-pinky-stars-shirt': { n: 'Native Magnolia Shirt', p: 35.00, tall: 3.1, exclusive: true,
+      img: 'Recurso7t7.png',
+      say: 'Magnolia across the chest, stars behind it. Printed once, never re-run.' },
+    'native-flower-shirt': { n: 'Native Life in Flowers', p: 35.00, tall: 3.1, exclusive: true,
+      img: 'Recurso11T1BACK.png',
+      say: 'Life in flowers, front and back. The softest statement in the archive.' }
+  };
+
+  /* The five WiP? tees are one question printed five times, so they hang
+     together on the Peace rails rather than being scattered by colour.
+     `span` is the length of the bar in world units; the pieces space
+     themselves along it. */
+  var RAILS = [
+    { room: 1, x: -5.0, span: 6.4, on: ['white-bones', 'pure-water-wip-t-shirt', 'greek-stone-wip-t-shirt'] },
+    { room: 1, x:  5.2, span: 4.6, on: ['black-stone', 'cotton-candy-wip-t-shirt'] },
+    { room: 2, x: -4.9, span: 3.0, on: ['ycsfpotd-hoodie'] },
+    { room: 2, x:  4.9, span: 3.0, on: ['ycsfpotd-pants'] },
+    { room: 3, x: -4.9, span: 4.6, on: ['sweet-lemon-hoodie', 'sweet-lemon-pants'] },
+    { room: 3, x:  4.9, span: 4.6, on: ['native-pinky-stars-shirt', 'native-flower-shirt'] }
   ];
 
-  /* build the scene: a rail, the garments on it, and the room's name high
-     on the far wall where a shop would put its sign */
   var SKY = [];
-  RACKS.forEach(function (r) {
-    SKY.push({ k: 'rack', at: [r.x, 2.9, r.room * RL + 13], size: 5.8 });
-  });
-  WARDROBE.forEach(function (g) {
-    var rack = RACKS.filter(function (r) { return r.room === g.room; })[g.rail];
-    SKY.push({
-      k: 'garment', h: g.h, n: g.n, p: g.p, img: g.img, say: g.say,
-      sold: g.sold, exclusive: g.exclusive,
-      pillar: ROOMS[g.room].name,
-      at: [rack.x + g.slot * 1.15, RAIL - g.tall / 2, g.room * RL + 12.6],
-      size: g.tall
+  RAILS.forEach(function (r) {
+    var z = r.room * RL + 13;
+    SKY.push({ k: 'rack', at: [r.x, 2.9, z], size: 5.8, span: r.span });
+    r.on.forEach(function (h, i) {
+      var g = PIECES[h], n = r.on.length;
+      SKY.push({
+        k: 'garment', h: h, n: g.n, p: g.p, img: g.img, say: g.say,
+        sold: g.sold, exclusive: g.exclusive, pillar: ROOMS[r.room].name,
+        at: [r.x + (i - (n - 1) / 2) * (r.span / n), RAIL - g.tall / 2, z - 0.4],
+        size: g.tall
+      });
     });
   });
   ROOMS.forEach(function (r, i) {
@@ -798,26 +797,31 @@
   /* A shop rail: two posts, two feet, a chrome tube across the top, and the
      shadow it drops on the grass. Flat, because a rail square-on to the
      aisle very nearly is. */
-  var RAIL_SVG =
-    '<svg viewBox="0 0 380 400" aria-hidden="true">' +
+  var PPU = 400 / 5.8;               /* the rail box is 400px tall = 5.8 world */
+
+  function railSVG(span) {
+    var bar = Math.round(span * PPU);
+    var W = bar + 48, x0 = 24, x1 = x0 + bar;
+    return '<svg viewBox="0 0 ' + W + ' 400" aria-hidden="true">' +
       '<defs>' +
-        '<linearGradient id="rl" x1="0" y1="0" x2="0" y2="1">' +
+        '<linearGradient id="rl' + bar + '" x1="0" y1="0" x2="0" y2="1">' +
           '<stop offset="0%" stop-color="#fbfcfd"/><stop offset="30%" stop-color="#c3cad2"/>' +
           '<stop offset="52%" stop-color="#6d757e"/><stop offset="68%" stop-color="#cdd4db"/>' +
           '<stop offset="100%" stop-color="#8a929a"/>' +
         '</linearGradient>' +
-        '<linearGradient id="ps" x1="0" y1="0" x2="1" y2="0">' +
+        '<linearGradient id="ps' + bar + '" x1="0" y1="0" x2="1" y2="0">' +
           '<stop offset="0%" stop-color="#8d959d"/><stop offset="34%" stop-color="#f4f7f9"/>' +
           '<stop offset="62%" stop-color="#9aa2aa"/><stop offset="100%" stop-color="#6a727a"/>' +
         '</linearGradient>' +
       '</defs>' +
-      '<ellipse cx="190" cy="393" rx="168" ry="11" fill="#0d1a24" opacity=".22"/>' +
-      '<rect x="14" y="379" width="52" height="10" rx="5" fill="url(#rl)"/>' +
-      '<rect x="314" y="379" width="52" height="10" rx="5" fill="url(#rl)"/>' +
-      '<rect x="33" y="28" width="11" height="353" rx="5.5" fill="url(#ps)"/>' +
-      '<rect x="336" y="28" width="11" height="353" rx="5.5" fill="url(#ps)"/>' +
-      '<rect x="24" y="22" width="332" height="12" rx="6" fill="url(#rl)"/>' +
+      '<ellipse cx="' + (W/2) + '" cy="393" rx="' + (W/2 - 12) + '" ry="11" fill="#0d1a24" opacity=".22"/>' +
+      '<rect x="' + (x0-10) + '" y="379" width="52" height="10" rx="5" fill="url(#rl' + bar + ')"/>' +
+      '<rect x="' + (x1-42) + '" y="379" width="52" height="10" rx="5" fill="url(#rl' + bar + ')"/>' +
+      '<rect x="' + (x0+5) + '" y="28" width="11" height="353" rx="5.5" fill="url(#ps' + bar + ')"/>' +
+      '<rect x="' + (x1-16) + '" y="28" width="11" height="353" rx="5.5" fill="url(#ps' + bar + ')"/>' +
+      '<rect x="' + x0 + '" y="22" width="' + bar + '" height="12" rx="6" fill="url(#rl' + bar + ')"/>' +
     '</svg>';
+  }
 
   /* the hanger each garment hangs from */
   var HOOK_SVG =
@@ -830,7 +834,8 @@
     var el = document.createElement(it.k === 'garment' ? 'button' : 'div');
     el.className = 'drift ' + it.k;
     if (it.k === 'rack') {
-      el.innerHTML = RAIL_SVG;
+      el.innerHTML = railSVG(it.span);
+      el.style.width = Math.round(it.span * PPU + 48) + 'px';
       el.setAttribute('aria-hidden', 'true');
     } else if (it.k === 'garment') {
       el.type = 'button';
@@ -944,8 +949,9 @@
                        : Math.min(1, Math.max(0, (zc - 1.6) / 2.6));
       var far  = Math.min(1, Math.max(0, (86 - zc) / 26));
       var op = near * far * gate;
+      var box = rack ? 400 : 380;
       var scale = verse ? Math.min(th.d.wide * scr / th.d.w, W * 0.86 / th.d.w)
-                        : Math.min(th.d.size * scr / 380, H * (rack ? 2.4 : 1.15) / 380);
+                        : Math.min(th.d.size * scr / box, H * (rack ? 2.4 : 1.15) / box);
 
       th.el.style.transform =
         'translate(' + ((sx * 0.5 + 0.5) * W).toFixed(1) + 'px,' +

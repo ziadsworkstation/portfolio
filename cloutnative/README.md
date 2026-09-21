@@ -86,24 +86,32 @@ andando a la sala que guarda esa hora.
 
 ## Las burras y lo que cuelga
 
-`RACKS` pone dos burras por sala, a `x = ±4.9`, apartadas del eje de la puerta.
-`WARDROBE` dice de qué burra y en qué hueco cuelga cada prenda:
+`RAILS` pone las burras: sala, posición, **largo de la barra** y qué cuelga de
+ella. Las prendas se reparten solas a lo largo del largo que se le dé, así que
+una barra de tres es más larga que una de una. `PIECES` dice qué es cada
+prenda, sin decir dónde va:
 
-    { h: 'black-stone',        // handle de Shopify: define el enlace
-      n: 'Black Stone "WiP?"',
-      p: 39.99,
-      room: 2,                 // en qué sala
-      rail: 0,                 // 0 izquierda, 1 derecha
-      slot: -1,                // -1, 0 o 1 a lo largo de la barra
-      img: 'IMG-0276.jpg',
-      tall: 3.1,               // alto en unidades de mundo (la sala mide 11)
-      say: '…' }
+    RAILS: { room: 1, x: -5.0, span: 6.4,
+             on: ['white-bones', 'pure-water-wip-t-shirt', 'greek-stone-wip-t-shirt'] }
+
+    PIECES: 'black-stone': {     // la clave es el handle de Shopify
+              n: 'Black Stone "WiP?"',
+              p: 39.99,
+              img: 'IMG-0276.jpg',
+              tall: 3.1,         // alto en unidades de mundo (la sala mide 11)
+              say: '…' }
 
 La posición se calcula sola: `RAIL - tall/2`, así que **todas las prendas
 cuelgan con el hombro a la altura de la barra** sea cual sea su largo.
 
 La burra es un SVG plano (dos pies, dos montantes, tubo cromado y su sombra),
-porque una barra puesta de frente al pasillo es casi plana de verdad.
+porque una barra puesta de frente al pasillo es casi plana de verdad. Se
+construye a medida con `railSVG(span)`: el tubo se alarga, los montantes y los
+pies no cambian de grosor.
+
+**Las salas son colecciones y el reparto sale de las prendas, no de un
+criterio**: las cinco WiP? llevan *"what is peace?"* escrito en el pecho, así
+que van juntas en la sala Peace.
 
 ## Las paredes mandan sobre el DOM
 

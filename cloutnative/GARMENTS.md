@@ -18,7 +18,7 @@ pregunta en un color distinto.
 Esto conviene que salga en la web en algún sitio, porque ahora mismo "WiP?"
 no se entiende si no tienes la prenda en la mano.
 
-**Confirmado con cuatro muestras**: la gris, la azul y la negra son *el mismo diseño*
+**Confirmado con las cinco**: la gris, la azul y la negra son *el mismo diseño*
 — misma frase, mismas tres palomas en la misma posición, mismo logo detrás,
 mismas etiquetas. Lo único que cambia es el color de la tela, y en la negra
 la tinta se invierte a blanco (etiqueta de manga incluida). Así que la línea
@@ -117,6 +117,54 @@ de la serie. **Casi seguro**, pero sin confirmar.
 **Handle probable**: *Cotton Candy "WiP?" T-shirt* (39,99 €). Es el único rosa
 de la serie. **Casi seguro**, sin confirmar.
 
+### "What is Peace?" — hueso
+
+- **Fotos**: `assets/garments/what-is-peace-bone-front.jpg` / `-back.jpg`
+- **Color de tela**: crema hueso, con un punto verdoso → **`#c8c8b4`**
+- **Diseño**: el mismo, tinta negra.
+- **Estado**: es la más gastada de las cinco. El estampado tiene **grietas y
+  desgaste** visibles, y la tela está arrugada. Al comparar su logo con el
+  adoptado difiere un 12 % de píxeles — el triple que las demás (4–6 %). Eso
+  **no** es una variante del logo: es la tinta rota. Dato de la prenda.
+
+**Handle**: *White Bones "WiP?" T-shirt* (39,99 €). Hueso, y es la única
+crema de la serie.
+
+---
+
+## La serie WiP? está completa
+
+Cinco camisetas, una pregunta:
+
+| Color | Prenda | Tela |
+|---|---|---|
+| Hueso | White Bones | `#c8c8b4` |
+| Azul claro | Pure Water | `#c7d5dd` |
+| Gris jaspeado | Greek Stone | `#787675` |
+| Negro | Black Stone | `#0f0e13` |
+| Rosa | Cotton Candy | `#cfa7b5` |
+
+Con la hueso cerrada, **la gris deja de ser ambigua**: es Greek Stone. Antes
+dudaba entre esa y White Bones.
+
+La única que invierte la tinta es la negra: blanco sobre negro, etiqueta de
+manga incluida.
+
+---
+
+## Cómo quedan repartidas las salas
+
+Las cinco WiP? cuelgan **juntas en la sala Peace**, no repartidas por color
+como estaban. El motivo sale de la propia prenda: la frase del pecho es
+*"what is peace?"*, así que esa serie **es** la pregunta de la sala. No hacía
+falta inventar un criterio, lo llevan escrito.
+
+| Sala | Colección | Qué cuelga |
+|---|---|---|
+| 1 · Peace | Las cinco WiP? | White Bones, Pure Water, Greek Stone / Black Stone, Cotton Candy |
+| 2 · Mystery | YCSFPOTD | Sudadera y pantalón. Dos piezas y mucho aire: la sala que no enseña lo que guarda. |
+| 3 · Nostalgia | Sweet Lemon + ediciones Native | Sudadera y pantalón Sweet Lemon / Magnolia y Life in Flowers |
+
 ---
 
 ## Una cosa de las fotos, no de la ropa
@@ -160,9 +208,6 @@ Precio y nombre salen del sitio actual; las fotos se cargan de su CDN.
 | "YCSFPOTD" Pants | 64,99 € | — |
 | Native Magnolia Shirt | 35,00 € | Edición exclusiva |
 | Native Life in Flowers Shirt | 35,00 € | Edición exclusiva |
-
-**Faltan de la serie WiP?**: solo *White Bones* (la blanca). Con esa cerrada,
-la gris deja de ser ambigua: sería *Greek Stone*.
 
 **Pendiente**: "YCSFPOTD" tampoco está descifrado. Si es otra frase como
 "WiP?", merece el mismo trato en la web.
