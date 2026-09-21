@@ -18,10 +18,10 @@ pregunta en un color distinto.
 Esto conviene que salga en la web en algún sitio, porque ahora mismo "WiP?"
 no se entiende si no tienes la prenda en la mano.
 
-**Confirmado con tres muestras**: la gris, la azul y la negra son *el mismo diseño*
+**Confirmado con cuatro muestras**: la gris, la azul y la negra son *el mismo diseño*
 — misma frase, mismas tres palomas en la misma posición, mismo logo detrás,
 mismas etiquetas. Lo único que cambia es el color de la tela, y en la negra
-la tinta se invierte a blanco. Así que la línea
+la tinta se invierte a blanco (etiqueta de manga incluida). Así que la línea
 WiP? no son cinco camisetas distintas: es una pregunta estampada en cinco
 colores. Eso es un argumento fuerte para enseñarlas juntas en la web, en la
 misma burra, y no repartidas.
@@ -41,8 +41,10 @@ misma burra, y no repartidas.
 El logo de la web está **trazado de la foto de una espalda**, umbralizado y
 convertido a vector. Va en `MARK_D` dentro de `index.html`.
 
-Se trazaron **las tres espaldas por separado** — gris, azul y negra — y salen
-la misma forma. Eso confirma que el trazado es fiel y no un artefacto de una
+Se trazaron **las espaldas por separado** — gris, azul y negra — y salen la
+misma forma. La rosa se comprobó contra la adoptada y coincide dentro del
+mismo margen que las otras entre sí (4,4 % de píxeles), así que confirma sin
+aportar nada nuevo. Eso confirma que el trazado es fiel y no un artefacto de una
 foto concreta.
 
 Se usa **el de la negra**: tinta blanca sobre tela negra es el mayor contraste
@@ -102,6 +104,29 @@ con el nombre y es el único azul de la serie. **Sin confirmar.**
 **Handle probable**: *Black Stone "WiP?" T-shirt* (39,99 €). Es el único negro
 de la serie. **Casi seguro**, pero sin confirmar.
 
+### "What is Peace?" — rosa
+
+- **Fotos**: `assets/garments/what-is-peace-pink-front.jpg` / `-back.jpg`
+- **Color de tela**: rosa empolvado → **`#cfa7b5`**. Más apagado de lo que
+  parece de lejos: los claros de la foto son reflejo, no tela.
+- **Diseño**: el mismo, tinta negra.
+- **Ojo con estas dos fotos**: vienen a ~850 px de lado, no a 2000 como las
+  demás. Valen para el catálogo pero **no para la web** — si hay originales
+  más grandes, mejor.
+
+**Handle probable**: *Cotton Candy "WiP?" T-shirt* (39,99 €). Es el único rosa
+de la serie. **Casi seguro**, sin confirmar.
+
+---
+
+## Una cosa de las fotos, no de la ropa
+
+En la gris, la azul y la rosa aparecen manchas claras en el torso, siempre en
+el mismo sitio. En la negra no. Que se repitan en la misma posición apunta a
+**reflejo del foco al fotografiar**, no a desgaste de la prenda. Si en algún
+momento se vuelven a tirar las fotos, merece la pena difuminar más esa luz:
+ahora mismo se comen el color real de la tela y obligan a estimarlo.
+
 ---
 
 ## Colores de tela medidos
@@ -114,6 +139,7 @@ web (las siluetas de la previsualización, y de referencia para los ambientes).
 | "What is Peace?" gris jaspeado | `#787675` |
 | "What is Peace?" azul claro | `#c7d5dd` |
 | "What is Peace?" negra | `#0f0e13` |
+| "What is Peace?" rosa | `#cfa7b5` |
 
 ---
 
@@ -134,6 +160,9 @@ Precio y nombre salen del sitio actual; las fotos se cargan de su CDN.
 | "YCSFPOTD" Pants | 64,99 € | — |
 | Native Magnolia Shirt | 35,00 € | Edición exclusiva |
 | Native Life in Flowers Shirt | 35,00 € | Edición exclusiva |
+
+**Faltan de la serie WiP?**: solo *White Bones* (la blanca). Con esa cerrada,
+la gris deja de ser ambigua: sería *Greek Stone*.
 
 **Pendiente**: "YCSFPOTD" tampoco está descifrado. Si es otra frase como
 "WiP?", merece el mismo trato en la web.
