@@ -53,14 +53,20 @@ nubes, la hierba, la luz que entra por la puerta y las estrellas. Están en
 
 ## El logo
 
-La página carga el logo real de la marca desde donde ya lo sirve su Shopify
-(`IMG_9568_copia.gif`). `cloudWindow()` dibuja debajo una reconstrucción del
-cuatrifolio con la ventana en cruz, que solo se ve si ese archivo no llega.
+Está **trazado de la foto de la espalda de una camiseta**
+(`assets/garments/what-is-peace-grey-back.jpg`): se umbralizó el estampado
+negro, se sacaron sus cinco contornos — el exterior y los cuatro paños
+huecos — se suavizaron y se pasaron a curvas. El resultado vive en la
+constante `MARK_D` de `index.html`, y `cloudWindow()` lo pinta plano donde va
+pequeño y cromado sobre la puerta.
 
-**No se pudo comprobar que el GIF cargue** — no hay salida a internet desde
-donde se construyó esto. Hay que abrirlo una vez con red. Si el archivo no es
-el bueno, cambia `REAL_MARK`; si prefieres un SVG, sustituye lo que devuelve
-`cloudWindow()` y quita el bloque que carga la imagen.
+Es la forma real, no una reconstrucción a ojo. Pero viene de tela fotografiada,
+así que si aparece el vector original sigue siendo mejor: se cambia `MARK_D` y
+ya está, nada más lo toca.
+
+Lo importante de la forma, que la versión anterior tenía al revés: el
+cuatrifolio es **hueco**, no macizo, y cada uno de los cuatro paños lleva una
+púa curvada hacia dentro.
 
 ## Salas, colecciones y horas
 
