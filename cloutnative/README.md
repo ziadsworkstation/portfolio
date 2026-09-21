@@ -53,20 +53,33 @@ nubes, la hierba, la luz que entra por la puerta y las estrellas. Están en
 
 ## El logo
 
-Está **trazado de la foto de la espalda de una camiseta**
-(`assets/garments/what-is-peace-grey-back.jpg`): se umbralizó el estampado
-negro, se sacaron sus cinco contornos — el exterior y los cuatro paños
-huecos — se suavizaron y se pasaron a curvas. El resultado vive en la
-constante `MARK_D` de `index.html`, y `cloudWindow()` lo pinta plano donde va
-pequeño y cromado sobre la puerta.
+La forma está **trazada de la espalda de la camiseta negra** — tinta blanca
+sobre tela negra, el estampado más nítido de los cinco —, suavizada y pasada
+a curvas. Vive en `MARK_D`.
 
-Es la forma real, no una reconstrucción a ojo. Pero viene de tela fotografiada,
-así que si aparece el vector original sigue siendo mejor: se cambia `MARK_D` y
-ya está, nada más lo toca.
+Sus **proporciones** vienen del PNG oficial, que no sirve para trazar (mide
+81 × 57 px) pero sí es exacto sobre el ancho contra el alto, cosa que una
+camiseta colgada de una percha no es: mi trazado salía un 3,1 % ancho de más
+y está corregido a 400 × 275.
 
-Lo importante de la forma, que la versión anterior tenía al revés: el
-cuatrifolio es **hueco**, no macizo, y cada uno de los cuatro paños lleva una
-púa curvada hacia dentro.
+### Cómo gira
+
+`turnMark()` dibuja el logo como **una placa de metal en un eje vertical**,
+en canvas 2D. Girar sobre Y hace dos cosas: aplasta la cara por `cos` y
+desplaza la cara trasera por `sin`. El canto se dibuja como una pila de
+copias entre las dos — **esa pila es el canto** que ves cuando la placa llega
+de perfil.
+
+El número de copias no es fijo: `LAYERS` sale del ancho que ocupa el canto en
+píxeles reales (`|sin| · T · k`), una copia por píxel. Con un número fijo, de
+perfil las copias dejan de solaparse y el canto se abre en franjas.
+
+El cromado es una rampa de luminancia que **se desliza** al girar
+(`chrome(a)`): eso es lo que se lee como metal pulido y no como gris. Una
+vuelta cada diez segundos. Con `prefers-reduced-motion` se queda quieta.
+
+Solo gira la de la puerta. La de la esquina va plana, en SVG, porque a 34 px
+un giro sería ruido.
 
 ## Una sala, cinco respuestas
 
