@@ -85,15 +85,46 @@ vuelta cada diez segundos. Con `prefers-reduced-motion` se queda quieta.
 Solo gira la de la puerta. La de la esquina va plana, en SVG, porque a 34 px
 un giro sería ruido.
 
-## Una sala, cinco respuestas
+## El probador
 
-La web es una sola colección: *What is Peace?* — una pregunta estampada en
-cinco colores. Así que es **una sola habitación**, sin pasillo y sin scroll.
-Entras por la puerta, te quedas de pie delante de las cinco, y ya está.
+La web es una sola colección — *What is Peace?*, una pregunta en cinco
+colores — en **una sola habitación**, sin pasillo y sin scroll. Entras por la
+puerta y estás en la tienda: el género en las burras de los lados, y tú en la
+peana del centro.
 
-`PIECES` es la colección en orden. `RAILS` dice qué cuelga de cada barra —
-tres a la izquierda del vano, dos a la derecha — y las prendas se reparten
-solas a lo largo del largo que se le dé a la barra.
+Está montado como la tienda de ropa de **GTA San Andreas**: una lista, el
+personaje en el sitio, y lo que eliges te lo pones al instante.
+
+- **Elegir** (en la lista o pulsando la prenda de la burra) te la pone encima
+  y la sala toma su hora.
+- **Turn around** te da la vuelta. Cada camiseta tiene foto de delante y de
+  detrás, y **detrás es donde está el logo grande** — que es lo que hay que
+  enseñar.
+- Las flechas del teclado recorren la colección.
+- **Buy** enlaza a su ficha de Shopify.
+
+### Las barras
+
+Donde el San Andreas ponía *Respect* y *Sex Appeal*, van **los tres pilares
+de la casa**: Peace, Mystery, Nostalgia. Cada prenda puntúa distinto
+(`stat: [5, 2, 3]`). Es un guiño al juego que además dice algo verdadero de
+la marca.
+
+### El figurín
+
+`figureSVG()`. Va **sin cara a propósito**: una cara mal dibujada hundiría el
+tono de todo lo demás, y sin ella el figurín se lee como la persona que está
+ahí de pie, no como un personaje concreto.
+
+Está en **pose de A** — brazos abiertos — por un motivo técnico: las fotos
+son de prenda extendida, con las mangas abiertas. Con los brazos pegados al
+cuerpo la camiseta parecía una tienda de campaña. Con los brazos abiertos las
+mangas caen donde tienen que caer y el antebrazo sale por donde acaba la
+manga. Es la misma razón por la que los selectores de personaje usan esa pose.
+
+Ocho cabezas de alto. Si se cambian las fotos, lo que hay que cuadrar es
+`.worn` en el CSS: `top` es dónde cae la línea de hombros y `width` cuánto
+abarcan las mangas.
 
 ## La sala toma la hora de la prenda que miras
 

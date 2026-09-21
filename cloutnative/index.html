@@ -25,6 +25,7 @@
     --ink-faint: rgba(15,22,32,0.46);
     --pane: rgba(255,255,255,0.72);
     --edge: rgba(15,22,32,0.14);
+    --accent-wash: rgba(15,22,32,0.07);
     --gut: clamp(20px, 3.4vw, 46px);
     --ease: cubic-bezier(.22,1,.36,1);
   }
@@ -35,6 +36,7 @@
     --ink-faint: rgba(238,241,251,0.48);
     --pane: rgba(16,18,34,0.62);
     --edge: rgba(238,241,251,0.16);
+    --accent-wash: rgba(238,241,251,0.09);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,6 +183,77 @@
   .hud-skies button[aria-pressed="true"]::after { width: 100%; }
 
   /* how far through the sky you are */
+  /* =====================================================================
+     THE FITTING PANEL
+     The shape of a clothing-shop menu — a list, the piece, what it does to
+     you, and the price — kept in the house's type rather than the game's.
+     ===================================================================== */
+  #shop {
+    position: fixed; z-index: 30;
+    left: var(--gut); bottom: calc(var(--gut) + 54px + env(safe-area-inset-bottom, 0px));
+    width: min(300px, calc(100vw - var(--gut) * 2));
+    display: grid; gap: 1px;
+    background: var(--edge);
+    border: 1px solid var(--edge);
+    backdrop-filter: blur(22px) saturate(1.2);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    opacity: 0; transition: opacity 1200ms ease;
+  }
+  html.through #shop { opacity: 1; }
+
+  .rack-list { background: var(--pane); padding: 6px 0; }
+  .rack-list button {
+    display: flex; width: 100%; align-items: baseline; gap: 10px;
+    padding: 8px 16px; text-align: left;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); transition: color 300ms ease, background 300ms ease;
+  }
+  .rack-list button .k { flex: 1; }
+  .rack-list button .v { font-size: 10px; letter-spacing: 0.08em; }
+  .rack-list button:hover { color: var(--ink-soft); }
+  .rack-list button[aria-selected="true"] { color: var(--ink); background: var(--accent-wash); }
+
+  .detail { background: var(--pane); padding: 16px; display: grid; gap: 11px; }
+  .detail h2 { font-size: 21px; font-weight: 500; letter-spacing: -0.02em; }
+  .detail .say { font-size: 12px; line-height: 1.55; color: var(--ink-soft); }
+
+  .stats { display: grid; gap: 6px; }
+  .stat { display: grid; grid-template-columns: 62px 1fr; gap: 10px; align-items: center; }
+  .stat span {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  .stat i { height: 3px; background: var(--edge); position: relative; display: block; }
+  .stat i::after {
+    content: ''; position: absolute; inset: 0 auto 0 0; background: var(--ink);
+    width: var(--w, 0%); transition: width 700ms var(--ease);
+  }
+
+  .acts { display: flex; gap: 14px; align-items: center; margin-top: 3px; }
+  .acts button, .acts a {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    padding-bottom: 3px; border-bottom: 1px solid transparent; color: var(--ink-soft);
+    transition: color 300ms ease, border-color 300ms ease;
+  }
+  .acts button:hover { color: var(--ink); border-color: var(--edge); }
+  .acts a { color: var(--ink); border-color: currentColor; margin-left: auto; }
+
+  /* you, on the podium */
+  .figure { width: 400px; }
+  .figure svg { width: 100%; height: auto; display: block; }
+  .figure .worn {
+    position: absolute; left: 50%; top: 16.4%; width: 94.5%;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 14px 16px rgba(16,22,28,0.3));
+    transition: opacity 260ms ease;
+  }
+  .dais { width: 400px; }
+  .dais svg { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 760px) {
+    #shop { left: 12px; right: 12px; width: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+    .detail .say { display: none; }
+  }
+
   /* the question stays in the room, set the way it is printed */
   .hud-ask {
     left: var(--gut); bottom: calc(var(--gut) + env(safe-area-inset-bottom, 0px));
@@ -242,50 +315,6 @@
   #door .tag { font-size: 9px; }
 
   /* =====================================================================
-     A GARMENT, BROUGHT CLOSE
-     ===================================================================== */
-  #close-up {
-    position: fixed; z-index: 60; inset: auto 0 0 0;
-    padding: var(--gut); display: grid; justify-items: center;
-    opacity: 0; visibility: hidden; transform: translateY(20px);
-    transition: opacity 700ms ease, visibility 700ms, transform 900ms var(--ease);
-  }
-  #close-up.up { opacity: 1; visibility: visible; transform: none; }
-  #close-up .card {
-    width: min(560px, 100%); padding: 26px 30px 28px;
-    background: var(--pane); border: 1px solid var(--edge); border-radius: 3px;
-    backdrop-filter: blur(26px) saturate(1.25);
-    -webkit-backdrop-filter: blur(26px) saturate(1.25);
-    display: grid; gap: 12px; text-align: center;
-    box-shadow: 0 40px 80px -50px rgba(14,30,50,0.6);
-  }
-  #close-up h2 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
-  #close-up p.say { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
-  #close-up .row { display: flex; gap: 18px; justify-content: center; align-items: center; margin-top: 4px; }
-  #close-up .go {
-    font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
-    border-bottom: 1px solid currentColor; padding-bottom: 3px;
-  }
-  #close-up .go[aria-disabled="true"] { color: var(--ink-faint); border-color: transparent; pointer-events: none; }
-  #close-up .shut { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-soft); }
-
-  /* =====================================================================
-     THE FAR SIDE
-     ===================================================================== */
-  #shore {
-    position: fixed; inset: 0; z-index: 20;
-    display: grid; place-content: center; justify-items: center; gap: 26px;
-    text-align: center; padding: var(--gut);
-    opacity: 0; visibility: hidden; pointer-events: none;
-    transition: opacity 1400ms ease, visibility 1400ms;
-  }
-  #shore.here { opacity: 1; visibility: visible; pointer-events: auto; }
-  #shore p.serif { font-size: clamp(24px, 3.6vw, 44px); max-width: 18ch; }
-  #shore .ways { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
-  #shore .ways a { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; border-bottom: 1px solid var(--edge); padding-bottom: 4px; }
-  #shore .ways a:hover { border-color: currentColor; }
-
-  /* =====================================================================
      SMALL SCREENS / STILL SCREENS
      ===================================================================== */
   @media (max-width: 760px) {
@@ -318,14 +347,6 @@
   <b>Clout Native</b>
 </div>
 
-<div class="hud hud-skies" role="group" aria-label="The collection">
-  <button type="button" data-pick="0" aria-pressed="false">Bone</button>
-  <button type="button" data-pick="1" aria-pressed="false">Water</button>
-  <button type="button" data-pick="2" aria-pressed="false">Stone</button>
-  <button type="button" data-pick="3" aria-pressed="false">Black</button>
-  <button type="button" data-pick="4" aria-pressed="false">Candy</button>
-</div>
-
 <p class="hud hud-ask serif">what is peace?</p>
 
 <p class="hud hud-out tag"><a href="https://cloutnative.com/collections/new-drop" target="_blank" rel="noopener">The whole store</a></p>
@@ -342,18 +363,20 @@
   </div>
 </div>
 
-<!-- ======================= A GARMENT, BROUGHT CLOSE ==================== -->
-<div id="close-up" role="dialog" aria-modal="false" aria-labelledby="cuName">
-  <div class="card">
-    <p class="tag" id="cuPillar"></p>
-    <h2 id="cuName"></h2>
-    <p class="say" id="cuSay"></p>
-    <div class="row">
-      <a class="go" id="cuGo" href="#" target="_blank" rel="noopener">Take it down with you</a>
-      <button class="shut" id="cuShut">Let it go</button>
+<!-- ======================= THE FITTING ======================= -->
+<section id="shop" aria-label="Try the collection on">
+  <div class="rack-list" role="listbox" aria-label="The collection" id="list"></div>
+  <div class="detail">
+    <p class="tag" id="sPillar">What is Peace?</p>
+    <h2 id="sName">Pure Water</h2>
+    <p class="say" id="sSay"></p>
+    <div class="stats" id="sStats"></div>
+    <div class="acts">
+      <button type="button" id="sTurn">Turn around</button>
+      <a id="sBuy" href="#" target="_blank" rel="noopener">Buy &mdash; <span id="sPrice"></span></a>
     </div>
   </div>
-</div>
+</section>
 
 <script>
 /* =======================================================================
@@ -379,45 +402,110 @@
 
   /* One room, one question, five answers on two rails. The room takes the
      hour of whichever shirt you are looking at. */
+  /* The five, and how each one scores against the house's own pillars —
+     the stat bars of a clothing shop, filled with Peace, Mystery and
+     Nostalgia instead of Respect and Sex Appeal. */
   var PIECES = [
-    { h: 'white-bones', n: 'White Bones', short: 'Bone', p: 39.99, tall: 3.1,
-      hour: 'dawn', cloth: '#c8c8b4', img: 'assets/garments/white-bones.webp',
+    { h: 'white-bones', n: 'White Bones', short: 'Bone', p: 39.99,
+      hour: 'dawn', cloth: '#c8c8b4',
+      front: 'assets/garments/white-bones.webp', back: 'assets/garments/white-bones-back.webp',
+      stat: [5, 2, 3],
       say: 'Bone cotton, the question in black. The quietest of the five, and the most worn — the ink has begun to crack.' },
-    { h: 'pure-water-wip-t-shirt', n: 'Pure Water', short: 'Water', p: 39.99, tall: 3.1,
-      hour: 'clear', cloth: '#c7d5dd', img: 'assets/garments/pure-water.webp',
+    { h: 'pure-water-wip-t-shirt', n: 'Pure Water', short: 'Water', p: 39.99,
+      hour: 'clear', cloth: '#c7d5dd',
+      front: 'assets/garments/pure-water.webp', back: 'assets/garments/pure-water-back.webp',
+      stat: [5, 1, 2],
       say: 'Washed blue, the colour of the calm inner space the house is named after.' },
-    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone', short: 'Stone', p: 39.99, tall: 3.1,
-      hour: 'overcast', cloth: '#787675', img: 'assets/garments/greek-stone.webp',
+    { h: 'greek-stone-wip-t-shirt', n: 'Greek Stone', short: 'Stone', p: 39.99,
+      hour: 'overcast', cloth: '#787675',
+      front: 'assets/garments/greek-stone.webp', back: 'assets/garments/greek-stone-back.webp',
+      stat: [4, 3, 4],
       say: 'Marble grey, marled. Patience, cut for a Tuesday.' },
-    { h: 'black-stone', n: 'Black Stone', short: 'Black', p: 39.99, tall: 3.1,
-      hour: 'night', cloth: '#0f0e13', img: 'assets/garments/black-stone.webp',
+    { h: 'black-stone', n: 'Black Stone', short: 'Black', p: 39.99,
+      hour: 'night', cloth: '#0f0e13',
+      front: 'assets/garments/black-stone.webp', back: 'assets/garments/black-stone-back.webp',
+      stat: [2, 5, 2],
       say: 'The only one of the five that turns the ink over: white on black, sleeve label included.' },
-    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy', short: 'Candy', p: 39.99, tall: 3.1,
-      hour: 'dusk', cloth: '#cfa7b5', img: 'assets/garments/cotton-candy.webp',
+    { h: 'cotton-candy-wip-t-shirt', n: 'Cotton Candy', short: 'Candy', p: 39.99,
+      hour: 'dusk', cloth: '#cfa7b5',
+      front: 'assets/garments/cotton-candy.webp', back: 'assets/garments/cotton-candy-back.webp',
+      stat: [3, 1, 5],
       say: 'Dusty pink, sun-faded on purpose. Quieter in the hand than it looks from across a room.' }
   ];
+  var PILLARS = ['Peace', 'Mystery', 'Nostalgia'];
 
   var ROOM = 1;                      /* the room the collection stands in */
   var ZR = ROOM * RL + 13;           /* how far down it the rails stand */
 
   /* three on the left of the doorway, two on the right */
   var RAILS = [
-    { x: -5.0, span: 6.4, on: [0, 1, 2] },
-    { x:  5.2, span: 4.6, on: [3, 4] }
+    { x: -6.2, span: 4.8, on: [0, 1, 2] },
+    { x:  6.4, span: 3.6, on: [3, 4] }
   ];
 
+  /* =====================================================================
+     THE FIGURE
+     You, on the podium, in whatever is on your back. Drawn without a face
+     on purpose: a badly drawn one would sink the whole room, and without
+     it the figure reads as the person standing there rather than a
+     character. The shirt photograph sits over the torso, its shoulders on
+     the figure's shoulders, its sleeves covering the upper arms.
+     ===================================================================== */
+  var FIG_W = 400, FIG_H = 900;
+  var SKIN = '#6d6560', SKIN_D = '#5a534f', DENIM = '#3f4550', SHOE = '#26282c';
+
+  /* A flat-lay photograph has its sleeves spread, so the figure stands with
+     its arms out to meet them — the same A-pose a character-select screen
+     uses, and for the same reason. Eight heads tall; the forearms carry on
+     where the sleeve ends. */
+  function figureSVG() {
+    return '<svg viewBox="0 0 ' + FIG_W + ' ' + FIG_H + '" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="dn" x1="0" y1="0" x2="1" y2="0">' +
+          '<stop offset="0%" stop-color="#31363f"/><stop offset="42%" stop-color="#454b57"/>' +
+          '<stop offset="100%" stop-color="#2b3038"/></linearGradient>' +
+        '<linearGradient id="sk" x1="0" y1="0" x2="1" y2="0">' +
+          '<stop offset="0%" stop-color="' + SKIN_D + '"/><stop offset="45%" stop-color="' + SKIN + '"/>' +
+          '<stop offset="100%" stop-color="' + SKIN_D + '"/></linearGradient>' +
+      '</defs>' +
+      /* legs */
+      '<path d="M146 424 h48 l4 208 l-4 198 h-42 l-6 -198 z" fill="url(#dn)"/>' +
+      '<path d="M206 424 h48 l-2 208 l-6 198 h-42 l4 -198 z" fill="url(#dn)"/>' +
+      '<path d="M198 430 h4 v400 h-4 z" fill="#20242b" opacity=".55"/>' +
+      '<path d="M140 826 h60 a11 11 0 0 1 11 11 v24 h-82 v-24 a11 11 0 0 1 11 -11 z" fill="' + SHOE + '"/>' +
+      '<path d="M200 826 h60 a11 11 0 0 1 11 11 v24 h-82 v-24 a11 11 0 0 1 11 -11 z" fill="' + SHOE + '"/>' +
+      /* arms: shoulder out to the elbow, then forearm and hand */
+      '<path d="M118 196 q-44 52 -70 104 l34 20 q30 -56 62 -94 z" fill="url(#sk)"/>' +
+      '<path d="M282 196 q44 52 70 104 l-34 20 q-30 -56 -62 -94 z" fill="url(#sk)"/>' +
+      '<path d="M48 300 l34 20 q-22 78 -30 142 q-3 22 -20 21 q-17 -1 -17 -22 q6 -88 33 -161 z" fill="url(#sk)"/>' +
+      '<path d="M352 300 l-34 20 q22 78 30 142 q3 22 20 21 q17 -1 17 -22 q-6 -88 -33 -161 z" fill="url(#sk)"/>' +
+      /* neck and head */
+      '<path d="M182 130 h36 v52 h-36 z" fill="' + SKIN_D + '"/>' +
+      '<path d="M158 76 q0 -48 42 -48 q42 0 42 48 q0 40 -10 56 q-12 20 -32 20 q-20 0 -32 -20 q-10 -16 -10 -56 z" fill="url(#sk)"/>' +
+      '<path d="M158 80 q0 -52 42 -52 q42 0 42 52 q0 -26 -42 -26 q-42 0 -42 26 z" fill="#37342f"/>' +
+      '<path d="M156 84 q-9 0 -9 11 q0 11 11 12 z" fill="' + SKIN_D + '"/>' +
+      '<path d="M244 84 q9 0 9 11 q0 11 -11 12 z" fill="' + SKIN_D + '"/>' +
+      /* the body under the shirt, so nothing shows through a thin print */
+      '<path d="M116 188 h168 l-24 250 h-120 z" fill="#4b4744"/>' +
+    '</svg>';
+  }
+
   var SKY = [];
+  /* the stock, on the rails either side */
   RAILS.forEach(function (r) {
     SKY.push({ k: 'rack', at: [r.x, 2.9, ZR], size: 5.8, span: r.span });
     r.on.forEach(function (idx, i) {
       var g = PIECES[idx], n = r.on.length;
-      SKY.push({ k: 'garment', i: idx, h: g.h, n: g.n, p: g.p, img: g.img, say: g.say,
-                 hour: g.hour,
-                 at: [r.x + (i - (n - 1) / 2) * (r.span / n), RAIL - g.tall / 2, ZR - 0.4],
-                 size: g.tall });
+      SKY.push({ k: 'garment', i: idx, h: g.h, n: g.n, p: g.p, img: g.front,
+                 say: g.say, hour: g.hour,
+                 at: [r.x + (i - (n - 1) / 2) * (r.span / n), RAIL - 1.55, ZR - 0.4],
+                 size: 3.1 });
     });
   });
-
+  /* the podium, and you on it, between the camera and the stock */
+  var ZF = ZR - 4;
+  SKY.push({ k: 'dais',   at: [0, 0.35, ZF], size: 0.9 });
+  SKY.push({ k: 'figure', at: [0, 3.47, ZF], size: 6.7 });
   /* ===================== the mark ===================================== */
   /* The mark: a quatrefoil with a window cut through it as a cross.
      Drawn rather than loaded so it can be any size and take the chrome
@@ -872,25 +960,7 @@
   }
   var darkNow = 'day';
 
-  /* the row of names is the index: it picks a shirt without walking anywhere */
-  var picked = -1;
-  document.querySelector('.hud-skies').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-pick]');
-    if (!b) return;
-    var i = +b.getAttribute('data-pick');
-    if (picked === i) { look(-1); letgo(); } else { look(i); bring(i); }
-    used();
-  });
-  function look(i) {
-    picked = i;
-    setHour(i < 0 ? REST : PIECES[i].hour);
-    [].forEach.call(document.querySelectorAll('.hud-skies button'), function (b, j) {
-      b.setAttribute('aria-pressed', String(j === i));
-    });
-    things.forEach(function (th) {
-      if (th.d.k === 'garment') th.el.classList.toggle('dim', picked >= 0 && th.d.i !== picked);
-    });
-  }
+  var picked = 1, worn = null, facing = 1;
 
   /* ===================== the field ==================================== */
   var field = document.getElementById('field');
@@ -944,6 +1014,18 @@
       el.innerHTML = railSVG(it.span);
       el.style.width = Math.round(it.span * PPU + 48) + 'px';
       el.setAttribute('aria-hidden', 'true');
+    } else if (it.k === 'dais') {
+      el.innerHTML = '<svg viewBox="0 0 400 96" aria-hidden="true">' +
+        '<ellipse cx="200" cy="68" rx="196" ry="26" fill="#0d1620" opacity=".28"/>' +
+        '<path d="M16 50 a184 25 0 0 0 368 0 v15 a184 25 0 0 1 -368 0 z" fill="#6f767d"/>' +
+        '<ellipse cx="200" cy="50" rx="184" ry="25" fill="#aab1b7"/>' +
+        '<ellipse cx="200" cy="48" rx="172" ry="21" fill="#c2c8cd"/>' +
+        '</svg>';
+      el.setAttribute('aria-hidden', 'true');
+    } else if (it.k === 'figure') {
+      el.innerHTML = figureSVG() + '<img class="worn" alt="">';
+      el.setAttribute('aria-hidden', 'true');
+      worn = el.querySelector('.worn');
     } else if (it.k === 'garment') {
       el.type = 'button';
       el.innerHTML =
@@ -955,12 +1037,7 @@
         '</span></figcaption></figure>';
       var im = el.querySelector('img');
       im.addEventListener('error', function () { im.style.visibility = 'hidden'; });
-      el.addEventListener('click', function () { look(it.i); bring(it.i); used(); });
-      /* before you have chosen, the room previews the weather you hover */
-      el.addEventListener('pointerenter', function () { if (picked < 0) setHour(it.hour); });
-      el.addEventListener('pointerleave', function () { if (picked < 0) setHour(REST); });
-      el.addEventListener('focus', function () { if (picked < 0) setHour(it.hour); });
-      el.addEventListener('blur', function () { if (picked < 0) setHour(REST); });
+      el.addEventListener('click', function () { wear(it.i); });
     } else {
       el.innerHTML = it.html;
       el.style.width = it.w + 'px';
@@ -978,7 +1055,7 @@
   var dive = 0, diving = false, through = false;
   var px = 0, py = 0, cx = 0, cy = 0;
 
-  var Z0 = ZR - 10;          /* where you come to rest, ten back from the rails */
+  var Z0 = ZR - 12.5;        /* back far enough to see the whole of them */
 
   function buildCamera(t) {
     aspect = W / H;
@@ -1033,6 +1110,7 @@
       }
 
       var verse = th.d.k === 'verse', rack = th.d.k === 'rack';
+      var prop = th.d.k === 'figure' || th.d.k === 'dais';
       /* a garment can pass you; a line of text has to hold its distance
          or it stops being readable and starts being wallpaper */
       var vis = gate > 0.002 && zc > (verse ? 7 : 1.4) && zc < 92;
@@ -1051,10 +1129,11 @@
       var scr = k / zc;                                   /* px per world unit */
 
       var near = verse ? Math.min(1, Math.max(0, (zc - 7.5) / 6))
+                       : prop ? 1
                        : Math.min(1, Math.max(0, (zc - 1.6) / 2.6));
       var far  = Math.min(1, Math.max(0, (86 - zc) / 26));
       var op = near * far * gate;
-      var box = rack ? 400 : 380;
+      var box = rack ? 400 : th.d.k === 'figure' ? FIG_H : th.d.k === 'dais' ? 96 : 380;
       var scale = verse ? Math.min(th.d.wide * scr / th.d.w, W * 0.86 / th.d.w)
                         : Math.min(th.d.size * scr / box, H * (rack ? 2.4 : 1.15) / box);
 
@@ -1076,21 +1155,70 @@
 
   var hint = document.getElementById('hint');
 
-  /* ===================== a garment, brought close ====================== */
-  var cu = document.getElementById('close-up');
-  function bring(i) {
-    var it = PIECES[i];
-    document.getElementById('cuPillar').textContent = 'What is Peace? — ' + it.short;
-    document.getElementById('cuName').textContent = it.n;
-    document.getElementById('cuSay').textContent = it.say;
-    var go = document.getElementById('cuGo');
-    go.href = SHOP + it.h;
-    go.textContent = 'Take it home — €' + it.p.toFixed(2).replace('.', ',');
-    cu.classList.add('up');
+  /* ===================== the fitting room =============================
+     Pick a piece and you are wearing it: the photograph swaps on the
+     figure, the room takes that piece's weather, and the pillars it scores
+     against fill. Turning shows the back, which is where the mark is.
+     ===================================================================== */
+  var list = document.getElementById('list');
+  var sName = document.getElementById('sName'), sSay = document.getElementById('sSay');
+  var sStats = document.getElementById('sStats'), sBuy = document.getElementById('sBuy');
+  var sPrice = document.getElementById('sPrice'), sTurn = document.getElementById('sTurn');
+
+  PIECES.forEach(function (g, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('role', 'option');
+    b.innerHTML = '<span class="k">' + g.n + '</span><span class="v">' +
+                  '€' + g.p.toFixed(2).replace('.', ',') + '</span>';
+    b.addEventListener('click', function () { wear(i); });
+    list.appendChild(b);
+  });
+
+  PILLARS.forEach(function (name, j) {
+    var row = document.createElement('div');
+    row.className = 'stat';
+    row.innerHTML = '<span>' + name + '</span><i data-bar="' + j + '"></i>';
+    sStats.appendChild(row);
+  });
+
+  function dress() {
+    var g = PIECES[picked];
+    if (worn) worn.src = facing > 0 ? g.front : g.back;
   }
-  function letgo() { cu.classList.remove('up'); look(-1); }
-  document.getElementById('cuShut').addEventListener('click', letgo);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') letgo(); });
+
+  function wear(i) {
+    picked = i;
+    var g = PIECES[i];
+    setHour(g.hour);
+    dress();
+    sName.textContent = g.n;
+    sSay.textContent = g.say;
+    sBuy.href = SHOP + g.h;
+    sPrice.textContent = '€' + g.p.toFixed(2).replace('.', ',');
+    [].forEach.call(list.children, function (b, j) {
+      b.setAttribute('aria-selected', String(j === i));
+    });
+    [].forEach.call(sStats.querySelectorAll('i'), function (bar, j) {
+      bar.style.setProperty('--w', (g.stat[j] / 5 * 100) + '%');
+    });
+    things.forEach(function (th) {
+      if (th.d.k === 'garment') th.el.classList.toggle('dim', th.d.i !== i);
+    });
+    used();
+  }
+
+  sTurn.addEventListener('click', function () {
+    facing = -facing;
+    sTurn.textContent = facing > 0 ? 'Turn around' : 'Turn back';
+    dress();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { wear((picked + 1) % PIECES.length); e.preventDefault(); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { wear((picked + PIECES.length - 1) % PIECES.length); e.preventDefault(); }
+  });
+
 
   /* ===================== the way in =================================== */
   var door = document.getElementById('door');
@@ -1115,6 +1243,7 @@
         veil.style.opacity = '0';
         through = true;
         root.classList.add('through');
+        wear(picked);
         document.body.classList.remove('held');
       }
     })(start);
