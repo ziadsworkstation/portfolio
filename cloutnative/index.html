@@ -21,8 +21,8 @@
     --sans: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
     --serif: 'Instrument Serif', 'Times New Roman', serif;
     --ink: #0f1620;
-    --ink-soft: rgba(15,22,32,0.55);
-    --ink-faint: rgba(15,22,32,0.30);
+    --ink-soft: rgba(15,22,32,0.70);
+    --ink-faint: rgba(15,22,32,0.46);
     --pane: rgba(255,255,255,0.72);
     --edge: rgba(15,22,32,0.14);
     --gut: clamp(20px, 3.4vw, 46px);
@@ -31,8 +31,8 @@
   /* night has to invert the few marks, or they disappear into it */
   html[data-sky="mystery"] {
     --ink: #eef1fb;
-    --ink-soft: rgba(238,241,251,0.58);
-    --ink-faint: rgba(238,241,251,0.30);
+    --ink-soft: rgba(238,241,251,0.74);
+    --ink-faint: rgba(238,241,251,0.48);
     --pane: rgba(16,18,34,0.62);
     --edge: rgba(238,241,251,0.16);
   }
@@ -45,7 +45,7 @@
     background: #a9c6dd;
     overflow-x: clip;
     -webkit-font-smoothing: antialiased;
-    transition: color 1400ms ease;
+    transition: color 480ms ease;
   }
   body.held { overflow: hidden; }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
@@ -122,7 +122,7 @@
   .garment .plate img {
     width: 100%; height: 100%; object-fit: contain;
     /* hanging, so the shadow falls away and down, not straight under */
-    filter: drop-shadow(0 26px 30px rgba(20,40,64,0.30));
+    filter: drop-shadow(0 18px 22px rgba(16,22,28,0.34));
     transition: transform 900ms var(--ease);
   }
   /* if a photo never arrives, the garment is still there as a held shape */
@@ -601,31 +601,49 @@
     '}',
 
     'vec3 mural(vec2 uv, float hi, float drift){',
-    '  float f = fbm(vec3(uv * 0.105 + vec2(drift, 0.0), 11.0));',
+    '  vec3 q = vec3(uv * 0.10 + vec2(drift, 0.0), 11.0);',
+    '  float f = fbm(q);',
+    /*  the slope of the noise stands in for a surface normal, so a cloud
+        has a lit side and a side in its own shadow instead of being a
+        flat cut-out of white */
+    '  float e = 0.75;',
+    '  vec2 slope = vec2(fbm(q + vec3(e, 0.0, 0.0)) - f, fbm(q + vec3(0.0, e, 0.0)) - f);',
+    '  float form = clamp(0.5 - (slope.x * 0.45 - slope.y * 0.95) * 9.0, 0.0, 1.0);',
+    '  form = form * form * (3.0 - 2.0 * form);',
+    /*  density with a long shoulder, then a second, much larger scale so the
+        field thins and gathers across the wall rather than tiling evenly */
+    '  float d = smoothstep(0.41, 0.645 - uCover * 0.06, f);',
+    '  d *= 0.56 + 0.44 * smoothstep(0.26, 0.68, fbm(q * 0.26 + 4.0));',
     '  vec3 sky = mix(uPale, uDeep, clamp(hi, 0.0, 1.0));',
-    '  float soft = smoothstep(0.40, 0.55, f);',
-    '  float core = smoothstep(0.545 - uCover * 0.09, 0.655, f);',
-    '  vec3 c = mix(sky, uCloud * 0.86, soft * 0.80);',
-    '  c = mix(c, uCloud, core);',
+    '  vec3 shade = mix(uCloud * 0.58, uDeep, 0.32);',
+    '  vec3 c = mix(sky, mix(shade, uCloud, form), d);',
+    /*  the thinnest edges let the sky through, which is what stops a cloud
+        looking like a sticker */
+    '  c = mix(c, sky, smoothstep(0.26, 0.0, d) * 0.45);',
     '  vec2 g = abs(fract(uv / vec2(5.2, 2.5) + 0.5) - 0.5);',
     '  float seam = max(smoothstep(0.47, 0.5, g.x), smoothstep(0.46, 0.5, g.y));',
     '  c *= 1.0 - seam * 0.028;',
-    '  c *= 0.97 + 0.06 * vnoise(vec3(uv * 5.5, 2.0));',
+    '  c *= 0.975 + 0.05 * vnoise(vec3(uv * 5.5, 2.0));',
     '  if (uStars > 0.5) {',
     '    vec2 sc = uv * 6.0; vec2 ci = floor(sc), cf = fract(sc);',
     '    float v = hash(vec3(ci, 1.0));',
     '    vec2 sp = vec2(hash(vec3(ci, 2.0)), hash(vec3(ci, 3.0)));',
     '    float d = length((cf - sp) * vec2(1.0, 1.0));',
     '    float star = step(0.88, v) * smoothstep(0.075, 0.0, d);',
-    '    c += vec3(star * (1.0 - core) * (0.45 + 0.55 * fract(v * 31.0)));',
+    '    c += vec3(star * (1.0 - d) * (0.45 + 0.55 * fract(v * 31.0)));',
     '  }',
     '  return c;',
     '}',
 
     'vec3 turf(vec2 uv, float pool){',
-    '  float n = fbm(vec3(uv * 0.5, 3.0));',
-    '  float blade = vnoise(vec3(uv.x * 26.0, uv.y * 9.0, 5.0));',
-    '  vec3 g = mix(uGA, uGB, clamp(n * 1.05 + blade * 0.38 - 0.12, 0.0, 1.0));',
+    '  float n = fbm(vec3(uv * 0.42, 3.0));',
+    /*  blades stretched along the run of the room, plus a finer grain */
+    '  float blade = vnoise(vec3(uv.x * 34.0, uv.y * 7.0, 5.0));',
+    '  float fine = vnoise(vec3(uv * 95.0, 9.0));',
+    '  float v = clamp(n * 0.82 + blade * 0.26 + fine * 0.11 - 0.08, 0.0, 1.0);',
+    '  vec3 g = mix(uGA, uGB, v);',
+    /*  broad clumping, the way cut turf lies in patches */
+    '  g *= 0.84 + 0.22 * smoothstep(0.24, 0.76, fbm(vec3(uv * 0.11, 7.0)));',
     '  return g * (0.55 + 0.95 * pool);',
     '}',
 
@@ -708,12 +726,20 @@
     '  col *= jamb;',
     '  col = mix(col, uGlow, clamp(beyond * 0.26, 0.0, 0.62));',
     '  col = mix(col, uGlow, smoothstep(16.0, 74.0, tHit) * 0.45);',
-    '  vec2 vg = gl_FragCoord.xy / uRes - 0.5;',
-    '  col *= 1.0 - dot(vg, vg) * 0.30;',
     '  col = col / (col + 0.82) * 1.42;',
-    '  col = pow(max(col, 0.0), vec3(0.88));',
-    '  float r = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);',
-    '  O = vec4(col + (r - 0.5) / 255.0, 1.0);',
+    /*  pull the colour back and lift the black a little: the look of film
+        left in the sun, which is also the house's own word for it */
+    '  float l = dot(col, vec3(0.2126, 0.7152, 0.0722));',
+    '  col = mix(vec3(l), col, 0.92);',
+    '  col = col * 0.97 + 0.018;',
+    '  col = pow(max(col, 0.0), vec3(0.95));',
+    '  vec2 vg = gl_FragCoord.xy / uRes - 0.5;',
+    '  col *= 1.0 - dot(vg, vg) * 0.32;',
+    /*  grain, enough to take the plastic off it */
+    '  float r = fract(sin(dot(gl_FragCoord.xy + fract(uTime) * 91.0,',
+    '                         vec2(12.9898, 78.233))) * 43758.5453);',
+    '  col += (r - 0.5) * 0.022;',
+    '  O = vec4(col, 1.0);',
     '}'
   ].join('\n');
 
@@ -774,34 +800,34 @@
      the clear day when you look away. */
   var HOURS = {
     dawn: {
-      deep: [0.44, 0.48, 0.52], pale: [0.92, 0.88, 0.78], cloud: [1.00, 0.99, 0.95],
-      grassA: [0.28, 0.31, 0.19], grassB: [0.64, 0.67, 0.45],
-      glow: [0.97, 0.95, 0.88], cover: 0.60, light: 0.86, stars: 0.0,
-      page: '#d8d2c0', dark: false
+      deep: [0.46, 0.47, 0.48], pale: [0.87, 0.84, 0.78], cloud: [0.99, 0.98, 0.95],
+      grassA: [0.20, 0.21, 0.15], grassB: [0.47, 0.47, 0.35],
+      glow: [0.93, 0.91, 0.86], cover: 0.60, light: 0.86, stars: 0.0,
+      page: '#cfcabb', dark: false
     },
     clear: {
-      deep: [0.11, 0.41, 0.74], pale: [0.71, 0.86, 0.96], cloud: [1.00, 1.00, 1.00],
-      grassA: [0.17, 0.31, 0.11], grassB: [0.55, 0.74, 0.31],
-      glow: [0.95, 0.98, 1.00], cover: 0.44, light: 1.00, stars: 0.0,
-      page: '#9fc4dd', dark: false
+      deep: [0.19, 0.38, 0.62], pale: [0.76, 0.83, 0.89], cloud: [0.99, 0.99, 0.99],
+      grassA: [0.16, 0.20, 0.13], grassB: [0.40, 0.45, 0.29],
+      glow: [0.93, 0.95, 0.97], cover: 0.44, light: 1.00, stars: 0.0,
+      page: '#a8bccb', dark: false
     },
     overcast: {
-      deep: [0.37, 0.38, 0.40], pale: [0.72, 0.72, 0.71], cloud: [0.88, 0.88, 0.87],
-      grassA: [0.21, 0.25, 0.17], grassB: [0.47, 0.52, 0.37],
-      glow: [0.76, 0.76, 0.75], cover: 0.74, light: 0.68, stars: 0.0,
-      page: '#a9a9a6', dark: false
+      deep: [0.40, 0.41, 0.42], pale: [0.74, 0.74, 0.73], cloud: [0.90, 0.90, 0.89],
+      grassA: [0.17, 0.19, 0.14], grassB: [0.37, 0.40, 0.30],
+      glow: [0.79, 0.79, 0.78], cover: 0.74, light: 0.68, stars: 0.0,
+      page: '#ababa8', dark: false
     },
     night: {
-      deep: [0.022, 0.045, 0.13], pale: [0.10, 0.15, 0.30], cloud: [0.38, 0.44, 0.62],
-      grassA: [0.035, 0.065, 0.050], grassB: [0.11, 0.18, 0.13],
-      glow: [0.09, 0.13, 0.26], cover: 0.50, light: 0.52, stars: 1.0,
-      page: '#0b1020', dark: true
+      deep: [0.030, 0.042, 0.088], pale: [0.11, 0.14, 0.23], cloud: [0.36, 0.40, 0.51],
+      grassA: [0.034, 0.050, 0.040], grassB: [0.095, 0.135, 0.105],
+      glow: [0.10, 0.13, 0.21], cover: 0.50, light: 0.52, stars: 1.0,
+      page: '#0c1019', dark: true
     },
     dusk: {
-      deep: [0.34, 0.25, 0.44], pale: [0.95, 0.74, 0.73], cloud: [1.00, 0.89, 0.88],
-      grassA: [0.17, 0.18, 0.13], grassB: [0.44, 0.43, 0.30],
-      glow: [0.97, 0.85, 0.83], cover: 0.52, light: 0.82, stars: 0.0,
-      page: '#e0b3ae', dark: false
+      deep: [0.36, 0.29, 0.38], pale: [0.87, 0.75, 0.72], cloud: [0.97, 0.90, 0.87],
+      grassA: [0.16, 0.16, 0.12], grassB: [0.37, 0.36, 0.27],
+      glow: [0.92, 0.85, 0.82], cover: 0.52, light: 0.82, stars: 0.0,
+      page: '#cfb1a9', dark: false
     }
   };
   var TINTS = ['deep', 'pale', 'cloud', 'grassA', 'grassB', 'glow'];
@@ -881,16 +907,16 @@
     return '<svg viewBox="0 0 ' + W + ' 400" aria-hidden="true">' +
       '<defs>' +
         '<linearGradient id="rl' + bar + '" x1="0" y1="0" x2="0" y2="1">' +
-          '<stop offset="0%" stop-color="#fbfcfd"/><stop offset="30%" stop-color="#c3cad2"/>' +
-          '<stop offset="52%" stop-color="#6d757e"/><stop offset="68%" stop-color="#cdd4db"/>' +
-          '<stop offset="100%" stop-color="#8a929a"/>' +
+          '<stop offset="0%" stop-color="#d9dcdf"/><stop offset="32%" stop-color="#aab0b6"/>' +
+          '<stop offset="54%" stop-color="#787f86"/><stop offset="72%" stop-color="#a6adb4"/>' +
+          '<stop offset="100%" stop-color="#7c838a"/>' +
         '</linearGradient>' +
         '<linearGradient id="ps' + bar + '" x1="0" y1="0" x2="1" y2="0">' +
-          '<stop offset="0%" stop-color="#8d959d"/><stop offset="34%" stop-color="#f4f7f9"/>' +
-          '<stop offset="62%" stop-color="#9aa2aa"/><stop offset="100%" stop-color="#6a727a"/>' +
+          '<stop offset="0%" stop-color="#7e858c"/><stop offset="36%" stop-color="#ccd1d6"/>' +
+          '<stop offset="64%" stop-color="#8e959c"/><stop offset="100%" stop-color="#686f76"/>' +
         '</linearGradient>' +
       '</defs>' +
-      '<ellipse cx="' + (W/2) + '" cy="393" rx="' + (W/2 - 12) + '" ry="11" fill="#0d1a24" opacity=".22"/>' +
+      '<ellipse cx="' + (W/2) + '" cy="393" rx="' + (W/2 - 12) + '" ry="10" fill="#0d1a24" opacity=".26"/>' +
       '<rect x="' + (x0-10) + '" y="379" width="52" height="10" rx="5" fill="url(#rl' + bar + ')"/>' +
       '<rect x="' + (x1-42) + '" y="379" width="52" height="10" rx="5" fill="url(#rl' + bar + ')"/>' +
       '<rect x="' + (x0+5) + '" y="28" width="11" height="353" rx="5.5" fill="url(#ps' + bar + ')"/>' +
