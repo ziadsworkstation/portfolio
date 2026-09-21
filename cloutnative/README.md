@@ -53,14 +53,18 @@ nubes, la hierba, la luz que entra por la puerta y las estrellas. Están en
 
 ## El logo
 
-La forma está **trazada de la espalda de la camiseta negra** — tinta blanca
-sobre tela negra, el estampado más nítido de los cinco —, suavizada y pasada
-a curvas. Vive en `MARK_D`.
+Está **trazado del PNG oficial**, no de una prenda.
 
-Sus **proporciones** vienen del PNG oficial, que no sirve para trazar (mide
-81 × 57 px) pero sí es exacto sobre el ancho contra el alto, cosa que una
-camiseta colgada de una percha no es: mi trazado salía un 3,1 % ancho de más
-y está corregido a 400 × 275.
+Antes lo trazaba de la espalda de las camisetas y salía mal: **la tinta de
+serigrafía se expande sobre la tela**, así que cualquier estampado es más
+gordo que el arte del que salió. El trazado de tela daba una cruz gruesa y
+abultada y púas romas, cuando el logo tiene la cruz fina y las púas en
+gancho. Las fotos de prenda sirven para el catálogo; **para el vector no.**
+
+El PNG mide 81 × 57 px, que es poco, así que no se puede trazar en crudo: se
+amplía ×14, se pasa un desenfoque gaussiano y se umbraliza. Eso convierte la
+escalera de píxeles del original en la curva suave con la que se dibujó. El
+resultado va en `MARK_D`, en una caja de 400 × 275.
 
 ### Cómo gira
 
