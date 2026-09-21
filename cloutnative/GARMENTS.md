@@ -18,9 +18,10 @@ pregunta en un color distinto.
 Esto conviene que salga en la web en algún sitio, porque ahora mismo "WiP?"
 no se entiende si no tienes la prenda en la mano.
 
-**Confirmado con la segunda muestra**: la gris y la azul son *el mismo diseño*
+**Confirmado con tres muestras**: la gris, la azul y la negra son *el mismo diseño*
 — misma frase, mismas tres palomas en la misma posición, mismo logo detrás,
-mismas etiquetas. Lo único que cambia es el color de la tela. Así que la línea
+mismas etiquetas. Lo único que cambia es el color de la tela, y en la negra
+la tinta se invierte a blanco. Así que la línea
 WiP? no son cinco camisetas distintas: es una pregunta estampada en cinco
 colores. Eso es un argumento fuerte para enseñarlas juntas en la web, en la
 misma burra, y no repartidas.
@@ -40,11 +41,21 @@ misma burra, y no repartidas.
 El logo de la web está **trazado de la foto de una espalda**, umbralizado y
 convertido a vector. Va en `MARK_D` dentro de `index.html`.
 
-Se trazaron las dos espaldas por separado, la gris y la azul, y **salen la
-misma forma** — eso confirma que el trazado es fiel y no un artefacto de una
-foto concreta. Se usa el de la azul, que tiene el estampado más limpio y más
-contraste contra la tela. Si aparece el vector original sigue siendo mejor: se
-cambia esa sola constante.
+Se trazaron **las tres espaldas por separado** — gris, azul y negra — y salen
+la misma forma. Eso confirma que el trazado es fiel y no un artefacto de una
+foto concreta.
+
+Se usa **el de la negra**: tinta blanca sobre tela negra es el mayor contraste
+de los tres, y el estampado es el más nítido.
+
+Probé también a promediar las tres (normalizar al mismo marco y votar píxel a
+píxel) esperando cancelar la distorsión de cada prenda. **Salió peor**: las
+diferencias entre prendas no son ruido aleatorio sino el estirado propio de
+cada tela, así que promediarlas no las cancela, las mezcla — y el resultado
+tiene las curvas más temblorosas que la mejor muestra sola. Queda anotado para
+no repetirlo.
+
+Si aparece el vector original sigue siendo mejor: se cambia `MARK_D` y ya.
 
 ---
 
@@ -79,6 +90,18 @@ y con menos seguridad que la azul.
 **Handle probable**: *Pure Water "WiP?" T-shirt* (39,99 €). El azul agua encaja
 con el nombre y es el único azul de la serie. **Sin confirmar.**
 
+### "What is Peace?" — negra
+
+- **Fotos**: `assets/garments/what-is-peace-black-front.jpg` / `-back.jpg`
+- **Color de tela**: negro con una gota de azul → **`#0f0e13`**
+- **Diseño**: el mismo, con la tinta **invertida a blanco** — delante la frase
+  y las palomas en blanco, detrás el logo blanco. La etiqueta de manga
+  también se invierte: fondo blanco, logo negro.
+- Es la muestra que mejor define el logo de las tres.
+
+**Handle probable**: *Black Stone "WiP?" T-shirt* (39,99 €). Es el único negro
+de la serie. **Casi seguro**, pero sin confirmar.
+
 ---
 
 ## Colores de tela medidos
@@ -90,6 +113,7 @@ web (las siluetas de la previsualización, y de referencia para los ambientes).
 |---|---|
 | "What is Peace?" gris jaspeado | `#787675` |
 | "What is Peace?" azul claro | `#c7d5dd` |
+| "What is Peace?" negra | `#0f0e13` |
 
 ---
 
